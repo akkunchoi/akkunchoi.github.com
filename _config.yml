@@ -1,4 +1,10 @@
 auto: true
 server: true
 markdown: kramdown
-exclude: materials
+pygments: false
+title: akkunchoi.github.com
+sitename: akkunchoi.github.com
+author:
+  name: Akiyoshi Tanaka
+  email: akkunchoi@gmail.com
+
