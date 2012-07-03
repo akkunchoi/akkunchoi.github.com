@@ -3,31 +3,14 @@ layout: default
 title: Gitリファレンス
 ---
 
+* TOC
+{:toc}
+
 {{ page.title }}
 ================
 
-- [基本](#basic)
-- [ログ](#log)
-  - [commit --amend や reset --hard HEAD^^ などで消えたコミットを確認する](#log-reflog)
-- [コミット](#commit)
-- [ブランチ](#branch)
-- [マージ](#merge)
-- [タグ](#tag)
-- [共有](#remote)
-- [サブモジュール](#submodule)
-- [git-svn](#svn)
-- [その他](#etc)
-  - [パッチを作って適用する](#patch)
-  - [コンフリクト状態が残ってしまった場合](#merge-head-exists)  
-  - [merge を実行したらコンフリクトが大量に出てしまったので取り消したい](#merge-conflict)
-  - [untracked なファイルを取り除きたい](#clean)
-  - [merge と rebase の違い](#merge-and-rebase)
-  - [git pullでremoteを自動的に指定](#pull-track)
-  - [コミットの圧縮](#commit-squash)
-  - [コミットを操作する](#commit-rebase)
-- [参考](#links)
 
-<a name="basic"> 基本（とりあえずこれ覚えればOK）
+Basic - 基本（とりあえずこれ覚えればOK）
 -----------------------------
 
     $ git init hoge # git リポジトリを作成。または...
@@ -41,7 +24,7 @@ title: Gitリファレンス
     $ git push origin master  # remoteに送信
     $ git pull # remoteの更新を取得
 
-<a name="log">ログ
+log - ログ
 -------------------
 
     $ git log -p                # diffも出力する
@@ -52,7 +35,7 @@ title: Gitリファレンス
     $ git log -[n]              # n件表示
     $ git log --graph --oneline # ブランチ・マージ状態の確認
 
-#### <a name="log-reflog">commit --amend や reset --hard HEAD^^ などで消えたコミットを確認する
+#### commit --amend や reset --hard HEAD^^ などで消えたコミットを確認する
 
     $ git reflog
 
@@ -62,7 +45,7 @@ HEADの移り変わりを確認できる。ブランチの移動など。reset -
 
 
 
-<a name="commit">コミット
+commit - コミット
 -------
 
 この３手順で`svn commit`とだいたい同じ動作になる。
@@ -100,7 +83,7 @@ svn revertのようなもの。ステージングしていない変更の取り�
     $ git checkout -p hoge.txt # interactiveに操作する
 
 
-<a name="branch">ブランチ
+branch - ブランチ
 ---------
 
 <http://progit.org/book/ja/ch3-1.html>
@@ -120,7 +103,7 @@ testing ブランチを作成（切り替えはしない）
     $ git checkout -b issue53
 
 
-<a name="merge">マージ
+merge - マージ
 ----------------
 
 通常のマージはFast forward ポインタを前に進めるだけ。
@@ -146,7 +129,7 @@ testing ブランチを作成（切り替えはしない）
     $ git cherry-pick {commit}
     
 
-<a name="tag">タグ
+tag - タグ
 -------
 
 タグの一覧
@@ -166,7 +149,7 @@ testing ブランチを作成（切り替えはしない）
     $ git push origin --tags # 共有されてないもの全部
     $ git push origin :missing_tag # リモートのタグを削除
 
-<a name="remote">共有
+remote - 共有
 ----------
 
 <http://progit.org/book/ja/ch3-5.html>
@@ -229,7 +212,7 @@ pull は fetch と merge を自動でやってくれる
     $ git push --force origin master
 
 
-<a name="submodule">サブモジュール
+submodule - サブモジュール
 ------------
 
 http://progit.org/book/ja/ch6-6.html
@@ -260,7 +243,7 @@ submoduleのあるリポジトリをcloneした後、
     $ git commit
 
 
-<a name="svn">git-svn
+git-svn
 ------------
 
 <http://progit.org/book/ja/ch8-1.html>
@@ -343,10 +326,10 @@ git clone すると今までの履歴含め、全てをコピーしなければ�
 
 
 
-<a name="etc">その他
+etc - その他
 --------------------------------
 
-### <a name="patch">パッチを作って適用する
+### パッチを作って適用する
 
 <http://blog.s21g.com/articles/680>
 
@@ -358,7 +341,7 @@ git clone すると今までの履歴含め、全てをコピーしなければ�
 
     $ git am 0001-hoge.patch
 
-### <a name="merge-head-exists">コンフリクト状態が残ってしまった場合
+### コンフリクト状態が残ってしまった場合
 
     # このようなメッセージがでた場合
     You have not concluded your merge (MERGE_HEAD exists).
@@ -367,15 +350,15 @@ git clone すると今までの履歴含め、全てをコピーしなければ�
     $ git reset --merge
 
 
-### <a name="merge-conflict">mergeを実行したらconflictが大量に出てしまったので取り消したい
+### mergeを実行したらconflictが大量に出てしまったので取り消したい
 
     $ git reset --hard ORIG_HEAD
 
-### <a name="clean">untrackedなファイルを取り除きたい
+### untrackedなファイルを取り除きたい
 
     $ git clean -f
 
-### <a name="merge-and-rebase">merge と rebase の違い
+### merge と rebase の違い
 
 masterのHEADはポイントAにあるとする
 
@@ -418,7 +401,7 @@ A'' の HEAD^ は B
 mergeはブランチの履歴を残して一本にするけど、rebaseすると履歴も含めて一本に作り直す。そのためrebaseは注意が必要。
 
 
-### <a name="pull-track">git pullでremoteを自動的に指定
+### git pullでremoteを自動的に指定
 
     #
     # remoteが指定されてない(trackしてない)場合はリモート指定なしで git pull しても「わからないよ」と言われる
@@ -464,7 +447,7 @@ mergeはブランチの履歴を残して一本にするけど、rebaseすると
     $ git push -u origin master    
 
 
-### <a name="commit-squash">コミットの圧縮
+### コミットの圧縮
 
 マージするときにひとつのコミットにまとめる。
 
@@ -473,7 +456,7 @@ mergeはブランチの履歴を残して一本にするけど、rebaseすると
 または git rebase -i でsquash する。（後述）
 
 
-### <a name="commit-rebase">コミットを操作する
+### コミットを操作する
 
     # コミット２つあったとする
     git commit -am "hoge"
@@ -502,7 +485,7 @@ mergeはブランチの履歴を残して一本にするけど、rebaseすると
 で、行を消すとそのコミットが失われる。でも全部消すとrebaseは中止になる。
 
 
-<a name="links">参考
+参考
 ================
 
 - [Pro Git](http://git-scm.com/book/ja)
