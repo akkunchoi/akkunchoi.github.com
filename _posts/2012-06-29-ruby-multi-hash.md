@@ -1,5 +1,7 @@
 ---
 layout: default
+tags: ruby
+categories: ruby
 ---
 
 ## Ruby 多次元ハッシュ

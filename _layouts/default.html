@@ -9,6 +9,7 @@
     <link rel="stylesheet" type="text/css" media="screen" href="/stylesheets/stylesheet.css">
 
     <title>{{ page.title }} | akkunchoi@github</title>
+    <link rel="alternate" type="application/rss+xml" title="RSS Feed for mysite.com" href="/feed.xml" />
   </head>
 
   <body>
@@ -39,24 +40,11 @@
     <div id="footer_wrap" class="outer">
       <footer class="inner">
         <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+        <p>{% render_time page rendered at: %}</p>
       </footer>
     </div>
 
-
-<!-- GA -->
-<script type="text/javascript">
-
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-31706657-3']);
-  _gaq.push(['_trackPageview']);
-
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-
-</script>
+{% include ga.html %}
 
   </body>
 </html>

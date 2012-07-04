@@ -1,6 +1,7 @@
 ---
 layout: default
 title: Gitリファレンス
+tags: git
 ---
 
 * TOC

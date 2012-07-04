@@ -8,3 +8,6 @@ author:
   name: Akiyoshi Tanaka
   email: akkunchoi@gmail.com
 
+# for rss
+description: This site is a information for development written by akkunchoi
+fullurl: http://akkunchoi.example.com
