@@ -95,9 +95,10 @@ Octpressは、静的HTMLをローカルで生成してアップロードして�
 
 ## 他わかったこと
 
-_config.ymlに設定した変数はテンプレート内では site.hoge で取得できる。
-layout: nil でレイアウトなしで出力できる。
-テンプレートエンジン [Liquid デザイナー用マニュアル](https://github.com/Shopify/liquid/wiki/Liquid-for-Designers)
+- _config.ymlに設定した変数はテンプレート内では site.hoge で取得できる。
+- layout: nil でレイアウトなしで出力できる。
+- テンプレートエンジン [Liquid デザイナー用マニュアル](https://github.com/Shopify/liquid/wiki/Liquid-for-Designers)
+- raw は使用できない。
 
 
 [Jekyll]: https://github.com/mojombo/jekyll/
