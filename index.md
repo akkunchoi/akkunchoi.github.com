@@ -3,10 +3,8 @@ layout: default
 title: Index
 ---
 
-# Flows
-
 <ul>
-{% for post in site.posts limit:5 %}
+{% for post in site.posts limit:20 %}
     <li>
     <a href="{{ post.url }}">
     {{ post.date | date: "%Y-%m-%d" }}
@@ -16,7 +14,6 @@ title: Index
 {% endfor %}
 </ul>
 
-# Stocks
 <ul>
 {% for p in site.pages %}
     {% if p.title and p.url != '/index.html' %}
@@ -29,7 +26,7 @@ title: Index
 {% endfor %}
 </ul>
 
-# Coming soon
+# 書く予定
 - kramdown
-- rbenv/ruby-build
+- rails3
 

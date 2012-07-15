@@ -91,13 +91,13 @@ jekyllを起動
 
 `push` するだけでOK。 github pagesが内部でJekyllを動作させて、生成してくれる。http://username.github.com/ で見れれば完了。
 
-Octpressなんかは、静的HTMLをローカルで生成してアップロードしているらしい。怪しいプラグインなんかも動作させるためにはこの方法にするしかない。
+Octpressは、静的HTMLをローカルで生成してアップロードしているそうだ。動的な出力を行うプラグインを動作させるためにはこの方法にするか、自分でホスティングするしかなさそう。
 
 ## 他わかったこと
 
-- _config.ymlに設定した変数はテンプレート内では {% raw %}{{ site.hoge }}{% endraw %}で取得できる。
-- layout: nil でレイアウトなしで出力できる。
-- テンプレートエンジン [Liquid デザイナー用マニュアル](https://github.com/Shopify/liquid/wiki/Liquid-for-Designers)
+_config.ymlに設定した変数はテンプレート内では site.hoge で取得できる。
+layout: nil でレイアウトなしで出力できる。
+テンプレートエンジン [Liquid デザイナー用マニュアル](https://github.com/Shopify/liquid/wiki/Liquid-for-Designers)
 
 
 [Jekyll]: https://github.com/mojombo/jekyll/
