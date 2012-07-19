@@ -6,7 +6,11 @@ title: CentOS に ImageMagick, RMagick のインストール
 {{ page.title }}
 ================================
 
-## RPM
+CentOS に ImageMagick と RMagick をインストールしました。CentOS 標準 yum の ImageMagick は古過ぎるそうなので、RPM,ソースからコンパイルの順でインストールしてみました。
+
+## RPM から ImageMagickをインストールするが失敗
+
+まずは ImageMagick 公式が公開している RPM から入れてみる。
 
     $ wget http://www.imagemagick.org/download/linux/CentOS/x86_64/ImageMagick-6.7.8-3.x86_64.rpm
     $ sudo rpm -ivh ImageMagick-6.7.8-3.x86_64.rpm ImageMagick-6.7.8-3.x86_64.rpm
@@ -21,11 +25,11 @@ title: CentOS に ImageMagick, RMagick のインストール
         liblcms.so.1()(64bit) は ImageMagick-6.7.8-3.x86_64 に必要とされています	libltdl.so.3()(64bit) は ImageMagick-6.7.8-3.x86_64 に必要とされています	librsvg-2.so.2()(64bit) は ImageMagick-6.7.8-3.x86_64 に必要とされています
         libwmflite-0.2.so.7()(64bit) は ImageMagick-6.7.8-3.x86_64 に必要とされています
 
-ソースからやった方が早いかも。
+libHalfってなんだよ。ソースからコンパイルする手順での成功例が多いのでそっちの方が早いかもしれない。
 
-## ソースからインストール
+## ソースから ImageMagick をインストール。成功。
 
-依存ライブラリ
+依存ライブラリを事前にインストール。入れてなければJPEGやPNGが変換できない。
 
     $ sudo yum install libjpeg-devel libpng-devel
 
@@ -42,15 +46,19 @@ make
 試してみる
 
     $ convert hoge.jpg hoge.png # ..OK
+
+ImageMagick 6.7.8 をインストールできました。
+
   
-libjpegが入ってない場合...エラーになる。
+ちなみにlibjpegを入れずにコンパイルした場合、実行時にフォーマットがないというエラーが出ます。
 
     $ convert star-off.jpg star-off.png 
     convert: no decode delegate for this image format
 
     $ convert -list format # JPEGがない
 
-## RMagickがインストールできるかどうか確認
+
+## RMagick をインストールする
 
     $ cd 適当なディレクトリ
     $ vi Gemfile
@@ -81,16 +89,18 @@ PKG_CONFIG_PATH を設定しろとのこと
 
     $ export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
 
-    $ bundle install --path bundle ## 成功しました
+    $ bundle install --path bundle
 
+ビルドできました。
 
-試してみる
+試してみる。
 
     $ bundle console
 
     irb(main):001:0> require "RMagick"
     LoadError: libMagickCore.so.5: cannot open shared object file: No such file or directory - /home/admin/downloads/rmagick-test/bundle/ruby/1.9.1/gems/rmagick-2.13.1/lib/RMagick2.so
 
+shared objectが読み込めない。
 
 ダイナミックリンクライブラリのパスを設定する。
 
@@ -101,8 +111,9 @@ PKG_CONFIG_PATH を設定しろとのこと
     $ sudo /sbin/ldconfig
     $ sudo /sbin/ldconfig -p | grep Magick
 
+これでOKでした。
 
-### 参考
+### RMagick インストールの参考
 
 - <http://qiita.com/items/6b1c6c7257042a159cc9>
 - <http://6rats.blog62.fc2.com/blog-entry-78.html>
@@ -111,7 +122,7 @@ PKG_CONFIG_PATH を設定しろとのこと
 
 ## 最後に
 
-CentOS6.3だったのでyumから入れられました。めでたしめでたし。
+CentOS6.3 だったので yum から ImageMagick 入れられました。めでたしめでたし。
 
     $ sudo make uninstall
     $ sudo vi /etc/ld.so.conf # 変更を削除
@@ -119,5 +130,6 @@ CentOS6.3だったのでyumから入れられました。めでたしめでた�
 
     $ sudo yum install ImageMagick ImageMagick-devel
 
+ImagMagick バージョンは 6.5.4.7 です。RMagick2 は 6.3.5 以上なのでインストールできます。
 
 
