@@ -1,6 +1,7 @@
 ---
 layout: default
 title: Rails3 routes.rb まとめ
+tags: ruby rails
 ---
 
 {{ page.title }}

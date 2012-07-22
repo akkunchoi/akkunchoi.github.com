@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CentOS に ImageMagick, RMagick のインストール
+tags: CentOS ImageMagick RMagick
 ---
 
 {{ page.title }}

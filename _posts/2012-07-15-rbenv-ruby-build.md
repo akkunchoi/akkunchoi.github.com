@@ -1,7 +1,7 @@
 ---
 layout: default
 title: rbenv + ruby-build で ruby をインストール
-categories: ruby 
+tags: ruby rbenv ruby-build
 ---
 
 {{ page.title }}

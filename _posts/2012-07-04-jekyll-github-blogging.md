@@ -1,6 +1,7 @@
 ---
 layout: default
 title: Jekyll + github pages を使って git + markdown でサイト構築
+tags: ruby jekyll github markdown
 ---
 
 [github pages]と[Jekyll]を使ってサイト構築してみました。

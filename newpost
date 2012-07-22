@@ -18,6 +18,9 @@ cat <<EOD > $file
 layout: default
 title: $1
 ---
+
+{{ page.title }}
+================
 EOD
 
 vim "_posts/$day-$1.md"
