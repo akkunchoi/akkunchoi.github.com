@@ -13,3 +13,6 @@ description: This site is a information for development written by akkunchoi
 fullurl: http://akkunchoi.github.com
 
 permalink: /:categories/:title.html
+
+tag_title_prefix: "["
+tag_title_suffix: "]"

@@ -28,5 +28,4 @@ title: Index
 
 # 書く予定
 - kramdown
-- rails3
 
