@@ -71,7 +71,7 @@ _config.yml の内容はこんな感じで。[設定オプション一欄](https
     server: true
     markdown: kramdown
 
-default.html には Auto Generator で生成されたHTMLを元に作成しました。コンテンツ部分を `{% raw %}{{ content }}{% endraw %}` に置き換えるだけです。
+当サイトの場合、default.html には Auto Generator で生成されたHTMLを元に作成しました。コンテンツ部分を `｛｛ content ｝｝` に置き換えるだけです。
 
 この作業には [Radium Software](http://radiumsoftware.tumblr.com/post/10518849682)さんの
 [リポジトリ](https://github.com/unity-yb/unity-yb.github.com)を参考にしました。
@@ -109,9 +109,9 @@ Octpressは、静的HTMLをローカルで生成してアップロードして�
 ## 他わかったこと
 
 - _config.ymlに設定した変数はテンプレート内では site.hoge で取得できる。
-- layout: nil でレイアウトなしで出力できる。
+- layout: nil でレイアウトなし出力できる。
 - テンプレートエンジン [Liquid デザイナー用マニュアル](https://github.com/Shopify/liquid/wiki/Liquid-for-Designers)
-- raw は使用できない。
+- Liquidの raw を使用すると Page build failure （ダブルブラケットが入力できない！）。
 
 
 [Jekyll]: https://github.com/mojombo/jekyll/
