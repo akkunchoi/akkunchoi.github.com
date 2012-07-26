@@ -10,16 +10,21 @@ tags: ruby jekyll github markdown
 
 git + markdown でのサイト管理が便利そうなので、ホスティングまでできる[github pages]を使ってみました。
 
-ちなみに[Octopress], [Jekyll bootstrap]を使えばもっと簡単に設置できると思います（後で知った）。
+ちなみに[Octopress], [Jekyll bootstrap]を使えばもっと簡単に設置できるとみたいです（後で知った）。
 
-## username.github.com
+## [username].github.com の取得
 
 まずは github pages のユーザーページをセットアップ。
 
-- (1) github [Create a New Repo](https://github.com/new) へ。
-- (2) Repository name に "[username].github.com" と入力。[username]は自分のIDです。
-  - "username = 自分のユーザID" でない場合はドメインのルートにならず、パスを切るようです。
-- (3) 普通にリポジトリを作成する。
+1. github [Create a New Repo](https://github.com/new) へ。
+2. Repository name に "[username].github.com" と入力。[username]は自分のIDです。
+
+    <span style="color: grey">
+     "username = 自分のユーザID" でない場合はドメインのルートにならず、パスを切るようです。
+     例えば akkunchoi.github.com/hoge.github.com になる。
+    </span>
+
+3. 普通にリポジトリを作成する。
 
         mkdir username.github.com
         cd username.github.com
@@ -31,10 +36,15 @@ git + markdown でのサイト管理が便利そうなので、ホスティン�
         git push -u origin master
 
 
-- (4) リポジトリページの Admin から GitHub Pages 内の Automatic Page Generator で適当にテーマ選択。
-  - 自分のユーザIDをドメインにした場合（ID: akkunchoiならakkunchoi.github.com）はGeneratorのデータが自動的にmasterにマージされたが、そうでない場合は gh-pages ブランチに作成された。
-  - README から HTML 作成ができるので、ペライチなら Jekyll 使わなくてもいい。
-- (5) 以上で github pages のセットアップ完了。
+4. リポジトリページの Admin から GitHub Pages 内の Automatic Page Generator で適当にテーマ選択。
+
+    <div style="color: grey">
+      自分のユーザIDをドメインにした場合（ID: akkunchoiならakkunchoi.github.com）はGeneratorのデータが自動的にmasterにマージされたが、そうでない場合は gh-pages ブランチに作成された。
+
+      また、README から HTML 作成ができるので、ペライチでいいなら Jekyll 使わなくてもいい。
+    </div>
+
+5. 以上で github pages のセットアップ完了。
 
 
 ## Jekyll のインストール
@@ -61,7 +71,7 @@ _config.yml の内容はこんな感じで。[設定オプション一欄](https
     server: true
     markdown: kramdown
 
-default.html には Auto Generator で生成されたHTMLを元に作成しました。コンテンツ部分を `{{ content }}` に置き換えるだけです。
+default.html には Auto Generator で生成されたHTMLを元に作成しました。コンテンツ部分を `{% raw %}{{ content }}{% endraw %}` に置き換えるだけです。
 
 この作業には [Radium Software](http://radiumsoftware.tumblr.com/post/10518849682)さんの
 [リポジトリ](https://github.com/unity-yb/unity-yb.github.com)を参考にしました。
@@ -79,18 +89,20 @@ index.md を作成します。
     
     ....
 
-`---` の部分はページのメタデータです。layoutは必須です。タイトル、カテゴリ、タグなども設定できます。詳細は[YAML-Front-Matter](https://github.com/mojombo/jekyll/wiki/YAML-Front-Matter)。
+`---` で囲まれた部分はページのメタデータです。layoutは必須です。タイトル、カテゴリ、タグなども設定できます。詳細は[YAML-Front-Matter](https://github.com/mojombo/jekyll/wiki/YAML-Front-Matter)。
 
 
 jekyllを起動
 
     $ jekyll
 
-<http://localhost:4000> で表示されればOKです。
+<http://localhost:4000> で表示できればOKです。
 
 ## 公開
 
-`push` するだけでOK。 github pagesが内部でJekyllを動作させて、生成してくれる。http://username.github.com/ で見れれば完了。
+`push` するだけでOK。 github pagesが内部でJekyllを動作させて、生成してくれます。http://[username].github.com/ で表示されていれば完了。
+
+ただ、動的な出力を行うプラグインを入れていたり、使用できない処理を入れると失敗すことがある。
 
 Octpressは、静的HTMLをローカルで生成してアップロードしているそうだ。動的な出力を行うプラグインを動作させるためにはこの方法にするか、自分でホスティングするしかなさそう。
 
