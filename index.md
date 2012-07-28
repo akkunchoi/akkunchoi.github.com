@@ -4,7 +4,7 @@ title: Index
 ---
 
 <ul>
-{% for post in site.posts limit:20 %}
+{% for post in site.posts limit:100 %}
     <li>
     <a href="{{ post.url }}">
     {{ post.date | date: "%Y-%m-%d" }}
