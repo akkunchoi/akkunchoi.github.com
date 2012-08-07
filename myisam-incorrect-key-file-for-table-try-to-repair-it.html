@@ -31,9 +31,18 @@
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
 
-      <h1 id="databaseexception-incorrect-key-file-for-table-mydatabasemytablemyi-try-to-repair-it">DatabaseException Incorrect key file for table ‘mydatabase/mytable.MYI’; try to repair it</h1>
-
-<p>MySQLで<code>DELETE FROM ...</code>で一行消したらDatabaseExceptionが発生してアクセスできなくった。
+      <article class="posts">
+  <header>
+    <time>2012-07-28</time>
+    <h1>DatabaseException Incorrect key file for table 'mydatabase/mytable.MYI'; try to repair it</h1>
+    <ul class="tags">
+      
+      <li class="inline archive_list"><a class="tag_list_link" href="/tag/MySQL">MySQL</a></li>
+      
+    </ul>
+  </header>
+  <div class="posts-content">
+  <p>MySQLで<code>DELETE FROM ...</code>で一行消したらDatabaseExceptionが発生してアクセスできなくった。
 メッセージには <code>Incorrect key file for table 'mydatabase/mytable.MYI'; try to repair it</code> とある。</p>
 
 <p>テーブルが壊れたらしいので修復する。</p>
@@ -63,6 +72,13 @@ mysql&gt; repair table mytable;
   <li><a href="http://blog.kaburk.com/os/linux/mysql-broken.html">http://blog.kaburk.com/os/linux/mysql-broken.html</a></li>
   <li><a href="http://blog.livedoor.jp/roid2008/archives/50574239.html">http://blog.livedoor.jp/roid2008/archives/50574239.html</a></li>
 </ul>
+
+
+  </div>
+  <footer> 
+  </footer>
+</article>
+
 
 
 

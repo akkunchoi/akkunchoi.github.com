@@ -31,48 +31,52 @@
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
 
-      <h1 id="git">Gitリファレンス</h1>
-
-<p>gitの使い方まとめ</p>
-
-<p>最終更新日: 2012-07-20</p>
+      <article class="posts">
+  <header>
+    <time>2012-06-01</time>
+    <h1>Gitリファレンス</h1>
+    <ul class="tags">
+      
+      <li class="inline archive_list"><a class="tag_list_link" href="/tag/git">git</a></li>
+      
+    </ul>
+  </header>
+  <div class="posts-content">
+  <p>gitの使い方まとめ</p>
 
 <ul id="markdown-toc">
-  <li><a href="#git">Gitリファレンス</a>    <ul>
-      <li><a href="#basic---ok">Basic - 基本（とりあえずこれ覚えればOK）</a></li>
-      <li><a href="#log---">log - ログ</a>        <ul>
-          <li><a href="#commit---amend--reset---hard-head-">commit –amend や reset –hard HEAD^^ などで消えたコミットを確認する</a></li>
-        </ul>
-      </li>
-      <li><a href="#commit---">commit - コミット</a></li>
-      <li><a href="#branch---">branch - ブランチ</a></li>
-      <li><a href="#merge---">merge - マージ</a></li>
-      <li><a href="#tag---">tag - タグ</a></li>
-      <li><a href="#remote---">remote - 共有</a></li>
-      <li><a href="#submodule---">submodule - サブモジュール</a></li>
-      <li><a href="#git-svn">git-svn</a>        <ul>
-          <li><a href="#git-svn-dcommit-idid">git-svn dcommit できなかったのでコミットID見たら、違うIDになってた…。</a></li>
-          <li><a href="#git-svn-dcommit">ローカルに未コミットの変更があるけどgit-svn-dcommitしたい</a></li>
-          <li><a href="#svnexternals">svn:externalsのようなことをしたい</a></li>
-          <li><a href="#section">空のディレクトリはバージョン管理できない</a></li>
-          <li><a href="#subversiongit">複数のモジュールを含むSubversionリポジトリをGitへ移行する。</a></li>
-          <li><a href="#section-1">部分的なチェックアウトできない</a></li>
-          <li><a href="#trunk-branches-tags">trunk, branches, tags</a></li>
-        </ul>
-      </li>
-      <li><a href="#etc---">etc - その他</a>        <ul>
-          <li><a href="#section-2">過去のバージョンを取得、表示</a></li>
-          <li><a href="#section-3">パッチを作って適用する</a></li>
-          <li><a href="#section-4">コンフリクト状態が残ってしまった場合</a></li>
-          <li><a href="#mergeconflict">mergeを実行したらconflictが大量に出てしまったので取り消したい</a></li>
-          <li><a href="#untracked">untrackedなファイルを取り除きたい</a></li>
-          <li><a href="#merge--rebase-">merge と rebase の違い</a></li>
-          <li><a href="#git-pullremote">git pullでremoteを自動的に指定</a></li>
-          <li><a href="#section-5">コミットの圧縮</a></li>
-          <li><a href="#section-6">コミットを操作する</a></li>
-          <li><a href="#revert-">revert コミットを打ち消す</a></li>
-        </ul>
-      </li>
+  <li><a href="#basic---ok">Basic - 基本（とりあえずこれ覚えればOK）</a></li>
+  <li><a href="#log---">log - ログ</a>    <ul>
+      <li><a href="#commit---amend--reset---hard-head-">commit –amend や reset –hard HEAD^^ などで消えたコミットを確認する</a></li>
+    </ul>
+  </li>
+  <li><a href="#commit---">commit - コミット</a></li>
+  <li><a href="#branch---">branch - ブランチ</a></li>
+  <li><a href="#merge---">merge - マージ</a></li>
+  <li><a href="#tag---">tag - タグ</a></li>
+  <li><a href="#remote---">remote - 共有</a></li>
+  <li><a href="#submodule---">submodule - サブモジュール</a></li>
+  <li><a href="#git-svn">git-svn</a>    <ul>
+      <li><a href="#git-svn-dcommit-idid">git-svn dcommit できなかったのでコミットID見たら、違うIDになってた…。</a></li>
+      <li><a href="#git-svn-dcommit">ローカルに未コミットの変更があるけどgit-svn-dcommitしたい</a></li>
+      <li><a href="#svnexternals">svn:externalsのようなことをしたい</a></li>
+      <li><a href="#section">空のディレクトリはバージョン管理できない</a></li>
+      <li><a href="#subversiongit">複数のモジュールを含むSubversionリポジトリをGitへ移行する。</a></li>
+      <li><a href="#section-1">部分的なチェックアウトできない</a></li>
+      <li><a href="#trunk-branches-tags">trunk, branches, tags</a></li>
+    </ul>
+  </li>
+  <li><a href="#etc---">etc - その他</a>    <ul>
+      <li><a href="#section-2">過去のバージョンを取得、表示</a></li>
+      <li><a href="#section-3">パッチを作って適用する</a></li>
+      <li><a href="#section-4">コンフリクト状態が残ってしまった場合</a></li>
+      <li><a href="#mergeconflict">mergeを実行したらconflictが大量に出てしまったので取り消したい</a></li>
+      <li><a href="#untracked">untrackedなファイルを取り除きたい</a></li>
+      <li><a href="#merge--rebase-">merge と rebase の違い</a></li>
+      <li><a href="#git-pullremote">git pullでremoteを自動的に指定</a></li>
+      <li><a href="#section-5">コミットの圧縮</a></li>
+      <li><a href="#section-6">コミットを操作する</a></li>
+      <li><a href="#revert-">revert コミットを打ち消す</a></li>
     </ul>
   </li>
   <li><a href="#section-7">参考</a></li>
@@ -611,6 +615,13 @@ pick 0149644 moge
   <li><a href="http://keijinsonyaban.blogspot.jp/2011/05/git.html">Gitをボトムアップから理解する</a></li>
   <li><a href="http://keijinsonyaban.blogspot.jp/2010/10/successful-git-branching-model.html">A Successful Git Branching Model</a></li>
 </ul>
+
+  </div>
+  <footer> 
+  </footer>
+</article>
+
+
 
 
       </section>

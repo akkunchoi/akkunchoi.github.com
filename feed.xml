@@ -5,22 +5,17 @@
         <link>http://akkunchoi.github.com</link>
         <atom:link href="http://akkunchoi.github.com/rss.xml" rel="self" type="application/rss+xml" />
         <description>This site is a information for development written by akkunchoi</description>
-        <pubDate>Tue, 07 Aug 2012 21:12:01 +0900</pubDate>
-        <lastBuildDate>Tue, 07 Aug 2012 21:12:01 +0900</lastBuildDate>
+        <pubDate>Tue, 07 Aug 2012 22:44:00 +0900</pubDate>
+        <lastBuildDate>Tue, 07 Aug 2012 22:44:00 +0900</lastBuildDate>
         
         <item>
             <title>Apache Basic認証</title>
-            <description>&lt;h1 id=&quot;apache-basic&quot;&gt;Apache Basic認証&lt;/h1&gt;
-
-&lt;ul id=&quot;markdown-toc&quot;&gt;
-  &lt;li&gt;&lt;a href=&quot;#apache-basic&quot;&gt;Apache Basic認証&lt;/a&gt;    &lt;ul&gt;
-      &lt;li&gt;&lt;a href=&quot;#basic&quot;&gt;Basic認証の仕組み&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#htpasswd-&quot;&gt;.htpasswd ファイルを作成する&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#httpdconf--htaccess-&quot;&gt;httpd.conf / .htaccess での設定&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#section&quot;&gt;特定のファイルには認証をかけない&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#ip&quot;&gt;特定のIPからのアクセスには認証をかけない&lt;/a&gt;&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
+            <description>&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#basic&quot;&gt;Basic認証の仕組み&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#htpasswd-&quot;&gt;.htpasswd ファイルを作成する&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#httpdconf--htaccess-&quot;&gt;httpd.conf / .htaccess での設定&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#section&quot;&gt;特定のファイルには認証をかけない&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#ip&quot;&gt;特定のIPからのアクセスには認証をかけない&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;h2 id=&quot;basic&quot;&gt;Basic認証の仕組み&lt;/h2&gt;
@@ -267,9 +262,7 @@ apache_note(&quot;originallog&quot;, $val);
         
         <item>
             <title>xpdfを使ってPDFから日本語抽出 (homebrew, MacOSX)</title>
-            <description>&lt;h1 id=&quot;xpdfpdf-homebrew-macosx&quot;&gt;xpdfを使ってPDFから日本語抽出 (homebrew, MacOSX)&lt;/h1&gt;
-
-&lt;p&gt;homebrewでxpdfをインストールする。&lt;/p&gt;
+            <description>&lt;p&gt;homebrewでxpdfをインストールする。&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;$ brew install xpdf
 &lt;/code&gt;&lt;/pre&gt;
@@ -321,9 +314,7 @@ toUnicodeDir            /usr/local/share/xpdf/japanese/CMap
         
         <item>
             <title>Test DoubleとPHPUnit</title>
-            <description>&lt;h1 id=&quot;test-doublephpunit&quot;&gt;Test DoubleとPHPUnit&lt;/h1&gt;
-
-&lt;h2 id=&quot;test-double&quot;&gt;Test Doubleについて&lt;/h2&gt;
+            <description>&lt;h2 id=&quot;test-double&quot;&gt;Test Doubleについて&lt;/h2&gt;
 
 &lt;p&gt;単体テストを書く時に問題になるのが、依存コンポーネントの扱いだ。例えばデータベースが必要だったり、外部サービスへの接続が必要だったりすると、テストごとに毎回セットアップしていたら途方も無い時間がかかるし、そもそも依存関係が複雑でテストができない場合もある。&lt;/p&gt;
 
@@ -449,9 +440,7 @@ interface User{
         
         <item>
             <title>SPFを設定して迷惑メール回避する</title>
-            <description>&lt;h1 id=&quot;spf&quot;&gt;SPFを設定して迷惑メール回避する&lt;/h1&gt;
-
-&lt;h2 id=&quot;section&quot;&gt;設定方法&lt;/h2&gt;
+            <description>&lt;h2 id=&quot;section&quot;&gt;設定方法&lt;/h2&gt;
 
 &lt;p&gt;TXTレコードに &lt;code&gt;v=spf1 a:example.com ~all&lt;/code&gt;&lt;/p&gt;
 
@@ -477,9 +466,7 @@ interface User{
         
         <item>
             <title>teleport - Mac間でマウス、キーボード、クリップボード共有</title>
-            <description>&lt;h1 id=&quot;teleport---mac&quot;&gt;teleport - Mac間でマウス、キーボード、クリップボード共有&lt;/h1&gt;
-
-&lt;p&gt;&lt;a href=&quot;http://abyssoft.com/software/teleport/&quot;&gt;http://abyssoft.com/software/teleport/&lt;/a&gt;&lt;/p&gt;
+            <description>&lt;p&gt;&lt;a href=&quot;http://abyssoft.com/software/teleport/&quot;&gt;http://abyssoft.com/software/teleport/&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;クリップボード共有のツールを色々探していたが見つからず。諦めかけたところ、最適なツールを発見。例えるならMacOSX版&lt;a href=&quot;http://synergy-foss.org/&quot;&gt;Synergy&lt;/a&gt;だ。&lt;/p&gt;
 
@@ -521,9 +508,7 @@ KeyRemap4MacBookが入っていても問題ない。Synergyは設定が面倒だ
         
         <item>
             <title>DatabaseException Incorrect key file for table 'mydatabase/mytable.MYI'; try to repair it</title>
-            <description>&lt;h1 id=&quot;databaseexception-incorrect-key-file-for-table-mydatabasemytablemyi-try-to-repair-it&quot;&gt;DatabaseException Incorrect key file for table ‘mydatabase/mytable.MYI’; try to repair it&lt;/h1&gt;
-
-&lt;p&gt;MySQLで&lt;code&gt;DELETE FROM ...&lt;/code&gt;で一行消したらDatabaseExceptionが発生してアクセスできなくった。
+            <description>&lt;p&gt;MySQLで&lt;code&gt;DELETE FROM ...&lt;/code&gt;で一行消したらDatabaseExceptionが発生してアクセスできなくった。
 メッセージには &lt;code&gt;Incorrect key file for table 'mydatabase/mytable.MYI'; try to repair it&lt;/code&gt; とある。&lt;/p&gt;
 
 &lt;p&gt;テーブルが壊れたらしいので修復する。&lt;/p&gt;
@@ -561,9 +546,7 @@ mysql&amp;gt; repair table mytable;
         
         <item>
             <title>Chrome拡張を使ってGoogle Analyticsの自分のアクセスを除外する</title>
-            <description>&lt;h1 id=&quot;chromegoogle-analytics&quot;&gt;Chrome拡張を使ってGoogle Analyticsの自分のアクセスを除外する&lt;/h1&gt;
-
-&lt;p&gt;IP固定の場合はIPフィルタリングすることもできるが、IP動的の場合はわざわざクッキーを設定しなければならなかった。&lt;/p&gt;
+            <description>&lt;p&gt;IP固定の場合はIPフィルタリングすることもできるが、IP動的の場合はわざわざクッキーを設定しなければならなかった。&lt;/p&gt;
 
 &lt;p&gt;&lt;a href=&quot;https://chrome.google.com/webstore/detail/jmcpbefnpobogldglnlikgojpaddibgb&quot;&gt;Analytics blocker&lt;/a&gt;はURLにマッチしたサイトへのGoogle Analyticsへの送信をブロックするChrome拡張だ。
 これを使えば自分のサイトを登録するだけで、アクセスを除外できるのでとても簡単。&lt;/p&gt;
@@ -587,9 +570,7 @@ mysql&amp;gt; repair table mytable;
         
         <item>
             <title>Apple Mail (Mail.app) がメモリをアホみたいに食う (MacOSX Snow Leopard)</title>
-            <description>&lt;h1 id=&quot;apple-mail-mailapp--macosx-snow-leopard&quot;&gt;Apple Mail (Mail.app) がメモリをアホみたいに食う (MacOSX Snow Leopard)&lt;/h1&gt;
-
-&lt;p&gt;Mail.appをしばらく使っていると、メモリを大量に消費するという現象にしばしば遭遇する（２年以上も前から発生してたかも）。&lt;/p&gt;
+            <description>&lt;p&gt;Mail.appをしばらく使っていると、メモリを大量に消費するという現象にしばしば遭遇する（２年以上も前から発生してたかも）。&lt;/p&gt;
 
 &lt;p&gt;現在の環境は MBP, OSX10.6.8, Core2Duo, メモリ4GB, Mail.app 4.5(1084)&lt;/p&gt;
 
@@ -651,9 +632,7 @@ mysql&amp;gt; repair table mytable;
         
         <item>
             <title>Apple Mail (Mail.app) のメモをエクスポートする</title>
-            <description>&lt;h1 id=&quot;apple-mail-mailapp-&quot;&gt;Apple Mail (Mail.app) のメモをエクスポートする&lt;/h1&gt;
-
-&lt;p&gt;Apple Mail (Mail.app) のメモは保存が早く、iPhoneと同期できて重宝していたのだけど、&lt;a href=&quot;/apple-mail-memory-problem.html&quot;&gt;変な問題&lt;/a&gt; が解決できず、別のツールに乗り換えすることを検討してみた。&lt;/p&gt;
+            <description>&lt;p&gt;Apple Mail (Mail.app) のメモは保存が早く、iPhoneと同期できて重宝していたのだけど、&lt;a href=&quot;/apple-mail-memory-problem.html&quot;&gt;変な問題&lt;/a&gt; が解決できず、別のツールに乗り換えすることを検討してみた。&lt;/p&gt;
 
 &lt;p&gt;問題はエクスポートをどうするか。メモはgmailに保存しているので、最悪IMAPでアクセスすれば取得できるのだけど、良いスクリプトを発見。&lt;/p&gt;
 
@@ -685,9 +664,7 @@ AppleScript習得したら色んなことができそうだ。&lt;/p&gt;
         
         <item>
             <title>wi-fiから位置情報を得る（ruby版、住所変換）</title>
-            <description>&lt;h1 id=&quot;wi-firuby&quot;&gt;wi-fiから位置情報を得る（ruby版、住所変換）&lt;/h1&gt;
-
-&lt;p&gt;&lt;a href=&quot;http://unknownplace.org/memo/2012/07/21/1/&quot;&gt;OSX のコマンドラインから、wi-fi の情報をつかって位置情報を得る&lt;/a&gt;&lt;/p&gt;
+            <description>&lt;p&gt;&lt;a href=&quot;http://unknownplace.org/memo/2012/07/21/1/&quot;&gt;OSX のコマンドラインから、wi-fi の情報をつかって位置情報を得る&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;Ruby化して、住所変換機能を付けました。&lt;/p&gt;
 
@@ -700,38 +677,33 @@ AppleScript習得したら色んなことができそうだ。&lt;/p&gt;
         
         <item>
             <title>Rails3 routes.rb まとめ</title>
-            <description>&lt;h1 id=&quot;rails3-routesrb-&quot;&gt;Rails3 routes.rb まとめ&lt;/h1&gt;
-
-&lt;ul id=&quot;markdown-toc&quot;&gt;
-  &lt;li&gt;&lt;a href=&quot;#rails3-routesrb-&quot;&gt;Rails3 routes.rb まとめ&lt;/a&gt;    &lt;ul&gt;
-      &lt;li&gt;&lt;a href=&quot;#basics&quot;&gt;Basics&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#resources&quot;&gt;Resources&lt;/a&gt;        &lt;ul&gt;
-          &lt;li&gt;&lt;a href=&quot;#namespace&quot;&gt;Namespace&lt;/a&gt;&lt;/li&gt;
-          &lt;li&gt;&lt;a href=&quot;#scope-controller&quot;&gt;Scope (Controller)&lt;/a&gt;&lt;/li&gt;
-          &lt;li&gt;&lt;a href=&quot;#scope-path&quot;&gt;Scope (Path)&lt;/a&gt;&lt;/li&gt;
-          &lt;li&gt;&lt;a href=&quot;#nested-resources&quot;&gt;Nested Resources&lt;/a&gt;&lt;/li&gt;
-          &lt;li&gt;&lt;a href=&quot;#member&quot;&gt;member&lt;/a&gt;&lt;/li&gt;
-          &lt;li&gt;&lt;a href=&quot;#collection&quot;&gt;collection&lt;/a&gt;&lt;/li&gt;
-        &lt;/ul&gt;
-      &lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#non-resourceful&quot;&gt;Non-Resourceful&lt;/a&gt;        &lt;ul&gt;
-          &lt;li&gt;&lt;a href=&quot;#dynamic&quot;&gt;dynamic&lt;/a&gt;&lt;/li&gt;
-          &lt;li&gt;&lt;a href=&quot;#static&quot;&gt;static&lt;/a&gt;&lt;/li&gt;
-          &lt;li&gt;&lt;a href=&quot;#defaults&quot;&gt;defaults&lt;/a&gt;&lt;/li&gt;
-          &lt;li&gt;&lt;a href=&quot;#named&quot;&gt;named&lt;/a&gt;&lt;/li&gt;
-          &lt;li&gt;&lt;a href=&quot;#glob&quot;&gt;glob&lt;/a&gt;&lt;/li&gt;
-          &lt;li&gt;&lt;a href=&quot;#redirection&quot;&gt;redirection&lt;/a&gt;&lt;/li&gt;
-          &lt;li&gt;&lt;a href=&quot;#root&quot;&gt;root&lt;/a&gt;&lt;/li&gt;
-        &lt;/ul&gt;
-      &lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#customized-resource&quot;&gt;Customized Resource&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#section&quot;&gt;こんなこともできました&lt;/a&gt;        &lt;ul&gt;
-          &lt;li&gt;&lt;a href=&quot;#resourcesmatch&quot;&gt;resourcesでmatchを使う&lt;/a&gt;&lt;/li&gt;
-        &lt;/ul&gt;
-      &lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#section-1&quot;&gt;参考&lt;/a&gt;&lt;/li&gt;
+            <description>&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#basics&quot;&gt;Basics&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#resources&quot;&gt;Resources&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#namespace&quot;&gt;Namespace&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#scope-controller&quot;&gt;Scope (Controller)&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#scope-path&quot;&gt;Scope (Path)&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#nested-resources&quot;&gt;Nested Resources&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#member&quot;&gt;member&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#collection&quot;&gt;collection&lt;/a&gt;&lt;/li&gt;
     &lt;/ul&gt;
   &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#non-resourceful&quot;&gt;Non-Resourceful&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#dynamic&quot;&gt;dynamic&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#static&quot;&gt;static&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#defaults&quot;&gt;defaults&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#named&quot;&gt;named&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#glob&quot;&gt;glob&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#redirection&quot;&gt;redirection&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#root&quot;&gt;root&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#customized-resource&quot;&gt;Customized Resource&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#section&quot;&gt;こんなこともできました&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#resourcesmatch&quot;&gt;resourcesでmatchを使う&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#section-1&quot;&gt;参考&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;h2 id=&quot;basics&quot;&gt;Basics&lt;/h2&gt;
@@ -981,9 +953,7 @@ category_user_images /users/:user_id/images/category/:category(.:format) images#
         
         <item>
             <title>CentOS に ImageMagick, RMagick のインストール</title>
-            <description>&lt;h1 id=&quot;centos--imagemagick-rmagick-&quot;&gt;CentOS に ImageMagick, RMagick のインストール&lt;/h1&gt;
-
-&lt;p&gt;CentOS に ImageMagick と RMagick をインストールしました。CentOS 標準 yum の ImageMagick は古過ぎるそうなので、RPM,ソースからコンパイルの順でインストールしてみました。&lt;/p&gt;
+            <description>&lt;p&gt;CentOS に ImageMagick と RMagick をインストールしました。CentOS 標準 yum の ImageMagick は古過ぎるそうなので、RPM,ソースからコンパイルの順でインストールしてみました。&lt;/p&gt;
 
 &lt;h2 id=&quot;rpm--imagemagick&quot;&gt;RPM から ImageMagickをインストールするが失敗&lt;/h2&gt;
 
@@ -1124,9 +1094,7 @@ $ sudo yum install ImageMagick ImageMagick-devel
         
         <item>
             <title>rbenv + ruby-build で ruby をインストール</title>
-            <description>&lt;h1 id=&quot;rbenv--ruby-build--ruby-&quot;&gt;rbenv + ruby-build で ruby をインストール&lt;/h1&gt;
-&lt;ul id=&quot;markdown-toc&quot;&gt;
-  &lt;li&gt;&lt;a href=&quot;#rbenv--ruby-build--ruby-&quot;&gt;rbenv + ruby-build で ruby をインストール&lt;/a&gt;&lt;/li&gt;
+            <description>&lt;ul id=&quot;markdown-toc&quot;&gt;
   &lt;li&gt;&lt;a href=&quot;#macosx&quot;&gt;MacOSX&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#centos&quot;&gt;CentOS&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
@@ -1327,7 +1295,7 @@ markdown: kramdown
 &lt;p&gt;index.md を作成します。&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;---
-layout: default
+layout: posts
 ---
 
 ## トップページです
@@ -1367,10 +1335,8 @@ layout: default
         </item>
         
         <item>
-            <title>Ruby Multi Hash</title>
-            <description>&lt;h2 id=&quot;ruby-&quot;&gt;Ruby 多次元ハッシュ&lt;/h2&gt;
-
-&lt;p&gt;PHPでこんなことをRubyでもやりたい。&lt;/p&gt;
+            <title>Ruby 多次元ハッシュ</title>
+            <description>&lt;p&gt;PHPでこんなことをRubyでもやりたい。&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;$a = array();
 $a['foo']['bar']['fuga'] = 'hoge';
@@ -1414,48 +1380,41 @@ NoMethodError: undefined method `[]' for nil:NilClass
         
         <item>
             <title>Gitリファレンス</title>
-            <description>&lt;h1 id=&quot;git&quot;&gt;Gitリファレンス&lt;/h1&gt;
-
-&lt;p&gt;gitの使い方まとめ&lt;/p&gt;
-
-&lt;p&gt;最終更新日: 2012-07-20&lt;/p&gt;
+            <description>&lt;p&gt;gitの使い方まとめ&lt;/p&gt;
 
 &lt;ul id=&quot;markdown-toc&quot;&gt;
-  &lt;li&gt;&lt;a href=&quot;#git&quot;&gt;Gitリファレンス&lt;/a&gt;    &lt;ul&gt;
-      &lt;li&gt;&lt;a href=&quot;#basic---ok&quot;&gt;Basic - 基本（とりあえずこれ覚えればOK）&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#log---&quot;&gt;log - ログ&lt;/a&gt;        &lt;ul&gt;
-          &lt;li&gt;&lt;a href=&quot;#commit---amend--reset---hard-head-&quot;&gt;commit –amend や reset –hard HEAD^^ などで消えたコミットを確認する&lt;/a&gt;&lt;/li&gt;
-        &lt;/ul&gt;
-      &lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#commit---&quot;&gt;commit - コミット&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#branch---&quot;&gt;branch - ブランチ&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#merge---&quot;&gt;merge - マージ&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#tag---&quot;&gt;tag - タグ&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#remote---&quot;&gt;remote - 共有&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#submodule---&quot;&gt;submodule - サブモジュール&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#git-svn&quot;&gt;git-svn&lt;/a&gt;        &lt;ul&gt;
-          &lt;li&gt;&lt;a href=&quot;#git-svn-dcommit-idid&quot;&gt;git-svn dcommit できなかったのでコミットID見たら、違うIDになってた…。&lt;/a&gt;&lt;/li&gt;
-          &lt;li&gt;&lt;a href=&quot;#git-svn-dcommit&quot;&gt;ローカルに未コミットの変更があるけどgit-svn-dcommitしたい&lt;/a&gt;&lt;/li&gt;
-          &lt;li&gt;&lt;a href=&quot;#svnexternals&quot;&gt;svn:externalsのようなことをしたい&lt;/a&gt;&lt;/li&gt;
-          &lt;li&gt;&lt;a href=&quot;#section&quot;&gt;空のディレクトリはバージョン管理できない&lt;/a&gt;&lt;/li&gt;
-          &lt;li&gt;&lt;a href=&quot;#subversiongit&quot;&gt;複数のモジュールを含むSubversionリポジトリをGitへ移行する。&lt;/a&gt;&lt;/li&gt;
-          &lt;li&gt;&lt;a href=&quot;#section-1&quot;&gt;部分的なチェックアウトできない&lt;/a&gt;&lt;/li&gt;
-          &lt;li&gt;&lt;a href=&quot;#trunk-branches-tags&quot;&gt;trunk, branches, tags&lt;/a&gt;&lt;/li&gt;
-        &lt;/ul&gt;
-      &lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#etc---&quot;&gt;etc - その他&lt;/a&gt;        &lt;ul&gt;
-          &lt;li&gt;&lt;a href=&quot;#section-2&quot;&gt;過去のバージョンを取得、表示&lt;/a&gt;&lt;/li&gt;
-          &lt;li&gt;&lt;a href=&quot;#section-3&quot;&gt;パッチを作って適用する&lt;/a&gt;&lt;/li&gt;
-          &lt;li&gt;&lt;a href=&quot;#section-4&quot;&gt;コンフリクト状態が残ってしまった場合&lt;/a&gt;&lt;/li&gt;
-          &lt;li&gt;&lt;a href=&quot;#mergeconflict&quot;&gt;mergeを実行したらconflictが大量に出てしまったので取り消したい&lt;/a&gt;&lt;/li&gt;
-          &lt;li&gt;&lt;a href=&quot;#untracked&quot;&gt;untrackedなファイルを取り除きたい&lt;/a&gt;&lt;/li&gt;
-          &lt;li&gt;&lt;a href=&quot;#merge--rebase-&quot;&gt;merge と rebase の違い&lt;/a&gt;&lt;/li&gt;
-          &lt;li&gt;&lt;a href=&quot;#git-pullremote&quot;&gt;git pullでremoteを自動的に指定&lt;/a&gt;&lt;/li&gt;
-          &lt;li&gt;&lt;a href=&quot;#section-5&quot;&gt;コミットの圧縮&lt;/a&gt;&lt;/li&gt;
-          &lt;li&gt;&lt;a href=&quot;#section-6&quot;&gt;コミットを操作する&lt;/a&gt;&lt;/li&gt;
-          &lt;li&gt;&lt;a href=&quot;#revert-&quot;&gt;revert コミットを打ち消す&lt;/a&gt;&lt;/li&gt;
-        &lt;/ul&gt;
-      &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#basic---ok&quot;&gt;Basic - 基本（とりあえずこれ覚えればOK）&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#log---&quot;&gt;log - ログ&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#commit---amend--reset---hard-head-&quot;&gt;commit –amend や reset –hard HEAD^^ などで消えたコミットを確認する&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#commit---&quot;&gt;commit - コミット&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#branch---&quot;&gt;branch - ブランチ&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#merge---&quot;&gt;merge - マージ&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#tag---&quot;&gt;tag - タグ&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#remote---&quot;&gt;remote - 共有&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#submodule---&quot;&gt;submodule - サブモジュール&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#git-svn&quot;&gt;git-svn&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#git-svn-dcommit-idid&quot;&gt;git-svn dcommit できなかったのでコミットID見たら、違うIDになってた…。&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#git-svn-dcommit&quot;&gt;ローカルに未コミットの変更があるけどgit-svn-dcommitしたい&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#svnexternals&quot;&gt;svn:externalsのようなことをしたい&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#section&quot;&gt;空のディレクトリはバージョン管理できない&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#subversiongit&quot;&gt;複数のモジュールを含むSubversionリポジトリをGitへ移行する。&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#section-1&quot;&gt;部分的なチェックアウトできない&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#trunk-branches-tags&quot;&gt;trunk, branches, tags&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#etc---&quot;&gt;etc - その他&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#section-2&quot;&gt;過去のバージョンを取得、表示&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#section-3&quot;&gt;パッチを作って適用する&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#section-4&quot;&gt;コンフリクト状態が残ってしまった場合&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#mergeconflict&quot;&gt;mergeを実行したらconflictが大量に出てしまったので取り消したい&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#untracked&quot;&gt;untrackedなファイルを取り除きたい&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#merge--rebase-&quot;&gt;merge と rebase の違い&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#git-pullremote&quot;&gt;git pullでremoteを自動的に指定&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#section-5&quot;&gt;コミットの圧縮&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#section-6&quot;&gt;コミットを操作する&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#revert-&quot;&gt;revert コミットを打ち消す&lt;/a&gt;&lt;/li&gt;
     &lt;/ul&gt;
   &lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#section-7&quot;&gt;参考&lt;/a&gt;&lt;/li&gt;
