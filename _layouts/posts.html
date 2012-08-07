@@ -1,0 +1,21 @@
+---
+layout: default
+---
+
+<article class="posts">
+  <header>
+    <h1>{{ page.title }}</h1>
+  </header>
+  <div class="posts-content">
+  {{ content }}
+  </div>
+  <footer> 
+    <ul class="tag_list">
+      {% for tag in page.tags %}
+      <li class="inline archive_list"><a class="tag_list_link" href="/tag/{{ tag }}">{{ tag }}</a></li>
+      {% endfor %}
+    </ul>
+  </footer>
+</article>
+
+

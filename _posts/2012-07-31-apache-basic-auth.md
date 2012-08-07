@@ -1,11 +1,8 @@
 ---
-layout: default
+layout: posts
 title: Apache Basic認証
 tags: apache
 ---
-
-{{ page.title }}
-================
 
 * toc
 {:toc}

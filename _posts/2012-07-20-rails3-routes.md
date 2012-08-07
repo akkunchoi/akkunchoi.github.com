@@ -1,11 +1,8 @@
 ---
-layout: default
+layout: posts
 title: Rails3 routes.rb まとめ
 tags: ruby rails
 ---
-
-{{ page.title }}
-================
 
 * toc
 {:toc}

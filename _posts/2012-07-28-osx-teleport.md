@@ -1,11 +1,8 @@
 ---
-layout: default
+layout: posts
 title: teleport - Mac間でマウス、キーボード、クリップボード共有
 tags: MacOSX
 ---
-
-{{ page.title }}
-================
 
 <http://abyssoft.com/software/teleport/>
 

@@ -1,11 +1,8 @@
 ---
-layout: default
+layout: posts
 title: DatabaseException Incorrect key file for table 'mydatabase/mytable.MYI'; try to repair it 
 tags: MySQL
 ---
-
-{{ page.title }}
-================
 
 MySQLで```DELETE FROM ... ```で一行消したらDatabaseExceptionが発生してアクセスできなくった。
 メッセージには ```Incorrect key file for table 'mydatabase/mytable.MYI'; try to repair it``` とある。

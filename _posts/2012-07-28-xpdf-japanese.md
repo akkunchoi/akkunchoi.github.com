@@ -1,11 +1,8 @@
 ---
-layout: default
+layout: posts
 title: xpdfを使ってPDFから日本語抽出 (homebrew, MacOSX) 
 tags: pdf MacOSX
 ---
-
-{{ page.title }}
-================
 
 homebrewでxpdfをインストールする。
 

@@ -1,11 +1,9 @@
 ---
-layout: default
+layout: posts
 title: rbenv + ruby-build で ruby をインストール
 tags: ruby rbenv ruby-build
 ---
 
-{{ page.title }}
-================
 * TOC
 {:toc}
 

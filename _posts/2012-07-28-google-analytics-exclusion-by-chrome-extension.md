@@ -1,12 +1,8 @@
 ---
-layout: default
+layout: posts
 title: Chrome拡張を使ってGoogle Analyticsの自分のアクセスを除外する
 tags: Chrome GoogleAnalytics
 ---
-
-{{ page.title }}
-================
-
 
 IP固定の場合はIPフィルタリングすることもできるが、IP動的の場合はわざわざクッキーを設定しなければならなかった。
 

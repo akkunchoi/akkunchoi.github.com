@@ -1,11 +1,8 @@
 ---
-layout: default
+layout: posts
 title: Test DoubleとPHPUnit
 tags: xUnit
 ---
-
-{{ page.title }}
-================
 
 ## Test Doubleについて
 

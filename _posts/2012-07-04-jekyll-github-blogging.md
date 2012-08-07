@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: posts
 title: Jekyll + github pages を使って git + markdown でサイト構築
 tags: ruby jekyll github markdown
 ---
@@ -82,7 +82,7 @@ _config.yml の内容はこんな感じで。[設定オプション一欄](https
 index.md を作成します。
 
     ---
-    layout: default
+    layout: posts
     ---
     
     ## トップページです

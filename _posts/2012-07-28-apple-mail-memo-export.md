@@ -1,11 +1,8 @@
 ---
-layout: default
+layout: posts
 title: Apple Mail (Mail.app) のメモをエクスポートする
 tags: MacOSX
 ---
-
-{{ page.title }}
-================
 
 Apple Mail (Mail.app) のメモは保存が早く、iPhoneと同期できて重宝していたのだけど、[変な問題](/apple-mail-memory-problem.html) が解決できず、別のツールに乗り換えすることを検討してみた。
 

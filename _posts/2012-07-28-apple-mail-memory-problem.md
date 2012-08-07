@@ -1,11 +1,8 @@
 ---
-layout: default
+layout: posts
 title: Apple Mail (Mail.app) がメモリをアホみたいに食う (MacOSX Snow Leopard)
 tags: MacOSX
 ---
-
-{{ page.title }}
-================
 
 
 Mail.appをしばらく使っていると、メモリを大量に消費するという現象にしばしば遭遇する（２年以上も前から発生してたかも）。

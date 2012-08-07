@@ -1,9 +1,8 @@
 ---
-layout: default
+layout: posts
 tags: ruby
+title: Ruby 多次元ハッシュ
 ---
-
-## Ruby 多次元ハッシュ
 
 PHPでこんなことをRubyでもやりたい。
    
