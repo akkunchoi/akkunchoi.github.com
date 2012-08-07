@@ -4,7 +4,6 @@ layout: default
 
 <article class="posts">
   <header>
-    <time>{{ page.date | date: "%Y-%m-%d" }}</time>
     <h1>{{ page.title }}</h1>
     <ul class="tags">
       {% for tag in page.tags %}
@@ -16,6 +15,8 @@ layout: default
   {{ content }}
   </div>
   <footer> 
+  <p>Last updated at <time>{{ page.last_commit_time }}</time></p>
+  <!-- <p>Published at <time>{{ page.date | date: "%Y-%m-%d" }}</time></p> -->
   </footer>
 </article>
 

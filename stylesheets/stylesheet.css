@@ -432,9 +432,6 @@ Small Device Styles
 
 
 /* custom */
-article time{
-  float: right;
-}
 article .tags{
   text-align: right;
   margin-right: 5px;
@@ -443,7 +440,13 @@ article .tags{
 article .tags li{
   display: inline-block;
   margin-left: 0px;
-  padding-left: 0px;
+  padding-left: 5px;
 }
-
-
+article footer{
+  margin: 20px 10px;
+}
+article footer p{
+  margin: 0px;
+  padding: 0px;
+  color: #666;
+}

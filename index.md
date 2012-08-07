@@ -7,13 +7,17 @@ title: Index
 
 ## Recent Published
 
-{% for post in site.posts limit:100 %}
+{% for post in site.posts limit:5 %}
 - [{{ post.title }}]({{ post.url }}){% endfor %}
 
 
 ## Tags
 
 <ul>
-{% assign tags_list = site.tags %}
-{% include tags_list %}
+{% for tag in site.tags limit: 10 %} 
+  <li><a href="/tag/{{ tag[0] }}/index.html">{{ tag[0] }} <span>{{ tag[1].size }}</span></a></li>
+{% endfor %}
+  <li><a href="/tag/index.html" class="more">more..</a></li>
 </ul>
+
+

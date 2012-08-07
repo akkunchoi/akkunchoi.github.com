@@ -1,6 +1,11 @@
 ---
 layout: default
-title: Tagsafdafsd
+title: Tags
 ---
 
-hoge
+<h1>Tags</h1>
+<ul>
+{% for tag in site.tags %} 
+  <li><a href="/tag/{{ tag[0] }}/index.html">{{ tag[0] }} <span>{{ tag[1].size }}</span></a></li>
+{% endfor %}
+</ul>
