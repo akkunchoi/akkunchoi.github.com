@@ -1,3 +1,0 @@
-[submodule "_deploy"]
-	path = _deploy
-	url = git@github.com:akkunchoi/akkunchoi.github.com.git
