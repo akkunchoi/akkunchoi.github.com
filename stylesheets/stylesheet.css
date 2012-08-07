@@ -272,7 +272,7 @@ Full-Width Styles
 
 .inner {
   position: relative;
-  max-width: 640px;
+  max-width: 840px;
   padding: 20px 10px;
   margin: 0 auto;
 }
@@ -429,3 +429,21 @@ Small Device Styles
   }
 
 }
+
+
+/* custom */
+article time{
+  float: right;
+}
+article .tags{
+  text-align: right;
+  margin-right: 5px;
+  padding-right: 5px;
+}
+article .tags li{
+  display: inline-block;
+  margin-left: 0px;
+  padding-left: 0px;
+}
+
+
