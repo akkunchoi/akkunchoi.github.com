@@ -1,0 +1,7 @@
+#!/bin/sh
+
+cp -r _site/* _deploy
+cd _deploy
+git add .
+git commit -m "update"
+git push
