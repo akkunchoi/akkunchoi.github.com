@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Akkunchoi.github.com : " />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="/stylesheets/stylesheet.css">
+
+    <title>DatabaseException Incorrect key file for table 'mydatabase/mytable.MYI'; try to repair it | akkunchoi@github</title>
+    <link rel="alternate" type="application/rss+xml" title="RSS Feed for mysite.com" href="/feed.xml" />
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/akkunchoi">View on GitHub</a>
+
+          <h1 id="project_title">
+            <a href="/">akkunchoi.github.com</a>
+          </h1>
+          <h2 id="project_tagline"></h2>
+
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+
+      <h1 id="databaseexception-incorrect-key-file-for-table-mydatabasemytablemyi-try-to-repair-it">DatabaseException Incorrect key file for table ‘mydatabase/mytable.MYI’; try to repair it</h1>
+
+<p>MySQLで<code>DELETE FROM ...</code>で一行消したらDatabaseExceptionが発生してアクセスできなくった。
+メッセージには <code>Incorrect key file for table 'mydatabase/mytable.MYI'; try to repair it</code> とある。</p>
+
+<p>テーブルが壊れたらしいので修復する。</p>
+
+<pre><code>mysql&gt; check table mytable;
++-----------------------------+-------+----------+----------------------------+
+| Table                       | Op    | Msg_type | Msg_text                   |
++-----------------------------+-------+----------+----------------------------+
+| mydatabase.mytable | check | warning  | Table is marked as crashed |
+| mydatabase.mytable | check | error    | Found 426 keys of 427      |
+| mydatabase.mytable | check | error    | Corrupt                    |
++-----------------------------+-------+----------+----------------------------+
+3 rows in set (0.07 sec)
+
+mysql&gt; repair table mytable;
++-----------------------------+--------+----------+----------+
+| Table                       | Op     | Msg_type | Msg_text |
++-----------------------------+--------+----------+----------+
+| mydatabase.mytable | repair | status   | OK       |
++-----------------------------+--------+----------+----------+
+1 row in set (0.14 sec)
+</code></pre>
+
+<p>check, repair はMyISAMでしか実行できないらしい。InnoDBの場合はどうなってるのだろう。</p>
+
+<ul>
+  <li><a href="http://blog.kaburk.com/os/linux/mysql-broken.html">http://blog.kaburk.com/os/linux/mysql-broken.html</a></li>
+  <li><a href="http://blog.livedoor.jp/roid2008/archives/50574239.html">http://blog.livedoor.jp/roid2008/archives/50574239.html</a></li>
+</ul>
+
+
+
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    <script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-31706657-3']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+
+  </body>
+</html>

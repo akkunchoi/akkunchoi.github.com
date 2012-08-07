@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Akkunchoi.github.com : " />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="/stylesheets/stylesheet.css">
+
+    <title>Apache 設定例 | akkunchoi@github</title>
+    <link rel="alternate" type="application/rss+xml" title="RSS Feed for mysite.com" href="/feed.xml" />
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/akkunchoi">View on GitHub</a>
+
+          <h1 id="project_title">
+            <a href="/">akkunchoi.github.com</a>
+          </h1>
+          <h2 id="project_tagline"></h2>
+
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+
+      <ul id="markdown-toc">
+  <li><a href="#section">起動</a></li>
+  <li><a href="#section-1">設定例</a>    <ul>
+      <li><a href="#php">phpファイルをテキストで表示</a></li>
+      <li><a href="#php-1">強制的にphpとして実行</a></li>
+      <li><a href="#htaccess">.htaccessを許可/禁止する</a></li>
+      <li><a href="#indexhtml">ディレクトリアクセスしたときにindex.htmlを表示する</a></li>
+      <li><a href="#documentroot">DocumentRootのディレクトリ以外を公開したい</a>        <ul>
+          <li><a href="#alias">Aliasを使う</a></li>
+          <li><a href="#virtualhost">VirtualHostを使う</a></li>
+        </ul>
+      </li>
+      <li><a href="#section-2">ディレクトリアクセスしたときに中身を表示しない</a></li>
+      <li><a href="#section-3">シンボリックリンクをたどるのを許可する</a></li>
+      <li><a href="#hogehogehoge">hogeをリクエストしてhogeがなければhoge.*を表示するようにする</a></li>
+      <li><a href="#basic">Basic認証をかける</a></li>
+      <li><a href="#section-4">他の設定ファイルを読み込む</a></li>
+      <li><a href="#php-2">phpファイルだけに適用させる</a></li>
+      <li><a href="#ipvirtualhost">IP直打ちの場合は別のVirtualHostを表示したい</a></li>
+      <li><a href="#section-5">キャッシュクリア</a></li>
+      <li><a href="#section-6">画像等不要なファイルはアクセスログを取らないようにする</a></li>
+      <li><a href="#section-7">アクセスログを日別に記録する</a></li>
+      <li><a href="#php-3">アクセスログに情報を追加する (PHP)</a></li>
+    </ul>
+  </li>
+  <li><a href="#section-8">メモ</a></li>
+  <li><a href="#todo">TODO</a></li>
+</ul>
+
+<p>モジュールのマニュアル</p>
+
+<p><a href="http://httpd.apache.org/docs/2.2/ja/mod/">http://httpd.apache.org/docs/2.2/ja/mod/</a></p>
+
+<h1 id="section">起動</h1>
+
+<pre><code>$ sudo /etc/init.d/httpd restart
+$ sudo /etc/init.d/httpd graceful
+</code></pre>
+
+<p>gracefulオプションは現在実行中のプロセスを待ってから再起動する</p>
+
+<h1 id="section-1">設定例</h1>
+
+<h2 id="php">phpファイルをテキストで表示</h2>
+
+<pre><code>AddHandler text/plain .php
+</code></pre>
+
+<h2 id="php-1">強制的にphpとして実行</h2>
+
+<pre><code>ForceType application/x-httpd-php
+</code></pre>
+
+<h2 id="htaccess">.htaccessを許可/禁止する</h2>
+
+<pre><code>AllowOverride All  # 許可
+AllowOverride None # 禁止
+</code></pre>
+
+<h2 id="indexhtml">ディレクトリアクセスしたときにindex.htmlを表示する</h2>
+
+<pre><code>DirectoryIndex index.html
+</code></pre>
+
+<h2 id="documentroot">DocumentRootのディレクトリ以外を公開したい</h2>
+
+<h3 id="alias">Aliasを使う</h3>
+
+<pre><code>Alias /hoge "/path/to/htdocs"
+</code></pre>
+
+<h3 id="virtualhost">VirtualHostを使う</h3>
+
+<pre><code>&lt;VirtualHost 127.0.0.1&gt;
+  &lt;Directory /path/to/htdocs&gt;
+     allow from all
+  &lt;/Directory&gt;
+&lt;/VirtualHost&gt;
+</code></pre>
+
+<h2 id="section-2">ディレクトリアクセスしたときに中身を表示しない</h2>
+
+<pre><code>Options -Indexes
+</code></pre>
+
+<p>表示したい場合はハイフン”-“なしで</p>
+
+<h2 id="section-3">シンボリックリンクをたどるのを許可する</h2>
+
+<pre><code>Options FollowSymLinks
+</code></pre>
+
+<h2 id="hogehogehoge">hogeをリクエストしてhogeがなければhoge.*を表示するようにする</h2>
+
+<pre><code>Options MultiViews
+</code></pre>
+
+<h2 id="basic">Basic認証をかける</h2>
+
+<pre><code>AuthType Basic
+AuthName "authenticate required"
+AuthUserFile /path/to/.htpasswd
+Require valid-user
+</code></pre>
+
+<h2 id="section-4">他の設定ファイルを読み込む</h2>
+
+<pre><code>Include /path/to/another/httpd.conf
+</code></pre>
+
+<h2 id="php-2">phpファイルだけに適用させる</h2>
+
+<pre><code>&lt;Files ~ "\.php$"&gt;
+  ...
+&lt;/Files&gt;
+</code></pre>
+
+<h2 id="ipvirtualhost">IP直打ちの場合は別のVirtualHostを表示したい</h2>
+
+<p>IP直打ちするとVirtualHostの一番最初の設定が表示される。
+てきとーなやつを先頭に入れるだけでよい。</p>
+
+<p>VirtualHostを設定したのにIP直打ちで来る人を残念賞にする方法
+<a href="http://d.hatena.ne.jp/ir9Ex/20071014/1192366566">http://d.hatena.ne.jp/ir9Ex/20071014/1192366566</a></p>
+
+<h2 id="section-5">キャッシュクリア</h2>
+
+<pre><code>&lt;IfModule headers_module&gt;
+    &lt;Files ~ "\.css$"&gt;
+    Header set Pragma no-cache
+    Header set Cache-Control no-cache
+    &lt;/Files&gt;
+&lt;/IfModule&gt;
+</code></pre>
+
+<h2 id="section-6">画像等不要なファイルはアクセスログを取らないようにする</h2>
+
+<pre><code>SetEnvIf Request_URI "\.(gif)|(jpg)|(png)|(css)|(js)|(ico)$" nolog
+CustomLog "/path/to/log" combined env=!nolog
+</code></pre>
+
+<p>CustomLogで否定しないやり方も考えてみた。</p>
+
+<p>URIのマッチングに否定戻り読み言明を使った。</p>
+
+<pre><code>SetEnvIf Request_URI "(?&lt;!\.gif)(?&lt;!\.jpg)(?&lt;!\.png)(?&lt;!\.css)(?&lt;!\.js)(?&lt;!\.ico)$" hoge
+CustomLog "/path/to/log" combined env=hoge
+</code></pre>
+
+<p>こうすれば、特定のディレクトリのみ別のログにするというのも可能</p>
+
+<p>（上記SetEnvIfをDirectoryディレクティブに追加すればいい）</p>
+
+<p><code>[^\.(gif)|(jpg)]</code> でいけるかなと思ったけど、文字に分解されちゃうのでダメだった。</p>
+
+<h2 id="section-7">アクセスログを日別に記録する</h2>
+
+<pre><code>CustomLog "|/usr/sbin/rotatelogs /path/to/log/access.%Y%m%d.log 86400 540" combined
+</code></pre>
+
+<h2 id="php-3">アクセスログに情報を追加する (PHP)</h2>
+
+<p><a href="http://neta.ywcafe.net/000607.html">http://neta.ywcafe.net/000607.html</a></p>
+
+<p>httpd.confでLogFormatを編集</p>
+
+<pre><code>LogFormat "%h %l %u %t \"%r\" %&gt;s %b %{originallog}n" common
+</code></pre>
+
+<p>PHPのapache_noteを実行する。</p>
+
+<pre><code>&lt;?php
+apache_note("originallog", $val);
+</code></pre>
+
+<p>例えばユーザーIDなどを埋め込むと便利。</p>
+
+<h1 id="section-8">メモ</h1>
+
+<ul>
+  <li>同じパスのDirectoryディレクティブを２つ書くと、常に後に記述した方のみが適用され、前の方の設定は失われるっぽい。</li>
+</ul>
+
+<h1 id="todo">TODO</h1>
+
+<p>昔の記事…</p>
+
+
+
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    <script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-31706657-3']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+
+  </body>
+</html>

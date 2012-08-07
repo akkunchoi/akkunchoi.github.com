@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Akkunchoi.github.com : " />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="/stylesheets/stylesheet.css">
+
+    <title>Ruby Multi Hash | akkunchoi@github</title>
+    <link rel="alternate" type="application/rss+xml" title="RSS Feed for mysite.com" href="/feed.xml" />
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/akkunchoi">View on GitHub</a>
+
+          <h1 id="project_title">
+            <a href="/">akkunchoi.github.com</a>
+          </h1>
+          <h2 id="project_tagline"></h2>
+
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+
+      <h2 id="ruby-">Ruby 多次元ハッシュ</h2>
+
+<p>PHPでこんなことをRubyでもやりたい。</p>
+
+<pre><code>$a = array();
+$a['foo']['bar']['fuga'] = 'hoge';
+</code></pre>
+
+<p>PHPのノリでやるとこうなる。</p>
+
+<pre><code>&gt; a = {}
+ =&gt; {} 
+
+&gt; a['foo']['bar'] = 'hoge'
+NoMethodError: undefined method `[]' for nil:NilClass
+</code></pre>
+
+<p>Hashの場合、キーが存在しない場合の処理、というtrap::Hashなるものが作成できる。</p>
+
+<pre><code># 存在しない場合の処理をブロックで渡す
+&gt; a = Hash.new{ |hash,key| hash[key] = {} }
+ =&gt; {}
+ 
+# foo は存在しないキーだが、ここで先ほどのブロックが発動
+#   a['foo'] = {} が呼び出された後に処理が実行されるのでエラーが発生しない
+# 
+&gt; a['foo']['bar'] = 'hoge'
+ =&gt; "hoge"
+&gt; a
+ =&gt; {"foo"=&gt;{"bar"=&gt;"hoge"}}
+</code></pre>
+
+<p>しかし多次元になる場合、Arrayの場合はめんどくさい</p>
+
+<ul>
+  <li><a href="http://www.ruby-lang.org/ja/old-man/html/Hash.html">http://www.ruby-lang.org/ja/old-man/html/Hash.html</a></li>
+  <li><a href="http://k.try-z.com/?p=264">http://k.try-z.com/?p=264</a></li>
+</ul>
+
+
+
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    <script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-31706657-3']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+
+  </body>
+</html>

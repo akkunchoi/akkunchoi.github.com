@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Akkunchoi.github.com : " />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="/stylesheets/stylesheet.css">
+
+    <title>SPFを設定して迷惑メール回避する | akkunchoi@github</title>
+    <link rel="alternate" type="application/rss+xml" title="RSS Feed for mysite.com" href="/feed.xml" />
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/akkunchoi">View on GitHub</a>
+
+          <h1 id="project_title">
+            <a href="/">akkunchoi.github.com</a>
+          </h1>
+          <h2 id="project_tagline"></h2>
+
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+
+      <h1 id="spf">SPFを設定して迷惑メール回避する</h1>
+
+<h2 id="section">設定方法</h2>
+
+<p>TXTレコードに <code>v=spf1 a:example.com ~all</code></p>
+
+<h2 id="section-1">確認方法</h2>
+
+<p>DNSの確認はTXTレコードを見る。</p>
+
+<pre><code>$ nslookup -query=TXT example.com
+</code></pre>
+
+<p>次にメールヘッダを確認する。
+“Received-Spf: pass” になっていれば迷惑メール回避されているはず。</p>
+
+<ul>
+  <li>ムームードメインの場合 <a href="http://laugh.rinazo.com/2012/03/28/857">http://laugh.rinazo.com/2012/03/28/857</a></li>
+  <li>詳しい解説 <a href="http://webos-goodies.jp/archives/51103006.html">http://webos-goodies.jp/archives/51103006.html</a></li>
+  <li>設定例 <a href="http://www.au.kddi.com/service/email/support/chui/spf_record.html">http://www.au.kddi.com/service/email/support/chui/spf_record.html</a> </li>
+</ul>
+
+
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    <script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-31706657-3']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+
+  </body>
+</html>

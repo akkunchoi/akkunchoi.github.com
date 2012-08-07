@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Akkunchoi.github.com : " />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="/stylesheets/stylesheet.css">
+
+    <title>rbenv + ruby-build で ruby をインストール | akkunchoi@github</title>
+    <link rel="alternate" type="application/rss+xml" title="RSS Feed for mysite.com" href="/feed.xml" />
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/akkunchoi">View on GitHub</a>
+
+          <h1 id="project_title">
+            <a href="/">akkunchoi.github.com</a>
+          </h1>
+          <h2 id="project_tagline"></h2>
+
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+
+      <h1 id="rbenv--ruby-build--ruby-">rbenv + ruby-build で ruby をインストール</h1>
+<ul id="markdown-toc">
+  <li><a href="#rbenv--ruby-build--ruby-">rbenv + ruby-build で ruby をインストール</a></li>
+  <li><a href="#macosx">MacOSX</a></li>
+  <li><a href="#centos">CentOS</a></li>
+</ul>
+
+<h1 id="macosx">MacOSX</h1>
+<p>rvmからよりシンプルな構成であるrbenv+ruby-buildに乗り換えたのでメモ。</p>
+
+<p>方針gemはroot権限でbundlerのみ持たせて
+一般ユーザーが各自bundle installする</p>
+
+<p>まずは rvm を削除。</p>
+
+<pre><code>$ rvm implode
+# bashrc等に追加した読み込み設定を手動で削除する。
+</code></pre>
+
+<p>rbenv, ruby-build を homebrew でインストール。
+たったの５コマンドでOK。</p>
+
+<pre><code>$ brew install rbenv
+$ if which rbenv &gt; /dev/null; then eval "$(rbenv init -)"; fi
+$ brew install ruby-build
+$ rbenv install 1.9.3-p194 # バージョンを指定しなければ一欄が出る
+$ rbenv rehash
+</code></pre>
+
+<p>MacPortsでも下記CentOSの方法を使ってインストールできるかと思っていたが、上手くいかないらしい。portにruby1.9があるのでそれを使う方が良さそう。</p>
+
+<h1 id="centos">CentOS</h1>
+
+<p>CentOSにもrubyを入れる機会があったので、rbenvで入れてみる。</p>
+
+<p><code>/usr/local</code>にroot権限でインストールし、ユーザー共通にする。
+gemはbundlerやpassengerのみ入れる。その他はアプリケーションごとにbundleで個別インストールさせる。このようにしておけば、グローバルな場所にgemライブラリをインストールする時にroot権限が必要になるのでわかりやすい。</p>
+
+<p>まずは必要なライブラリをインストール</p>
+
+<pre><code>$ sudo yum -y update
+$ sudo yum -y install gcc kernel-devel zlib-devel openssl-devel readline-devel curl-devel libyaml-devel sqlite-devel
+</code></pre>
+
+<p>ちなみに zlib-devel がない状態でrubyをコンパイルするとこんなエラーが出ます。</p>
+
+<pre><code>ERROR:  Loading command: install (LoadError)
+cannot load such file -- zlib
+</code></pre>
+
+<p>rbenvとruby-buildはgitから取得する。</p>
+
+<pre><code>$ cd /usr/local/share
+$ git clone git://github.com/sstephenson/rbenv.git
+</code></pre>
+
+<p><code>/etc/profile.d/rbenv.sh</code>を作成する</p>
+
+<pre><code>export PATH="/usr/local/share/rbenv/bin:$PATH"
+export RBENV_VERSION="1.9.3-p194"
+export RBENV_DIR=/usr/local/share/rbenv
+export RBENV_ROOT=/usr/local/share/rbenv
+eval "$(rbenv init -)"
+</code></pre>
+
+<p>権限設定して、読み込む。</p>
+
+<pre><code>$ chmod 755 /etc/profile.d/rbenv.sh
+$ . /etc/profile.d/rbenv.sh
+</code></pre>
+
+<p>ruby-buildのインストール</p>
+
+<pre><code>$ cd /usr/local/src
+$ sudo git clone git://github.com/sstephenson/ruby-build.git
+$ cd ruby-build
+$ sudo ./install.sh
+</code></pre>
+
+<p>rubyをインストール</p>
+
+<pre><code>$ rbenv install 1.9.3-p194
+$ rbenv rehash
+$ rbenv global 1.9.3-p194
+$ gem install bundler
+</code></pre>
+
+<p>ロケーションとバージョンを確認</p>
+
+<pre><code>$ ruby -v
+$ which ruby
+$ gem -v 
+$ which gem
+</code></pre>
+
+<p>このままでは<code>sudo ruby</code>や<code>sudo gem</code>ができない。sudo時のパスが違うからだ。パスはsudoersによって管理されている。設定方法は２つある。</p>
+
+<pre><code>$ visudo
+
+# env_keep設定で一般ユーザーのパスを引き継ぐようになる。
+# 一般ユーザーが`/usr/local/bin`パスを設定しておけば良い
+Defaults env_keep+="PATH" 
+
+# またはsecure_pathでsudo時のパスを直接指定できる（セキュリティ的にどうなんだろうか）
+Defaults secure_path = "/sbin:/bin:/usr/local/share/rbenv/shims:usr/local/bin:/usr/bin:"
+</code></pre>
+
+<p>基本的なことだけど、上手くいかない場合はパスの問題であることが多い。</p>
+
+<p>パスの設定が間違っていると元々入っているrubyやgemやbundleが呼ばれる場合がある。
+<code>gem env</code>や<code>echo $PATH</code>などで常にどこにgemがインストールされるか、何が優先されるのかを把握しておくと良い。
+使う予定のない古いバージョンの実行ファイルは削除しておくと良い。</p>
+
+
+
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    <script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-31706657-3']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+
+  </body>
+</html>

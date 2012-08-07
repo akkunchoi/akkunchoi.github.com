@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Akkunchoi.github.com : " />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="/stylesheets/stylesheet.css">
+
+    <title>Jekyll + github pages を使って git + markdown でサイト構築 | akkunchoi@github</title>
+    <link rel="alternate" type="application/rss+xml" title="RSS Feed for mysite.com" href="/feed.xml" />
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/akkunchoi">View on GitHub</a>
+
+          <h1 id="project_title">
+            <a href="/">akkunchoi.github.com</a>
+          </h1>
+          <h2 id="project_tagline"></h2>
+
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+
+      <p><a href="http://pages.github.com/">github pages</a>と<a href="https://github.com/mojombo/jekyll/">Jekyll</a>を使ってサイト構築してみました。</p>
+
+<h2 id="section">はじめに</h2>
+
+<p>git + markdown でのサイト管理が便利そうなので、ホスティングまでできる<a href="http://pages.github.com/">github pages</a>を使ってみました。</p>
+
+<p>ちなみに<a href="http://octopress.org/">Octopress</a>, <a href="http://jekyllbootstrap.com/">Jekyll bootstrap</a>を使えばもっと簡単に設置できるとみたいです（後で知った）。</p>
+
+<h2 id="usernamegithubcom-">[username].github.com の取得</h2>
+
+<p>まずは github pages のユーザーページをセットアップ。</p>
+
+<ol>
+  <li>github <a href="https://github.com/new">Create a New Repo</a> へ。</li>
+  <li>
+    <p>Repository name に “[username].github.com” と入力。[username]は自分のIDです。</p>
+
+    <p><span style="color: grey">
+  “username = 自分のユーザID” でない場合はドメインのルートにならず、パスを切るようです。
+  例えば akkunchoi.github.com/hoge.github.com になる。
+ </span></p>
+  </li>
+  <li>
+    <p>普通にリポジトリを作成する。</p>
+
+    <pre><code> mkdir username.github.com
+ cd username.github.com
+ git init
+ touch README
+ git add README
+ git commit -m 'first commit'
+ git remote add origin git@github.com:username/username.github.com
+ git push -u origin master
+</code></pre>
+  </li>
+  <li>
+    <p>リポジトリページの Admin から GitHub Pages 内の Automatic Page Generator で適当にテーマ選択。</p>
+
+    <div style="color: grey">
+   自分のユーザIDをドメインにした場合（ID: akkunchoiならakkunchoi.github.com）はGeneratorのデータが自動的にmasterにマージされたが、そうでない場合は gh-pages ブランチに作成された。
+
+   また、README から HTML 作成ができるので、ペライチでいいなら Jekyll 使わなくてもいい。
+ </div>
+  </li>
+  <li>以上で github pages のセットアップ完了。</li>
+</ol>
+
+<h2 id="jekyll-">Jekyll のインストール</h2>
+
+<p>インストールはgemから。</p>
+
+<pre><code>$ gem install jekyll
+</code></pre>
+
+<p>最初rvmで動作させていたのを忘れて、<code>sudo gem install jekyll</code>してしまった。すると、違う場所に保存されたり、root権限になってたりでややこしいことになったが、uninstall して、<code>sudo</code> せずに install で問題なくインストールできた。</p>
+
+<h2 id="jekyll--1">Jekyll 用にファイルを配置する</h2>
+
+<p>最低限必要なファイルは次の通り。</p>
+
+<pre><code>/
+|-- _config.yml
+|-- _layouts
+     `-- default.html
+</code></pre>
+
+<p>_config.yml の内容はこんな感じで。<a href="https://github.com/mojombo/jekyll/wiki/Configuration">設定オプション一欄</a></p>
+
+<pre><code>auto: true
+server: true
+markdown: kramdown
+</code></pre>
+
+<p>当サイトの場合、default.html には Auto Generator で生成されたHTMLを元に作成しました。コンテンツ部分を <code>｛｛ content ｝｝</code> に置き換えるだけです。</p>
+
+<p>この作業には <a href="http://radiumsoftware.tumblr.com/post/10518849682">Radium Software</a>さんの
+<a href="https://github.com/unity-yb/unity-yb.github.com">リポジトリ</a>を参考にしました。</p>
+
+<h2 id="section-1">ページを作成してみる</h2>
+
+<p>index.md を作成します。</p>
+
+<pre><code>---
+layout: default
+---
+
+## トップページです
+
+....
+</code></pre>
+
+<p><code>---</code> で囲まれた部分はページのメタデータです。layoutは必須です。タイトル、カテゴリ、タグなども設定できます。詳細は<a href="https://github.com/mojombo/jekyll/wiki/YAML-Front-Matter">YAML-Front-Matter</a>。</p>
+
+<p>jekyllを起動</p>
+
+<pre><code>$ jekyll
+</code></pre>
+
+<p><a href="http://localhost:4000">http://localhost:4000</a> で表示できればOKです。</p>
+
+<h2 id="section-2">公開</h2>
+
+<p><code>push</code> するだけでOK。 github pagesが内部でJekyllを動作させて、生成してくれます。http://[username].github.com/ で表示されていれば完了。</p>
+
+<p>ただ、動的な出力を行うプラグインを入れていたり、使用できない処理を入れると失敗すことがある。</p>
+
+<p>Octpressは、静的HTMLをローカルで生成してアップロードしているそうだ。動的な出力を行うプラグインを動作させるためにはこの方法にするか、自分でホスティングするしかなさそう。</p>
+
+<h2 id="section-3">他わかったこと</h2>
+
+<ul>
+  <li>_config.ymlに設定した変数はテンプレート内では site.hoge で取得できる。</li>
+  <li>layout: nil でレイアウトなし出力できる。</li>
+  <li>テンプレートエンジン <a href="https://github.com/Shopify/liquid/wiki/Liquid-for-Designers">Liquid デザイナー用マニュアル</a></li>
+  <li>Liquidの raw を使用すると Page build failure （ダブルブラケットが入力できない！）。</li>
+</ul>
+
+
+
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    <script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-31706657-3']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+
+  </body>
+</html>

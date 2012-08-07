@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Akkunchoi.github.com : " />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="/stylesheets/stylesheet.css">
+
+    <title>Apple Mail (Mail.app) がメモリをアホみたいに食う (MacOSX Snow Leopard) | akkunchoi@github</title>
+    <link rel="alternate" type="application/rss+xml" title="RSS Feed for mysite.com" href="/feed.xml" />
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/akkunchoi">View on GitHub</a>
+
+          <h1 id="project_title">
+            <a href="/">akkunchoi.github.com</a>
+          </h1>
+          <h2 id="project_tagline"></h2>
+
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+
+      <h1 id="apple-mail-mailapp--macosx-snow-leopard">Apple Mail (Mail.app) がメモリをアホみたいに食う (MacOSX Snow Leopard)</h1>
+
+<p>Mail.appをしばらく使っていると、メモリを大量に消費するという現象にしばしば遭遇する（２年以上も前から発生してたかも）。</p>
+
+<p>現在の環境は MBP, OSX10.6.8, Core2Duo, メモリ4GB, Mail.app 4.5(1084)</p>
+
+<p>作業していると急に遅くなり、iStat Menuでメモリを見てみると Swap 8.00GB 、Mailがメモリを1.5GB以上使っている。CPUは10%程度。スワップによりHDDアクセスが増えて遅くなっているようだ。</p>
+
+<p>使用しているアカウントは４つ。</p>
+
+<ul>
+  <li>gmail</li>
+  <li>i.softbank.jp</li>
+  <li>gmail (google apps)</li>
+  <li>自サーバーのIMAP</li>
+</ul>
+
+<p>アカウントの有効無効を繰り返した結果、gmailを切ると問題が発生しない。gmailは他のアカウントに比べてデータ量が半端ないのでもしかすると量も関係しているかもしれない。</p>
+
+<p>色々試して見つけた解決の方法は２つ。</p>
+
+<ul>
+  <li>A. 何かわからないが処理をしているようなので、放っておく。数時間かかる。</li>
+  <li>B. アカウントを無効 -&gt; 有効にする。すぐ終わる。</li>
+</ul>
+
+<p>どちらかの方法を行えば、一時的に問題ない状態になる。A. の方法は時間がかかるが、なんとなくこちらの方が良い気がする。B. の方法は無理矢理だがすぐに解決できる。手順は以下の通り。</p>
+
+<ol>
+  <li>環境設定 &gt; アカウント &gt; Gmailのアカウント &gt; 詳細
+    <ul>
+      <li>このアカウントを使用のチェックを外す</li>
+    </ul>
+  </li>
+  <li>Mail.appを再起動
+    <ul>
+      <li>問題ないことを確認</li>
+    </ul>
+  </li>
+  <li>Mail.appを再起動</li>
+  <li>チェックを外したアカウントを有効にする</li>
+  <li>メモとTODOの既定アカウントにしていた場合は再設定する
+    <ul>
+      <li>環境設定＞作成＞メモとTODO</li>
+    </ul>
+  </li>
+</ol>
+
+<p>ディスカッションに上がっているこれらは同じ問題だろうか。</p>
+
+<ul>
+  <li><a href="https://discussions.apple.com/thread/2003573?start=0&amp;tstart=0">https://discussions.apple.com/thread/2003573?start=0&amp;tstart=0</a></li>
+  <li><a href="https://discussions.apple.com/thread/3454806?start=0&amp;tstart=0">https://discussions.apple.com/thread/3454806?start=0&amp;tstart=0</a></li>
+</ul>
+
+<p>Mail.appのIMAPアクセスは不安定、Lionでも発生するらしい。</p>
+
+
+
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    <script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-31706657-3']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+
+  </body>
+</html>

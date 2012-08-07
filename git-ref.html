@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Akkunchoi.github.com : " />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="/stylesheets/stylesheet.css">
+
+    <title>Gitリファレンス | akkunchoi@github</title>
+    <link rel="alternate" type="application/rss+xml" title="RSS Feed for mysite.com" href="/feed.xml" />
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/akkunchoi">View on GitHub</a>
+
+          <h1 id="project_title">
+            <a href="/">akkunchoi.github.com</a>
+          </h1>
+          <h2 id="project_tagline"></h2>
+
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+
+      <h1 id="git">Gitリファレンス</h1>
+
+<p>gitの使い方まとめ</p>
+
+<p>最終更新日: 2012-07-20</p>
+
+<ul id="markdown-toc">
+  <li><a href="#git">Gitリファレンス</a>    <ul>
+      <li><a href="#basic---ok">Basic - 基本（とりあえずこれ覚えればOK）</a></li>
+      <li><a href="#log---">log - ログ</a>        <ul>
+          <li><a href="#commit---amend--reset---hard-head-">commit –amend や reset –hard HEAD^^ などで消えたコミットを確認する</a></li>
+        </ul>
+      </li>
+      <li><a href="#commit---">commit - コミット</a></li>
+      <li><a href="#branch---">branch - ブランチ</a></li>
+      <li><a href="#merge---">merge - マージ</a></li>
+      <li><a href="#tag---">tag - タグ</a></li>
+      <li><a href="#remote---">remote - 共有</a></li>
+      <li><a href="#submodule---">submodule - サブモジュール</a></li>
+      <li><a href="#git-svn">git-svn</a>        <ul>
+          <li><a href="#git-svn-dcommit-idid">git-svn dcommit できなかったのでコミットID見たら、違うIDになってた…。</a></li>
+          <li><a href="#git-svn-dcommit">ローカルに未コミットの変更があるけどgit-svn-dcommitしたい</a></li>
+          <li><a href="#svnexternals">svn:externalsのようなことをしたい</a></li>
+          <li><a href="#section">空のディレクトリはバージョン管理できない</a></li>
+          <li><a href="#subversiongit">複数のモジュールを含むSubversionリポジトリをGitへ移行する。</a></li>
+          <li><a href="#section-1">部分的なチェックアウトできない</a></li>
+          <li><a href="#trunk-branches-tags">trunk, branches, tags</a></li>
+        </ul>
+      </li>
+      <li><a href="#etc---">etc - その他</a>        <ul>
+          <li><a href="#section-2">過去のバージョンを取得、表示</a></li>
+          <li><a href="#section-3">パッチを作って適用する</a></li>
+          <li><a href="#section-4">コンフリクト状態が残ってしまった場合</a></li>
+          <li><a href="#mergeconflict">mergeを実行したらconflictが大量に出てしまったので取り消したい</a></li>
+          <li><a href="#untracked">untrackedなファイルを取り除きたい</a></li>
+          <li><a href="#merge--rebase-">merge と rebase の違い</a></li>
+          <li><a href="#git-pullremote">git pullでremoteを自動的に指定</a></li>
+          <li><a href="#section-5">コミットの圧縮</a></li>
+          <li><a href="#section-6">コミットを操作する</a></li>
+          <li><a href="#revert-">revert コミットを打ち消す</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#section-7">参考</a></li>
+</ul>
+
+<h2 id="basic---ok">Basic - 基本（とりあえずこれ覚えればOK）</h2>
+
+<pre><code>$ git init hoge # git リポジトリを作成。または...
+$ git clone hoge@example.com:myrepo.git # 外部から取得
+
+... some change
+
+$ git add *
+$ git commit -m "my commit"
+$ git status # 状態を見る
+$ git push origin master  # remoteに送信
+$ git pull # remoteの更新を取得
+</code></pre>
+
+<h2 id="log---">log - ログ</h2>
+
+<pre><code>$ git log -p                # diffも出力する
+$ git log --stat            # 変更したファイルの一覧
+$ git log --pretty=oneline  #１行で
+$ git log --pretty=format:"%h - %an, %ar : %s" # 独自のフォーマットで
+$ git log --since=2.weeks   # 日付指定
+$ git log -[n]              # n件表示
+$ git log --graph --oneline # ブランチ・マージ状態の確認
+</code></pre>
+
+<h4 id="commit---amend--reset---hard-head-">commit –amend や reset –hard HEAD^^ などで消えたコミットを確認する</h4>
+
+<pre><code>$ git reflog
+</code></pre>
+
+<p>HEADの移り変わりを確認できる。ブランチの移動など。reset –hardした直後なら、reflogでコミットが確認できる。</p>
+
+<p>この方法でも辿れなくなる場合はあるのでしょうか。</p>
+
+<h2 id="commit---">commit - コミット</h2>
+
+<p>この３手順で<code>svn commit</code>とだいたい同じ動作になる。</p>
+
+<pre><code>$ git add hoge.txt        # コミット前に `git add` でステージングが必要
+$ git commit -m "message" # -m オプションは同じ
+$ git push                # リモートに送信する
+</code></pre>
+
+<p>といっても、add するのが面倒な時は -a オプションが使用できる（add済みファイルに限る）。</p>
+
+<pre><code>$ git commit -a hoge.txt
+</code></pre>
+
+<p>直前のコミットを書き換える。</p>
+
+<pre><code>$ git commit --amend
+</code></pre>
+
+<p>直前のコミットをなかった事にして一つ前のコミット状態に戻す。</p>
+
+<pre><code>$ git reset --hard HEAD^  # HEAD^で１つ前、HEAD^^で２つ前
+$ git reflog              # 間違えた場合は reflog で確認
+</code></pre>
+
+<p>ステージング</p>
+
+<pre><code>$ git add hoge.txt
+$ git add -p hoge.txt # interactiveに部分的なステージングができる
+</code></pre>
+
+<p>ステージングの取り消し</p>
+
+<pre><code>$ git reset HEAD hoge.txt
+</code></pre>
+
+<p>svn revertのようなもの。ステージングしていない変更の取り消し。</p>
+
+<pre><code>$ git checkout -- hoge.txt
+$ git checkout -- . # こうするとカレントディレクトリ以下の全更新が消えるよ
+$ git checkout -p hoge.txt # interactiveに操作する
+</code></pre>
+
+<h2 id="branch---">branch - ブランチ</h2>
+
+<p><a href="http://progit.org/book/ja/ch3-1.html">http://progit.org/book/ja/ch3-1.html</a></p>
+
+<p><code>HEAD</code>とは「あなたが作業しているローカルブランチへのポインタ」</p>
+
+<p>testing ブランチを作成（切り替えはしない）</p>
+
+<pre><code>$ git branch testing
+</code></pre>
+
+<p>切り替える</p>
+
+<pre><code>$ git checkout testing
+</code></pre>
+
+<p>作成して切り替える</p>
+
+<pre><code>$ git checkout -b issue53
+</code></pre>
+
+<h2 id="merge---">merge - マージ</h2>
+
+<p>通常のマージはFast forward ポインタを前に進めるだけ。
+<a href="http://keijinsonyaban.blogspot.jp/2010/10/successful-git-branching-model.html">A Successful Git branching model</a>では –no-ff オプション推奨。</p>
+
+<pre><code>$ git merge issue53
+$ git merge --no-commit issue53 # "Merged branch ..." とコミットしない
+$ git merge --no-squash issue53 # 変更をワーキングツリーに適用する。
+                                # マージもコミットもしない。
+                                # ブランチ上での履歴は失われる。
+$ git merge --no-ff issue53     # Fast forwardを行わない。    
+</code></pre>
+
+<p>マージを取り消す場合も通常のコミット同様<code>reset --hard</code></p>
+
+<pre><code>$ git reset --hard HEAD
+</code></pre>
+
+<p><code>merge</code>は二本に分かれた枝を一本に合わせる。 <code>rebase</code>は枝が一本になるように作り直す。<a href="#merge-and-rebase">mergeとrebaseの違い</a></p>
+
+<pre><code>$ git rebase master
+</code></pre>
+
+<p>あるコミットの変更分だけを適用する。rebaseは連続して cherry-pick しているだけのもの。</p>
+
+<pre><code>$ git cherry-pick {commit}
+</code></pre>
+
+<h2 id="tag---">tag - タグ</h2>
+
+<p>タグの一覧</p>
+
+<pre><code>$ git tag
+</code></pre>
+
+<p>タグを作成</p>
+
+<pre><code>$ git tag v0.1
+</code></pre>
+
+<p>注釈付きタグの作成（コミットするかどうかの違いらしいが、どう使い分けるのかよくわかりません）</p>
+
+<pre><code>$ git tag -a v1.4 -m 'my version 1.4'
+</code></pre>
+
+<p>タグの共有
+    $ git push origin v1.5
+    $ git push origin –tags # 共有されてないもの全部
+    $ git push origin :missing_tag # リモートのタグを削除</p>
+
+<h2 id="remote---">remote - 共有</h2>
+
+<p><a href="http://progit.org/book/ja/ch3-5.html">http://progit.org/book/ja/ch3-5.html</a></p>
+
+<p>「こっちの serverfix で、リモートの awesomebranch を更新しろ」</p>
+
+<pre><code>$ git push origin serverfix:awesomebranch
+
+$ git push origin master
+$ git push                # track していれば省略できる
+</code></pre>
+
+<p>リモートにデータを送信</p>
+
+<p>「こっちの (何もなし) で、向こうの [remotebranch] を更新しろ」</p>
+
+<pre><code>$ git push origin :serverfix
+</code></pre>
+
+<p>ドッカーン。これでブランチはサーバーから消えてしまいました。</p>
+
+<p>リモートのデータを取得</p>
+
+<pre><code>$ git fetch origin
+</code></pre>
+
+<p>fetchしたものとマージ</p>
+
+<pre><code>$ git merge origin/master
+</code></pre>
+
+<p>origin/serverfix が指す先から作業を開始するためのローカルブランチができあがりました。</p>
+
+<pre><code>$ git checkout -b serverfix origin/serverfix
+</code></pre>
+
+<p>追跡ブランチ。cloneすると自動的に追跡ブランチする。これが引数なしでgit pushやgit pullが動作する理由。</p>
+
+<p>これは同じ意味。</p>
+
+<pre><code>$ git checkout --track origin/serverfix
+$ git checkout -b serverfix origin/serverfix
+</code></pre>
+
+<p>push時にもセットできる</p>
+
+<pre><code>$ git push -u origin master
+</code></pre>
+
+<p>pull は fetch と merge を自動でやってくれる</p>
+
+<pre><code>$ git pull
+$ git pull --rebase # mergeではなくrebaseします。
+                    # ちょっとしたローカルの変更がある場合に
+</code></pre>
+
+<p>リモートブランチを削除しても、別の場所してクローンされてるとずっと残る。追加は自動だけど削除は自動でしてくれない。そういう場合に prune を使う。</p>
+
+<pre><code># 状態を確認する
+$ git remote show origin
+$ git remote prune origin
+</code></pre>
+
+<p>リポジトリを破壊します！</p>
+
+<pre><code>$ git push --force origin master
+</code></pre>
+
+<h2 id="submodule---">submodule - サブモジュール</h2>
+
+<p>http://progit.org/book/ja/ch6-6.html</p>
+
+<pre><code>$ git submodule add git://github.com/chneukirchen/rack.git rack
+</code></pre>
+
+<p>submoduleのあるリポジトリをcloneした後、</p>
+
+<pre><code>$ git submodule init
+$ git submodule update
+</code></pre>
+
+<p>サブモジュールの外部の変更を取り込むには毎回これをやる</p>
+
+<pre><code>$ git merge origin/master
+$ git submodule update
+</code></pre>
+
+<p>サブモジュールはあるポイントしか見ない！！親プロジェクトはそのポイントを記録する</p>
+
+<p>問題点。特定のバージョンをポイントしている（detached head）ので、git submodule updateで手元の変更が失われやすい</p>
+
+<p>.gitmodulesを見ればわかる</p>
+
+<p>サブモジュールを削除</p>
+
+<pre><code> .git/config の該当モジュールを削除
+
+$ git rm --cached path/to/hoge
+$ git commit
+</code></pre>
+
+<h2 id="git-svn">git-svn</h2>
+
+<p><a href="http://progit.org/book/ja/ch8-1.html">http://progit.org/book/ja/ch8-1.html</a>
+<a href="http://d.hatena.ne.jp/idesaku/20090323/1237825080">http://d.hatena.ne.jp/idesaku/20090323/1237825080</a></p>
+
+<p>svn checkoutのようなもの
+svnからgitリポジトリを作成。 -s(standard)オプションはsvnのtrunk/branches/tags構成をそのままインポートする</p>
+
+<pre><code>$ git svn clone file:///tmp/test-svn -s
+</code></pre>
+
+<p>svnのデータだけ取得</p>
+
+<pre><code>$ git svn fetch
+</code></pre>
+
+<p>svn upのようなもの
+svnのデータを取り込む</p>
+
+<pre><code>$ git svn rebase
+</code></pre>
+
+<p>svn commitのようなもの
+svnにコミット。gitのコミットIDが書き換わる！注意！
+コミットできたらgit-svn-id属性が付く。</p>
+
+<pre><code>$ git svn dcommit
+</code></pre>
+
+<p>git-svnで削除されたリモートブランチをローカルでも削除する方法</p>
+
+<pre><code>$ git branch -r -d my-remote-branch
+</code></pre>
+
+<p>svnにブランチ作成</p>
+
+<pre><code>$ git svn branch new_branch_name
+</code></pre>
+
+<p>svnにタグ作成</p>
+
+<pre><code>$ git svn tag new_tag_name
+</code></pre>
+
+<h4 id="git-svn-dcommit-idid">git-svn dcommit できなかったのでコミットID見たら、違うIDになってた…。</h4>
+
+<p>patch を作成する</p>
+
+<h4 id="git-svn-dcommit">ローカルに未コミットの変更があるけどgit-svn-dcommitしたい</h4>
+
+<p>stashを使う</p>
+
+<pre><code>$ git stash
+$ git svn dcommit
+$ git stash apply
+</code></pre>
+
+<h4 id="svnexternals">svn:externalsのようなことをしたい</h4>
+
+<p>git submoduleを使う。</p>
+
+<p>移行スクリプト。でもうまくいかなかった…</p>
+
+<p><a href="http://github.com/garbas/garbasgit.svnexternals">http://github.com/garbas/garbasgit.svnexternals</a>
+via <a href="http://d.hatena.ne.jp/Sixeight/20090210/1234272295">http://d.hatena.ne.jp/Sixeight/20090210/1234272295</a></p>
+
+<h4 id="section">空のディレクトリはバージョン管理できない</h4>
+
+<p>.gitignoreとか何でもいいから空ファイルを作成すればOK。</p>
+
+<h4 id="subversiongit">複数のモジュールを含むSubversionリポジトリをGitへ移行する。</h4>
+
+<p>http://iteman.jp/blog/2009/02/subversiongit.html</p>
+
+<h4 id="section-1">部分的なチェックアウトできない</h4>
+
+<p>svn checkout はパスを指定すればどの階層でもワーキングコピーを作成できる。
+git clone すると今までの履歴含め、全てをコピーしなければならない。
+なのでプロジェクト/モジュールごとにリポジトリを作成するのがベストだろう。</p>
+
+<p>そのため、ディレクトリ同士のマージができない。これはどうにもできないかも。</p>
+
+<h4 id="trunk-branches-tags">trunk, branches, tags</h4>
+
+<ul>
+  <li>Subversionはディレクトリ構造として表現</li>
+  <li>Gitはbranchesとtagsが別のシステムになっている。</li>
+</ul>
+
+<h2 id="etc---">etc - その他</h2>
+
+<h3 id="section-2">過去のバージョンを取得、表示</h3>
+
+<p>特定のファイルを特定のバージョンに戻す。commit_id はブランチやタグ名、コミットIDなど。</p>
+
+<pre><code>$ git checkout commit_id path/to/file
+</code></pre>
+
+<p>単に表示する場合は<code>git show</code>で。</p>
+
+<pre><code>$ git show commit_id:path/to/file
+</code></pre>
+
+<h3 id="section-3">パッチを作って適用する</h3>
+
+<p><a href="http://blog.s21g.com/articles/680">http://blog.s21g.com/articles/680</a></p>
+
+<p>直前のコミットとその前との差分でパッチを作成する</p>
+
+<pre><code>$ git format-patch -r HEAD~
+</code></pre>
+
+<p>パッチを適用する</p>
+
+<pre><code>$ git am 0001-hoge.patch
+</code></pre>
+
+<h3 id="section-4">コンフリクト状態が残ってしまった場合</h3>
+
+<pre><code># このようなメッセージがでた場合
+You have not concluded your merge (MERGE_HEAD exists).
+Please, commit your changes before you can merge
+
+$ git reset --merge
+</code></pre>
+
+<h3 id="mergeconflict">mergeを実行したらconflictが大量に出てしまったので取り消したい</h3>
+
+<pre><code>$ git reset --hard ORIG_HEAD
+</code></pre>
+
+<h3 id="untracked">untrackedなファイルを取り除きたい</h3>
+
+<pre><code>$ git clean -f
+</code></pre>
+
+<h3 id="merge--rebase-">merge と rebase の違い</h3>
+
+<p>masterのHEADはポイントAにあるとする</p>
+
+<pre><code>(master) ---A
+</code></pre>
+
+<p>Aからブランチしたworkingを作成し、Bまで進める</p>
+
+<pre><code>(master) ---A 
+             \
+(working)     \----- B
+</code></pre>
+
+<p>そこからさらに masterでも変更し A’ まで進めたとする</p>
+
+<pre><code>(master) -- A ------------ A'
+             \
+(working)     \----- B
+</code></pre>
+
+<p>この状態で、</p>
+
+<p>(master) git merge working した場合
+A’に B がマージされて C になる。
+C の HEAD^（一つ前） は A’</p>
+
+<pre><code>(master) ---A ------------ A' ---- C
+             \                   /
+(working)     \-----B------------
+</code></pre>
+
+<p>(master) git rebase working した場合
+コミットA’の存在はmasterからはなくなって、
+Bからの続きとして AからA’の差分がマージされて A’’ になる
+A’’ の HEAD^ は B</p>
+
+<pre><code>First, rewinding head to replay your work on top of it...
+Applying: commit B
+
+(master) ---A         ------ A''
+             \       /
+(working)     \-----B
+</code></pre>
+
+<p>mergeはブランチの履歴を残して一本にするけど、rebaseすると履歴も含めて一本に作り直す。そのためrebaseは注意が必要。</p>
+
+<h3 id="git-pullremote">git pullでremoteを自動的に指定</h3>
+
+<pre><code>#
+# remoteが指定されてない(trackしてない)場合はリモート指定なしで git pull しても「わからないよ」と言われる
+#
+(master) $ git pull
+
+You asked me to pull without telling me which branch you
+want to merge with, and 'branch.master.merge' in
+your configuration file does not tell me, either. Please
+specify which branch you want to use on the command line and
+try again (e.g. 'git pull &lt;repository&gt; &lt;refspec&gt;').
+See git-pull(1) for details.
+
+If you often merge with the same branch, you may want to
+use something like the following in your configuration file:
+
+    [branch "master"]
+    remote = &lt;nickname&gt;
+    merge = &lt;remote-ref&gt;
+    
+    [remote "&lt;nickname&gt;"]
+    url = &lt;url&gt;
+    fetch = &lt;refspec&gt;
+
+See git-config(1) for details.
+
+# 解決法１
+# 手動で指定
+#
+(master) $ git pull origin master
+
+# 解決法２
+# configで指定
+#
+$ vi .git/config
+
+[branch "master"]
+    remote = origin
+    merge = refs/heads/master
+
+# 解決法３
+# これだけでOK
+$ git push -u origin master    
+</code></pre>
+
+<h3 id="section-5">コミットの圧縮</h3>
+
+<p>マージするときにひとつのコミットにまとめる。</p>
+
+<pre><code>git merge --squash something-new-feature
+</code></pre>
+
+<p>または git rebase -i でsquash する。（後述）</p>
+
+<h3 id="section-6">コミットを操作する</h3>
+
+<pre><code># コミット２つあったとする
+git commit -am "hoge"
+git commit -am "moge"
+
+git rebase -i head^^
+</code></pre>
+
+<p>するとエディターが開かれる。</p>
+
+<pre><code>pick 59d6190 hoge
+pick 0149644 moge
+
+# Rebase 36fde72..0149644 onto 36fde72
+# ...
+</code></pre>
+
+<p>この行を修正して保存することで、指示通りにrebaseが行われる。
+コマンドはコメントに書かれてある。</p>
+
+<ul>
+  <li>pick はそのままコミットを使う</li>
+  <li>reword は保存後にrebaseが走るので、その時にコミットメッセージを変更するエディタが走る。（注：rebase -i した中でのコメントを変更するのではない。）</li>
+  <li>edit はamendするためにストップする？よくわからん。</li>
+  <li>squash は一つ前のコミットと結合する。コミットメッセージはrebaseで選択する。</li>
+  <li>fixup は一つ前のコミットと結合する。コミットメッセージは前のが使われる。</li>
+  <li>exec はshellを走らせるらしい。</li>
+</ul>
+
+<p>で、行を消すとそのコミットが失われる。でも全部消すとrebaseは中止になる。</p>
+
+<h3 id="revert-">revert コミットを打ち消す</h3>
+
+<pre><code>$ git revert commit_id
+</code></pre>
+
+<p>http://d.hatena.ne.jp/miau/20100709/1278699637</p>
+
+<h1 id="section-7">参考</h1>
+
+<ul>
+  <li><a href="http://git-scm.com/book/ja">Pro Git</a></li>
+  <li><a href="http://keijinsonyaban.blogspot.jp/2011/05/git.html">Gitをボトムアップから理解する</a></li>
+  <li><a href="http://keijinsonyaban.blogspot.jp/2010/10/successful-git-branching-model.html">A Successful Git Branching Model</a></li>
+</ul>
+
+
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    <script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-31706657-3']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+
+  </body>
+</html>

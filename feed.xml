@@ -1,0 +1,2004 @@
+<?xml version="1.0"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>akkunchoi.github.com</title>
+        <link>http://akkunchoi.github.com</link>
+        <atom:link href="http://akkunchoi.github.com/rss.xml" rel="self" type="application/rss+xml" />
+        <description>This site is a information for development written by akkunchoi</description>
+        <pubDate>Tue, 07 Aug 2012 21:12:01 +0900</pubDate>
+        <lastBuildDate>Tue, 07 Aug 2012 21:12:01 +0900</lastBuildDate>
+        
+        <item>
+            <title>Apache Basic認証</title>
+            <description>&lt;h1 id=&quot;apache-basic&quot;&gt;Apache Basic認証&lt;/h1&gt;
+
+&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#apache-basic&quot;&gt;Apache Basic認証&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#basic&quot;&gt;Basic認証の仕組み&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#htpasswd-&quot;&gt;.htpasswd ファイルを作成する&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#httpdconf--htaccess-&quot;&gt;httpd.conf / .htaccess での設定&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#section&quot;&gt;特定のファイルには認証をかけない&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#ip&quot;&gt;特定のIPからのアクセスには認証をかけない&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;basic&quot;&gt;Basic認証の仕組み&lt;/h2&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;クライアントがページをリクエストする（この時点ではまだ認証がかかってるかどうか知らない）&lt;/li&gt;
+  &lt;li&gt;クライアントに401レスポンスを返す&lt;/li&gt;
+  &lt;li&gt;ユーザにIDとパスワードの入力を求める&lt;/li&gt;
+  &lt;li&gt;認証ヘッダを含めてページをリクエストする&lt;/li&gt;
+  &lt;li&gt;成功すれば、通常のページを。そうでなければ再度401を返す&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;htpasswd-&quot;&gt;.htpasswd ファイルを作成する&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;# -c ファイル新規作成
+# -s パスワードをSHA1
+$ htpasswd -c -s .htpasswd username
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;httpdconf--htaccess-&quot;&gt;httpd.conf / .htaccess での設定&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;AuthUserFile    /path/to/.htpasswd
+AuthName        &quot;basic auth&quot;
+AuthType        Basic
+Require valid-user
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;section&quot;&gt;特定のファイルには認証をかけない&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://httpd.apache.org/docs/2.2/mod/core.html#satisfy&quot;&gt;Satisfy&lt;/a&gt; ディレクティブを使う。
+これは、RequireとAllowが両方使われている場合に、詳細な設定を行う場合に使用する。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# 画像のみ認証をかけない
+&amp;lt;FilesMatch &quot;\.(gif|jpe?g|png)$&quot;&amp;gt;
+    Satisfy Any
+    Allow from all
+&amp;lt;/FilesMatch&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;ip&quot;&gt;特定のIPからのアクセスには認証をかけない&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;Satisfy Any
+Allow from 127.0.0.1
+&lt;/code&gt;&lt;/pre&gt;
+
+</description>
+            <published>2012-07-31 00:00:00 +0900</published>
+            <link>http://akkunchoi.github.com/apache-basic-auth.html</link>
+        </item>
+        
+        <item>
+            <title>Apache 設定例</title>
+            <description>&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#section&quot;&gt;起動&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#section-1&quot;&gt;設定例&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#php&quot;&gt;phpファイルをテキストで表示&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#php-1&quot;&gt;強制的にphpとして実行&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#htaccess&quot;&gt;.htaccessを許可/禁止する&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#indexhtml&quot;&gt;ディレクトリアクセスしたときにindex.htmlを表示する&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#documentroot&quot;&gt;DocumentRootのディレクトリ以外を公開したい&lt;/a&gt;        &lt;ul&gt;
+          &lt;li&gt;&lt;a href=&quot;#alias&quot;&gt;Aliasを使う&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#virtualhost&quot;&gt;VirtualHostを使う&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#section-2&quot;&gt;ディレクトリアクセスしたときに中身を表示しない&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#section-3&quot;&gt;シンボリックリンクをたどるのを許可する&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#hogehogehoge&quot;&gt;hogeをリクエストしてhogeがなければhoge.*を表示するようにする&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#basic&quot;&gt;Basic認証をかける&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#section-4&quot;&gt;他の設定ファイルを読み込む&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#php-2&quot;&gt;phpファイルだけに適用させる&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#ipvirtualhost&quot;&gt;IP直打ちの場合は別のVirtualHostを表示したい&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#section-5&quot;&gt;キャッシュクリア&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#section-6&quot;&gt;画像等不要なファイルはアクセスログを取らないようにする&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#section-7&quot;&gt;アクセスログを日別に記録する&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#php-3&quot;&gt;アクセスログに情報を追加する (PHP)&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#section-8&quot;&gt;メモ&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#todo&quot;&gt;TODO&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;モジュールのマニュアル&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://httpd.apache.org/docs/2.2/ja/mod/&quot;&gt;http://httpd.apache.org/docs/2.2/ja/mod/&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&quot;section&quot;&gt;起動&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code&gt;$ sudo /etc/init.d/httpd restart
+$ sudo /etc/init.d/httpd graceful
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;gracefulオプションは現在実行中のプロセスを待ってから再起動する&lt;/p&gt;
+
+&lt;h1 id=&quot;section-1&quot;&gt;設定例&lt;/h1&gt;
+
+&lt;h2 id=&quot;php&quot;&gt;phpファイルをテキストで表示&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;AddHandler text/plain .php
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;php-1&quot;&gt;強制的にphpとして実行&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;ForceType application/x-httpd-php
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;htaccess&quot;&gt;.htaccessを許可/禁止する&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;AllowOverride All  # 許可
+AllowOverride None # 禁止
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;indexhtml&quot;&gt;ディレクトリアクセスしたときにindex.htmlを表示する&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;DirectoryIndex index.html
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;documentroot&quot;&gt;DocumentRootのディレクトリ以外を公開したい&lt;/h2&gt;
+
+&lt;h3 id=&quot;alias&quot;&gt;Aliasを使う&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;Alias /hoge &quot;/path/to/htdocs&quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&quot;virtualhost&quot;&gt;VirtualHostを使う&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;lt;VirtualHost 127.0.0.1&amp;gt;
+  &amp;lt;Directory /path/to/htdocs&amp;gt;
+     allow from all
+  &amp;lt;/Directory&amp;gt;
+&amp;lt;/VirtualHost&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;section-2&quot;&gt;ディレクトリアクセスしたときに中身を表示しない&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;Options -Indexes
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;表示したい場合はハイフン”-“なしで&lt;/p&gt;
+
+&lt;h2 id=&quot;section-3&quot;&gt;シンボリックリンクをたどるのを許可する&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;Options FollowSymLinks
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;hogehogehoge&quot;&gt;hogeをリクエストしてhogeがなければhoge.*を表示するようにする&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;Options MultiViews
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;basic&quot;&gt;Basic認証をかける&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;AuthType Basic
+AuthName &quot;authenticate required&quot;
+AuthUserFile /path/to/.htpasswd
+Require valid-user
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;section-4&quot;&gt;他の設定ファイルを読み込む&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;Include /path/to/another/httpd.conf
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;php-2&quot;&gt;phpファイルだけに適用させる&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;lt;Files ~ &quot;\.php$&quot;&amp;gt;
+  ...
+&amp;lt;/Files&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;ipvirtualhost&quot;&gt;IP直打ちの場合は別のVirtualHostを表示したい&lt;/h2&gt;
+
+&lt;p&gt;IP直打ちするとVirtualHostの一番最初の設定が表示される。
+てきとーなやつを先頭に入れるだけでよい。&lt;/p&gt;
+
+&lt;p&gt;VirtualHostを設定したのにIP直打ちで来る人を残念賞にする方法
+&lt;a href=&quot;http://d.hatena.ne.jp/ir9Ex/20071014/1192366566&quot;&gt;http://d.hatena.ne.jp/ir9Ex/20071014/1192366566&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;section-5&quot;&gt;キャッシュクリア&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;lt;IfModule headers_module&amp;gt;
+    &amp;lt;Files ~ &quot;\.css$&quot;&amp;gt;
+    Header set Pragma no-cache
+    Header set Cache-Control no-cache
+    &amp;lt;/Files&amp;gt;
+&amp;lt;/IfModule&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;section-6&quot;&gt;画像等不要なファイルはアクセスログを取らないようにする&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;SetEnvIf Request_URI &quot;\.(gif)|(jpg)|(png)|(css)|(js)|(ico)$&quot; nolog
+CustomLog &quot;/path/to/log&quot; combined env=!nolog
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;CustomLogで否定しないやり方も考えてみた。&lt;/p&gt;
+
+&lt;p&gt;URIのマッチングに否定戻り読み言明を使った。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;SetEnvIf Request_URI &quot;(?&amp;lt;!\.gif)(?&amp;lt;!\.jpg)(?&amp;lt;!\.png)(?&amp;lt;!\.css)(?&amp;lt;!\.js)(?&amp;lt;!\.ico)$&quot; hoge
+CustomLog &quot;/path/to/log&quot; combined env=hoge
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;こうすれば、特定のディレクトリのみ別のログにするというのも可能&lt;/p&gt;
+
+&lt;p&gt;（上記SetEnvIfをDirectoryディレクティブに追加すればいい）&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;[^\.(gif)|(jpg)]&lt;/code&gt; でいけるかなと思ったけど、文字に分解されちゃうのでダメだった。&lt;/p&gt;
+
+&lt;h2 id=&quot;section-7&quot;&gt;アクセスログを日別に記録する&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;CustomLog &quot;|/usr/sbin/rotatelogs /path/to/log/access.%Y%m%d.log 86400 540&quot; combined
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;php-3&quot;&gt;アクセスログに情報を追加する (PHP)&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://neta.ywcafe.net/000607.html&quot;&gt;http://neta.ywcafe.net/000607.html&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;httpd.confでLogFormatを編集&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;LogFormat &quot;%h %l %u %t \&quot;%r\&quot; %&amp;gt;s %b %{originallog}n&quot; common
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;PHPのapache_noteを実行する。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;lt;?php
+apache_note(&quot;originallog&quot;, $val);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;例えばユーザーIDなどを埋め込むと便利。&lt;/p&gt;
+
+&lt;h1 id=&quot;section-8&quot;&gt;メモ&lt;/h1&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;同じパスのDirectoryディレクティブを２つ書くと、常に後に記述した方のみが適用され、前の方の設定は失われるっぽい。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;todo&quot;&gt;TODO&lt;/h1&gt;
+
+&lt;p&gt;昔の記事…&lt;/p&gt;
+
+</description>
+            <published>2012-07-31 00:00:00 +0900</published>
+            <link>http://akkunchoi.github.com/apache.html</link>
+        </item>
+        
+        <item>
+            <title>xpdfを使ってPDFから日本語抽出 (homebrew, MacOSX)</title>
+            <description>&lt;h1 id=&quot;xpdfpdf-homebrew-macosx&quot;&gt;xpdfを使ってPDFから日本語抽出 (homebrew, MacOSX)&lt;/h1&gt;
+
+&lt;p&gt;homebrewでxpdfをインストールする。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ brew install xpdf
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;動作確認。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ pdftotext hoge.pdf
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;日本語が含まれる場合、このようなエラーが出る。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Error: Unknown character collection 'Adobe-Japan1'
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;調べてみると日本語用の設定が必要なようだ。&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.foolabs.com/xpdf/download.html&quot;&gt;xpdf&lt;/a&gt;のサイトからLanguage Support Packagesの xpdf-japanese.tar.gz をダウンロード。&lt;/li&gt;
+  &lt;li&gt;解凍したものを &lt;code&gt;/usr/local/share/xpdf/japanese&lt;/code&gt; に配置する。&lt;/li&gt;
+  &lt;li&gt;&lt;code&gt;/usr/local/etc/xpdfrc&lt;/code&gt; に add-to-xpdfrc の内容を追記する。&lt;/li&gt;
+  &lt;li&gt;ここまでだと、エラーはなくなるが、日本語が読み飛ばされる。textEncoding設定のコメントを外す&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;xpdfrcはこのようになります。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# コメントを外す
+textEncoding UTF-8
+...
+# 追記
+cidToUnicode    Adobe-Japan1    /usr/local/share/xpdf/japanese/Adobe-Japan1.cidToUnicode
+unicodeMap  ISO-2022-JP /usr/local/share/xpdf/japanese/ISO-2022-JP.unicodeMap
+unicodeMap  EUC-JP      /usr/local/share/xpdf/japanese/EUC-JP.unicodeMap
+unicodeMap  Shift-JIS   /usr/local/share/xpdf/japanese/Shift-JIS.unicodeMap
+cMapDir     Adobe-Japan1    /usr/local/share/xpdf/japanese/CMap
+toUnicodeDir            /usr/local/share/xpdf/japanese/CMap
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;以上で、日本語が出力されるようになりました。&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;http://watermans-linuxtips.blogspot.jp/2008/12/pdf.html&quot;&gt;http://watermans-linuxtips.blogspot.jp/2008/12/pdf.html&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://oku.edu.mie-u.ac.jp/~okumura/linux/?Xpdf&quot;&gt;http://oku.edu.mie-u.ac.jp/~okumura/linux/?Xpdf&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+</description>
+            <published>2012-07-28 00:00:00 +0900</published>
+            <link>http://akkunchoi.github.com/xpdf-japanese.html</link>
+        </item>
+        
+        <item>
+            <title>Test DoubleとPHPUnit</title>
+            <description>&lt;h1 id=&quot;test-doublephpunit&quot;&gt;Test DoubleとPHPUnit&lt;/h1&gt;
+
+&lt;h2 id=&quot;test-double&quot;&gt;Test Doubleについて&lt;/h2&gt;
+
+&lt;p&gt;単体テストを書く時に問題になるのが、依存コンポーネントの扱いだ。例えばデータベースが必要だったり、外部サービスへの接続が必要だったりすると、テストごとに毎回セットアップしていたら途方も無い時間がかかるし、そもそも依存関係が複雑でテストができない場合もある。&lt;/p&gt;
+
+&lt;p&gt;このような場合に、実際のオブジェクトではなく代役（Double）のオブジェクトを使うのが Test Doubleというテスト技法だ。Test Doubleにはスタブ、モック、フェイク、ダミーなど様々な手法がある。&lt;/p&gt;
+
+&lt;p&gt;特に重要で間違いやすいのが「モック」と「スタブ」だ。英単語では「モック」は模造品、「スタブ」は切り株、切り残しという意味だが、Test Doubleにおいては「モック」は出力の確認、「スタブ」は入力の差し替えを意味する。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://xunitpatterns.com/Test%20Double.html&quot;&gt;xUnit Patterns&lt;/a&gt; にTest Doubleのより詳しい解説がある。Test Doubleを使用する理由は、テスト対象オブジェクト（SUT: System Under Test）が、あるコンポーネントに依存（DOC: depended-on component）するために、「 出力を確認できない」「 入力を設定できない」「 遅い」という原因によりテストが困難になるからである。&lt;/p&gt;
+
+&lt;h2 id=&quot;phpunit&quot;&gt;PHPUnitの例&lt;/h2&gt;
+
+&lt;p&gt;例として、CMS的なシステムを考える。テスト対象オブジェクト Page は作成者を意味する User と永続化を行う Database に依存している。&lt;/p&gt;
+
+&lt;p&gt;テスト対象オブジェクト&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;class Page{
+  protected $user;
+  protected $title;
+  protected $body;
+  protected $database;
+
+  public function setUser($user) {
+    $this-&amp;gt;user = $user;
+  }
+
+  public function setTitle($title) {
+    $this-&amp;gt;title = $title;
+  }
+
+  public function setBody($body) {
+    $this-&amp;gt;body = $body;
+  }
+
+  public function setDatabase(Database $database){
+    $this-&amp;gt;database = $database;
+  }
+
+  public function save(){
+    $s = sprintf(
+      '%s wrote: &quot;%s&quot; %s', $this-&amp;gt;user-&amp;gt;getName(), $this-&amp;gt;title, $this-&amp;gt;body
+    );
+    $this-&amp;gt;database-&amp;gt;write($this-&amp;gt;title, $s);
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;依存コンポーネントの Database と User&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;interface Database{
+  public function write();
+}
+
+interface User{
+  public function getName();
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Pageのsaveメソッドをテストするには Database と User が必要である。しかし、Pageをテストするためだけなのに、わざわざ Database や User をインスタンス化する必要は全くない。User::getNameでダミーの値を返すようにしたり、 Database::write メソッドで何が与えられたか確認するだけで十分だ。&lt;/p&gt;
+
+&lt;p&gt;PHPUnitにはモックとスタブの生成機能がある。どちらも getMock というメソッドで生成できる。テストコードはこのようになる。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;class PageTest extends PHPUnit_Framework_TestCase{
+  public function testSave(){
+    // モック
+    $dbMock = $this-&amp;gt;getMock('Database');
+    $dbMock-&amp;gt;expects($this-&amp;gt;once())
+            -&amp;gt;method('write')
+            -&amp;gt;with($this-&amp;gt;equalTo('New Title'), $this-&amp;gt;equalTo('aaa wrote: &quot;New Title&quot; New Text'));
+
+    // スタブ
+    $userStub = $this-&amp;gt;getMock('User');
+    $userStub-&amp;gt;expects($this-&amp;gt;any())
+            -&amp;gt;method('getName')
+            -&amp;gt;will($this-&amp;gt;returnValue('aaa'));
+
+    // Exercise
+    $page = new Page();
+    $page-&amp;gt;setDatabase($dbMock);
+    $page-&amp;gt;setUser($userStub);
+    $page-&amp;gt;setBody('New Text');
+    $page-&amp;gt;setTitle('New Title');
+
+    // Verify
+    $page-&amp;gt;save();
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;getMock メソッドによりモックを生成する。普通のクラスだけでなく、インタフェースでも抽象クラスでも良い。オプションでコンストラクタを実行するかどうかも制御できる。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$dbMock = $this-&amp;gt;getMock('Database');
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;expects メソッドでどのような動作をするかをの設定を開始し、引数に何度呼ばれるべきかを設定する。&lt;code&gt;$this-&amp;gt;once()&lt;/code&gt;の他には any, never, atLeastOnce, once, exactly, at が利用できる。スタブとして生成するならコール回数の確認を行わない &lt;code&gt;$this-&amp;gt;any()&lt;/code&gt; にする。&lt;/p&gt;
+
+&lt;p&gt;method メソッドでどのメソッドについての動作か指定する。&lt;/p&gt;
+
+&lt;p&gt;with メソッドでexpectation を設定し、will メソッドで戻り値を設定する。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$dbMock-&amp;gt;expects($this-&amp;gt;once())
+        -&amp;gt;method('write')
+        -&amp;gt;with($this-&amp;gt;equalTo('New Title'), $this-&amp;gt;equalTo('aaa wrote: &quot;New Title&quot; New Text'));
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;このように、依存コンポーネントのimplementが存在しないにもかかわらず、対象オブジェクトがテストできるというのはとても強力だ。&lt;/p&gt;
+
+&lt;p&gt;しかしPHPUnitのモック生成機能はわかりにくい（覚えにくい）。&lt;/p&gt;
+
+&lt;p&gt;他にもSimpleTestがモック生成機能をサポートしていたり、Mockery, Phakeといったモック生成ライブラリがあるらしいので、そのうち調べてみようと思う。&lt;/p&gt;
+
+&lt;h2 id=&quot;section&quot;&gt;参考&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;http://capsctrl.que.jp/kdmsnr/wiki/bliki/?TestDouble&quot;&gt;bliki&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://xunitpatterns.com/Test%20Double.html&quot;&gt;xUnit Patterns&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.phpunit.de/manual/3.6/ja/test-doubles.html&quot;&gt;PHPUnit&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+</description>
+            <published>2012-07-28 00:00:00 +0900</published>
+            <link>http://akkunchoi.github.com/test-double-phpunit.html</link>
+        </item>
+        
+        <item>
+            <title>SPFを設定して迷惑メール回避する</title>
+            <description>&lt;h1 id=&quot;spf&quot;&gt;SPFを設定して迷惑メール回避する&lt;/h1&gt;
+
+&lt;h2 id=&quot;section&quot;&gt;設定方法&lt;/h2&gt;
+
+&lt;p&gt;TXTレコードに &lt;code&gt;v=spf1 a:example.com ~all&lt;/code&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;section-1&quot;&gt;確認方法&lt;/h2&gt;
+
+&lt;p&gt;DNSの確認はTXTレコードを見る。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ nslookup -query=TXT example.com
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;次にメールヘッダを確認する。
+“Received-Spf: pass” になっていれば迷惑メール回避されているはず。&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;ムームードメインの場合 &lt;a href=&quot;http://laugh.rinazo.com/2012/03/28/857&quot;&gt;http://laugh.rinazo.com/2012/03/28/857&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;詳しい解説 &lt;a href=&quot;http://webos-goodies.jp/archives/51103006.html&quot;&gt;http://webos-goodies.jp/archives/51103006.html&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;設定例 &lt;a href=&quot;http://www.au.kddi.com/service/email/support/chui/spf_record.html&quot;&gt;http://www.au.kddi.com/service/email/support/chui/spf_record.html&lt;/a&gt; &lt;/li&gt;
+&lt;/ul&gt;
+</description>
+            <published>2012-07-28 00:00:00 +0900</published>
+            <link>http://akkunchoi.github.com/spf-dns.html</link>
+        </item>
+        
+        <item>
+            <title>teleport - Mac間でマウス、キーボード、クリップボード共有</title>
+            <description>&lt;h1 id=&quot;teleport---mac&quot;&gt;teleport - Mac間でマウス、キーボード、クリップボード共有&lt;/h1&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://abyssoft.com/software/teleport/&quot;&gt;http://abyssoft.com/software/teleport/&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;クリップボード共有のツールを色々探していたが見つからず。諦めかけたところ、最適なツールを発見。例えるならMacOSX版&lt;a href=&quot;http://synergy-foss.org/&quot;&gt;Synergy&lt;/a&gt;だ。&lt;/p&gt;
+
+&lt;p&gt;マウス、キーボード共有はもちろん、クリップボード共有、ファイル共有もできる。
+ホスト、クライアントの概念がなく、スムーズに設定できる。使いやすい。
+KeyRemap4MacBookが入っていても問題ない。Synergyは設定が面倒だが、teleportならシステム環境設定から一瞬で設定できる。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;ちなみに試してみたが満足するクオリティではなかったクリップボード共有ツールはこちら。&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.theescapers.com/stuf/&quot;&gt;Stuf&lt;/a&gt; (旧Shadow)
+    &lt;ul&gt;
+      &lt;li&gt;有料。dropbox共有できるが、貼り付けの使い勝手がいまいち。&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://itunes.apple.com/jp/app/clipbox/id448856941&quot;&gt;ClipBox&lt;/a&gt;
+    &lt;ul&gt;
+      &lt;li&gt;MacAppStoreから85円。使えない！&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://pth.com/products/pthpasteboard/&quot;&gt;Pasteboard PRO&lt;/a&gt;
+    &lt;ul&gt;
+      &lt;li&gt;有料。よくわからなかった&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://itunes.apple.com/jp/app/flycut-clipboard-manager/id442160987&quot;&gt;Flycut&lt;/a&gt;
+    &lt;ul&gt;
+      &lt;li&gt;無料。dropboxへ保存はできるが、読み込みができない。貼り付けUIが良いのが惜しい。&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+</description>
+            <published>2012-07-28 00:00:00 +0900</published>
+            <link>http://akkunchoi.github.com/osx-teleport.html</link>
+        </item>
+        
+        <item>
+            <title>DatabaseException Incorrect key file for table 'mydatabase/mytable.MYI'; try to repair it</title>
+            <description>&lt;h1 id=&quot;databaseexception-incorrect-key-file-for-table-mydatabasemytablemyi-try-to-repair-it&quot;&gt;DatabaseException Incorrect key file for table ‘mydatabase/mytable.MYI’; try to repair it&lt;/h1&gt;
+
+&lt;p&gt;MySQLで&lt;code&gt;DELETE FROM ...&lt;/code&gt;で一行消したらDatabaseExceptionが発生してアクセスできなくった。
+メッセージには &lt;code&gt;Incorrect key file for table 'mydatabase/mytable.MYI'; try to repair it&lt;/code&gt; とある。&lt;/p&gt;
+
+&lt;p&gt;テーブルが壊れたらしいので修復する。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;mysql&amp;gt; check table mytable;
++-----------------------------+-------+----------+----------------------------+
+| Table                       | Op    | Msg_type | Msg_text                   |
++-----------------------------+-------+----------+----------------------------+
+| mydatabase.mytable | check | warning  | Table is marked as crashed |
+| mydatabase.mytable | check | error    | Found 426 keys of 427      |
+| mydatabase.mytable | check | error    | Corrupt                    |
++-----------------------------+-------+----------+----------------------------+
+3 rows in set (0.07 sec)
+
+mysql&amp;gt; repair table mytable;
++-----------------------------+--------+----------+----------+
+| Table                       | Op     | Msg_type | Msg_text |
++-----------------------------+--------+----------+----------+
+| mydatabase.mytable | repair | status   | OK       |
++-----------------------------+--------+----------+----------+
+1 row in set (0.14 sec)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;check, repair はMyISAMでしか実行できないらしい。InnoDBの場合はどうなってるのだろう。&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;http://blog.kaburk.com/os/linux/mysql-broken.html&quot;&gt;http://blog.kaburk.com/os/linux/mysql-broken.html&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://blog.livedoor.jp/roid2008/archives/50574239.html&quot;&gt;http://blog.livedoor.jp/roid2008/archives/50574239.html&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+</description>
+            <published>2012-07-28 00:00:00 +0900</published>
+            <link>http://akkunchoi.github.com/myisam-incorrect-key-file-for-table-try-to-repair-it.html</link>
+        </item>
+        
+        <item>
+            <title>Chrome拡張を使ってGoogle Analyticsの自分のアクセスを除外する</title>
+            <description>&lt;h1 id=&quot;chromegoogle-analytics&quot;&gt;Chrome拡張を使ってGoogle Analyticsの自分のアクセスを除外する&lt;/h1&gt;
+
+&lt;p&gt;IP固定の場合はIPフィルタリングすることもできるが、IP動的の場合はわざわざクッキーを設定しなければならなかった。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://chrome.google.com/webstore/detail/jmcpbefnpobogldglnlikgojpaddibgb&quot;&gt;Analytics blocker&lt;/a&gt;はURLにマッチしたサイトへのGoogle Analyticsへの送信をブロックするChrome拡張だ。
+これを使えば自分のサイトを登録するだけで、アクセスを除外できるのでとても簡単。&lt;/p&gt;
+
+&lt;p&gt;設定は例えばこのように。
+アスタリスクを忘れると、トップだけしかブロックしないので注意。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;akkunchoi.github.com/*
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ブロックできていれば、アドレスバーに赤い丸が表示される。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/posts/analytics-blocker.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://chrome.google.com/webstore/detail/jnkmfdileelhofjcijamephohjechhna&quot;&gt;Google Analytics Debugger&lt;/a&gt;を使っても確認できる。
+ブロックが成功していれば、トラッキングが送信されないはずだ。&lt;/p&gt;
+</description>
+            <published>2012-07-28 00:00:00 +0900</published>
+            <link>http://akkunchoi.github.com/google-analytics-exclusion-by-chrome-extension.html</link>
+        </item>
+        
+        <item>
+            <title>Apple Mail (Mail.app) がメモリをアホみたいに食う (MacOSX Snow Leopard)</title>
+            <description>&lt;h1 id=&quot;apple-mail-mailapp--macosx-snow-leopard&quot;&gt;Apple Mail (Mail.app) がメモリをアホみたいに食う (MacOSX Snow Leopard)&lt;/h1&gt;
+
+&lt;p&gt;Mail.appをしばらく使っていると、メモリを大量に消費するという現象にしばしば遭遇する（２年以上も前から発生してたかも）。&lt;/p&gt;
+
+&lt;p&gt;現在の環境は MBP, OSX10.6.8, Core2Duo, メモリ4GB, Mail.app 4.5(1084)&lt;/p&gt;
+
+&lt;p&gt;作業していると急に遅くなり、iStat Menuでメモリを見てみると Swap 8.00GB 、Mailがメモリを1.5GB以上使っている。CPUは10%程度。スワップによりHDDアクセスが増えて遅くなっているようだ。&lt;/p&gt;
+
+&lt;p&gt;使用しているアカウントは４つ。&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;gmail&lt;/li&gt;
+  &lt;li&gt;i.softbank.jp&lt;/li&gt;
+  &lt;li&gt;gmail (google apps)&lt;/li&gt;
+  &lt;li&gt;自サーバーのIMAP&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;アカウントの有効無効を繰り返した結果、gmailを切ると問題が発生しない。gmailは他のアカウントに比べてデータ量が半端ないのでもしかすると量も関係しているかもしれない。&lt;/p&gt;
+
+&lt;p&gt;色々試して見つけた解決の方法は２つ。&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;A. 何かわからないが処理をしているようなので、放っておく。数時間かかる。&lt;/li&gt;
+  &lt;li&gt;B. アカウントを無効 -&amp;gt; 有効にする。すぐ終わる。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;どちらかの方法を行えば、一時的に問題ない状態になる。A. の方法は時間がかかるが、なんとなくこちらの方が良い気がする。B. の方法は無理矢理だがすぐに解決できる。手順は以下の通り。&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;環境設定 &amp;gt; アカウント &amp;gt; Gmailのアカウント &amp;gt; 詳細
+    &lt;ul&gt;
+      &lt;li&gt;このアカウントを使用のチェックを外す&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Mail.appを再起動
+    &lt;ul&gt;
+      &lt;li&gt;問題ないことを確認&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Mail.appを再起動&lt;/li&gt;
+  &lt;li&gt;チェックを外したアカウントを有効にする&lt;/li&gt;
+  &lt;li&gt;メモとTODOの既定アカウントにしていた場合は再設定する
+    &lt;ul&gt;
+      &lt;li&gt;環境設定＞作成＞メモとTODO&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;ディスカッションに上がっているこれらは同じ問題だろうか。&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://discussions.apple.com/thread/2003573?start=0&amp;amp;tstart=0&quot;&gt;https://discussions.apple.com/thread/2003573?start=0&amp;amp;tstart=0&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://discussions.apple.com/thread/3454806?start=0&amp;amp;tstart=0&quot;&gt;https://discussions.apple.com/thread/3454806?start=0&amp;amp;tstart=0&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Mail.appのIMAPアクセスは不安定、Lionでも発生するらしい。&lt;/p&gt;
+
+</description>
+            <published>2012-07-28 00:00:00 +0900</published>
+            <link>http://akkunchoi.github.com/apple-mail-memory-problem.html</link>
+        </item>
+        
+        <item>
+            <title>Apple Mail (Mail.app) のメモをエクスポートする</title>
+            <description>&lt;h1 id=&quot;apple-mail-mailapp-&quot;&gt;Apple Mail (Mail.app) のメモをエクスポートする&lt;/h1&gt;
+
+&lt;p&gt;Apple Mail (Mail.app) のメモは保存が早く、iPhoneと同期できて重宝していたのだけど、&lt;a href=&quot;/apple-mail-memory-problem.html&quot;&gt;変な問題&lt;/a&gt; が解決できず、別のツールに乗り換えすることを検討してみた。&lt;/p&gt;
+
+&lt;p&gt;問題はエクスポートをどうするか。メモはgmailに保存しているので、最悪IMAPでアクセスすれば取得できるのだけど、良いスクリプトを発見。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://veritrope.com/tech/export-apple-mail-messages-and-notes-to-text-files/&quot;&gt;http://veritrope.com/tech/export-apple-mail-messages-and-notes-to-text-files/&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Apple MailをAppleScriptで操作してファイルに書き出すというスクリプト。
+期待通り１メモが１ファイルで保存された。
+これはすごい。製作者に感謝。
+AppleScript習得したら色んなことができそうだ。&lt;/p&gt;
+
+&lt;p&gt;使い方はの通り。&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;上記スクリプトをファイルに保存。&lt;/li&gt;
+  &lt;li&gt;AppleScriptエディタで開く。&lt;/li&gt;
+  &lt;li&gt;Apple Mailでエクスポートしたいメモを選択状態にして&lt;/li&gt;
+  &lt;li&gt;実行する。&lt;/li&gt;
+  &lt;li&gt;するとデスクトップの “Temp Export Folder” に保存される&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Notational Velocityに移行する予定なため、ファイル名の連番を消す（重複する場合は付ける）ように少し書き換えた。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://gist.github.com/2847462&quot;&gt;https://gist.github.com/2847462&lt;/a&gt;&lt;/p&gt;
+
+</description>
+            <published>2012-07-28 00:00:00 +0900</published>
+            <link>http://akkunchoi.github.com/apple-mail-memo-export.html</link>
+        </item>
+        
+        <item>
+            <title>wi-fiから位置情報を得る（ruby版、住所変換）</title>
+            <description>&lt;h1 id=&quot;wi-firuby&quot;&gt;wi-fiから位置情報を得る（ruby版、住所変換）&lt;/h1&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://unknownplace.org/memo/2012/07/21/1/&quot;&gt;OSX のコマンドラインから、wi-fi の情報をつかって位置情報を得る&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Ruby化して、住所変換機能を付けました。&lt;/p&gt;
+
+&lt;script src=&quot;https://gist.github.com/3157749.js?file=loc.rb&quot;&gt;&lt;/script&gt;
+
+</description>
+            <published>2012-07-22 00:00:00 +0900</published>
+            <link>http://akkunchoi.github.com/ruby-wifi-to-address.html</link>
+        </item>
+        
+        <item>
+            <title>Rails3 routes.rb まとめ</title>
+            <description>&lt;h1 id=&quot;rails3-routesrb-&quot;&gt;Rails3 routes.rb まとめ&lt;/h1&gt;
+
+&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#rails3-routesrb-&quot;&gt;Rails3 routes.rb まとめ&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#basics&quot;&gt;Basics&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#resources&quot;&gt;Resources&lt;/a&gt;        &lt;ul&gt;
+          &lt;li&gt;&lt;a href=&quot;#namespace&quot;&gt;Namespace&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#scope-controller&quot;&gt;Scope (Controller)&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#scope-path&quot;&gt;Scope (Path)&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#nested-resources&quot;&gt;Nested Resources&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#member&quot;&gt;member&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#collection&quot;&gt;collection&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#non-resourceful&quot;&gt;Non-Resourceful&lt;/a&gt;        &lt;ul&gt;
+          &lt;li&gt;&lt;a href=&quot;#dynamic&quot;&gt;dynamic&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#static&quot;&gt;static&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#defaults&quot;&gt;defaults&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#named&quot;&gt;named&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#glob&quot;&gt;glob&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#redirection&quot;&gt;redirection&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#root&quot;&gt;root&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#customized-resource&quot;&gt;Customized Resource&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#section&quot;&gt;こんなこともできました&lt;/a&gt;        &lt;ul&gt;
+          &lt;li&gt;&lt;a href=&quot;#resourcesmatch&quot;&gt;resourcesでmatchを使う&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#section-1&quot;&gt;参考&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;basics&quot;&gt;Basics&lt;/h2&gt;
+
+&lt;p&gt;ルーティングとはURLとコントローラー、アクションとのマッピング。
+Railsでは&lt;code&gt;config/routes.rb&lt;/code&gt;にDSLで記述する。
+Rails2とRails3ではかなり書き方が変わっている。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;resources&lt;/code&gt;を上手く使うのがコツのようだ。
+&lt;code&gt;resources&lt;/code&gt;を使うとリソース（って何なんだという話だけど）のCRUD（Create, Read, Update, Delete）を行うルーティングが生成される。これを使うと一貫性があり、記述量を減らすことができる。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://guides.rubyonrails.org/routing.html&quot;&gt;公式のガイド&lt;/a&gt;に沿って、まずは最もシンプルな例を試してみる。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# -- config/routes.rb
+
+match &quot;/patients/:id&quot; =&amp;gt; &quot;patients#show&quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;この一行で&lt;strong&gt;/patients/17 に HTTP GET すると、PatientsController の show アクションが呼ばれる&lt;/strong&gt;という設定になる。&lt;/p&gt;
+
+&lt;p&gt;また、ビューで&lt;code&gt;patient_path(patient_id)&lt;/code&gt;するとURL生成のヘルパーが使用できる(named_helperと言うらしい)
+_path ではなく _url にすると、host, port, path_prefix が付いたURLが生成できる。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;rake routes&lt;/code&gt;を実行すると、ルーティングの設定が確認できる。
+named_helperを&lt;code&gt;rails console&lt;/code&gt;で試す場合は&lt;code&gt;app.users_path&lt;/code&gt;で呼び出すことができる。&lt;/p&gt;
+
+&lt;p&gt;以上で基本終わり。以降設定の詳細を見ていく。&lt;/p&gt;
+
+&lt;p&gt;TODO named_helper生成の仕組み&lt;/p&gt;
+
+&lt;h2 id=&quot;resources&quot;&gt;Resources&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;#
+# HTTP Verb  Path             action  named_helper 
+# ---------  -----            ------  ----------
+# GET        /photos          index   photos_path 
+# GET        /photos/new      new     new_photo_path
+# POST       /photos          crete   photos_path
+# GET        /photos/:id      show    photo_path(:id)
+# GET        /photos/:id/edit edit    edit_photo_path(:id)
+# PUT        /photos/:id      update  photo_path(:id)
+# DELETE     /photos/:id      destroy photo_path(:id)
+
+resources :photos
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&quot;namespace&quot;&gt;Namespace&lt;/h3&gt;
+
+&lt;p&gt;namespaceはpathとcontrollerに付けられるprefix&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# HTTP Verb  Path               action  named_helper 
+# ---------  -----              ------  ----------
+# GET        /admin/photos      index   admin_photos_path 
+# GET        /admin/photos/new  new     new_admin_photo_path
+#   省略...
+# 
+
+namespace :admin do
+  resources :photos
+end
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&quot;scope-controller&quot;&gt;Scope (Controller)&lt;/h3&gt;
+
+&lt;p&gt;controllerのみprefix&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# HTTP Verb  Path         action  named_helper 
+# ---------  -----        ------  ----------
+# GET        /photos      index   photos_path 
+# GET        /photos/new  new     new_photo_path
+#   省略...
+# 
+
+scope :module =&amp;gt; &quot;admin&quot; do
+  resources :photos
+end
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;または&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;resources :photos, :module =&amp;gt; &quot;admin&quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&quot;scope-path&quot;&gt;Scope (Path)&lt;/h3&gt;
+
+&lt;p&gt;pathのみprefixを付ける場合場合&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# HTTP Verb  Path               action  named_helper 
+# ---------  -----              ------  ----------
+# GET        /admin/photos      index   photos_path 
+# GET        /admin/photos/new  new     new_photo_path
+#   省略...
+# 
+
+scope &quot;/admin&quot; do    
+  resources :photos
+end
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;または&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;resources :photos, :path =&amp;gt; '/admin/photos'
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code&gt;:path&lt;/code&gt;を使えば自由にパスを変更できる&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# GET  /hoge
+
+resources :photos, :path =&amp;gt; 'hoge' 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&quot;nested-resources&quot;&gt;Nested Resources&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;resources :photos do
+  resources :comments
+end 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;TODO&lt;/p&gt;
+
+&lt;h3 id=&quot;member&quot;&gt;member&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;# GET /photos/:id/preview
+
+resources :photos do
+  member do
+    get 'preview'
+  end
+end
+
+... or
+
+resources :photos do
+  get 'preview', :on =&amp;gt; :member
+end
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&quot;collection&quot;&gt;collection&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;# GET /photos/search
+
+resources :photos do
+  collection do
+    get 'search'
+  end
+end
+
+... or
+
+resources :photos do
+  get 'search', :on =&amp;gt; :collection
+end
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;non-resourceful&quot;&gt;Non-Resourceful&lt;/h2&gt;
+
+&lt;h3 id=&quot;dynamic&quot;&gt;dynamic&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;match ':controller(/:action(/:id))'
+
+# GET /photos/show/1/2
+# { :controller =&amp;gt; “photos”, :action =&amp;gt; “show”, :id =&amp;gt; “1”, :user_id =&amp;gt; “2” }
+match ':controller/:action/:id/:user_id'
+
+match ':controller(/:action(/:id))', :controller =&amp;gt; /admin\/[^\/]+/
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&quot;static&quot;&gt;static&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;# GET /photos/show/1/with_user/2
+# { :controller =&amp;gt; “photos”, :action =&amp;gt; “show”, :id =&amp;gt; “1”, :user_id =&amp;gt; “2” }
+match ':controller/:action/:id/with_user/:user_id'
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&quot;defaults&quot;&gt;defaults&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;# GET /photos/1
+# { :controller =&amp;gt; &quot;photos&quot;, :action =&amp;gt; &quot;show&quot;, :id =&amp;gt; &quot;1&quot;, :format =&amp;gt; &quot;jpg&quot;
+match 'photos/:id' =&amp;gt; 'photos#show', :defaults =&amp;gt; { :format =&amp;gt; 'jpg' }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&quot;named&quot;&gt;named&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;# logout_path, logout_url
+match 'exit' =&amp;gt; 'sessions#destroy', :as =&amp;gt; :logout
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;TODO&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;:via&lt;/li&gt;
+  &lt;li&gt;:constraints&lt;/li&gt;
+  &lt;li&gt;:subdomain&lt;/li&gt;
+  &lt;li&gt;Advanced Constraints&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;glob&quot;&gt;glob&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;# GET /photos/12               :other =&amp;gt; &quot;12&quot;
+# GET /photos/long/path/to/12, :other =&amp;gt; &quot;long/path/to/12&quot;.
+match 'photos/*other' =&amp;gt; 'photos#unknown'
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&quot;redirection&quot;&gt;redirection&lt;/h3&gt;
+
+&lt;p&gt;TODO&lt;/p&gt;
+
+&lt;h3 id=&quot;root&quot;&gt;root&lt;/h3&gt;
+
+&lt;p&gt;TODO&lt;/p&gt;
+
+&lt;h2 id=&quot;customized-resource&quot;&gt;Customized Resource&lt;/h2&gt;
+
+&lt;p&gt;TODO&lt;/p&gt;
+
+&lt;h2 id=&quot;section&quot;&gt;こんなこともできました&lt;/h2&gt;
+
+&lt;h3 id=&quot;resourcesmatch&quot;&gt;resourcesでmatchを使う&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;resources :users do
+  member do
+    match 'category/:category', :action =&amp;gt; :show, :as =&amp;gt; :category
+  end
+  resources :images do
+    collection do
+      match 'category/:category', :action =&amp;gt; :index, :as =&amp;gt; :category
+    end
+  end
+end
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;$ rake routes&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;category_user        /users/:id/category/:category(.:format)             users#show
+category_user_images /users/:user_id/images/category/:category(.:format) images#index
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;section-1&quot;&gt;参考&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;http://guides.rubyonrails.org/routing.html&quot;&gt;http://guides.rubyonrails.org/routing.html&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+</description>
+            <published>2012-07-20 00:00:00 +0900</published>
+            <link>http://akkunchoi.github.com/rails3-routes.html</link>
+        </item>
+        
+        <item>
+            <title>CentOS に ImageMagick, RMagick のインストール</title>
+            <description>&lt;h1 id=&quot;centos--imagemagick-rmagick-&quot;&gt;CentOS に ImageMagick, RMagick のインストール&lt;/h1&gt;
+
+&lt;p&gt;CentOS に ImageMagick と RMagick をインストールしました。CentOS 標準 yum の ImageMagick は古過ぎるそうなので、RPM,ソースからコンパイルの順でインストールしてみました。&lt;/p&gt;
+
+&lt;h2 id=&quot;rpm--imagemagick&quot;&gt;RPM から ImageMagickをインストールするが失敗&lt;/h2&gt;
+
+&lt;p&gt;まずは ImageMagick 公式が公開している RPM から入れてみる。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ wget http://www.imagemagick.org/download/linux/CentOS/x86_64/ImageMagick-6.7.8-3.x86_64.rpm
+$ sudo rpm -ivh ImageMagick-6.7.8-3.x86_64.rpm ImageMagick-6.7.8-3.x86_64.rpm
+
+エラー: 依存性の欠如:
+    libHalf.so.4()(64bit) は ImageMagick-6.7.8-3.x86_64 に必要とされています	libIex.so.4()(64bit) は ImageMagick-6.7.8-3.x86_64 に必要とされています
+    libIlmImf.so.4()(64bit) は ImageMagick-6.7.8-3.x86_64 に必要とされています
+    libImath.so.4()(64bit) は ImageMagick-6.7.8-3.x86_64 に必要とされています
+    libXt.so.6()(64bit) は ImageMagick-6.7.8-3.x86_64 に必要とされています
+    libfftw3.so.3()(64bit) は ImageMagick-6.7.8-3.x86_64 に必要とされています
+    libgs.so.8()(64bit) は ImageMagick-6.7.8-3.x86_64 に必要とされています
+    liblcms.so.1()(64bit) は ImageMagick-6.7.8-3.x86_64 に必要とされています	libltdl.so.3()(64bit) は ImageMagick-6.7.8-3.x86_64 に必要とされています	librsvg-2.so.2()(64bit) は ImageMagick-6.7.8-3.x86_64 に必要とされています
+    libwmflite-0.2.so.7()(64bit) は ImageMagick-6.7.8-3.x86_64 に必要とされています
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;libHalfってなんだよ。ソースからコンパイルする手順での成功例が多いのでそっちの方が早いかもしれない。&lt;/p&gt;
+
+&lt;h2 id=&quot;imagemagick-&quot;&gt;ソースから ImageMagick をインストール。成功。&lt;/h2&gt;
+
+&lt;p&gt;依存ライブラリを事前にインストール。入れてなければJPEGやPNGが変換できない。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ sudo yum install libjpeg-devel libpng-devel
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;make&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ wget http://www.imagemagick.org/download/ImageMagick.tar.gz
+$ tar zxvf ImageMagick.tar.gz
+$ cd ImageMagick-6.7.8-3
+$ ./configure
+$ make
+$ sudo make install
+$ convert -list format # JPEG,PNG があればOK
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;試してみる&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ convert hoge.jpg hoge.png # ..OK
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ImageMagick 6.7.8 をインストールできました。&lt;/p&gt;
+
+&lt;p&gt;ちなみにlibjpegを入れずにコンパイルした場合、実行時にフォーマットがないというエラーが出ます。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ convert star-off.jpg star-off.png 
+convert: no decode delegate for this image format
+
+$ convert -list format # JPEGがない
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;rmagick-&quot;&gt;RMagick をインストールする&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;$ cd 適当なディレクトリ
+$ vi Gemfile
+
+source 'https://rubygems.org'
+gem 'rmagick'
+
+$ bundle install --path bundle
+
+Gem::Installer::ExtensionBuildError: ERROR: Failed to build gem native extension.
+ 
+...
+ 
+Package MagickCore was not found in the pkg-config search path.
+Perhaps you should add the directory containing `MagickCore.pc'
+to the PKG_CONFIG_PATH environment variable
+No package 'MagickCore' found
+
+...
+
+Can't install RMagick 2.13.1. Can't find MagickWand.h.
+*** extconf.rb failed ***
+Could not create Makefile due to some reason, probably lack of
+necessary libraries and/or headers.  Check the mkmf.log file for more
+details.  You may need configuration options.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;PKG_CONFIG_PATH を設定しろとのこと&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
+
+$ bundle install --path bundle
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ビルドできました。&lt;/p&gt;
+
+&lt;p&gt;試してみる。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ bundle console
+
+irb(main):001:0&amp;gt; require &quot;RMagick&quot;
+LoadError: libMagickCore.so.5: cannot open shared object file: No such file or directory - /home/admin/downloads/rmagick-test/bundle/ruby/1.9.1/gems/rmagick-2.13.1/lib/RMagick2.so
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;shared objectが読み込めない。&lt;/p&gt;
+
+&lt;p&gt;ダイナミックリンクライブラリのパスを設定する。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ sudo vi /etc/ld.so.conf
+
+    /usr/local/lib
+
+$ sudo /sbin/ldconfig
+$ sudo /sbin/ldconfig -p | grep Magick
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;これでOKでした。&lt;/p&gt;
+
+&lt;h3 id=&quot;rmagick--1&quot;&gt;RMagick インストールの参考&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;http://qiita.com/items/6b1c6c7257042a159cc9&quot;&gt;http://qiita.com/items/6b1c6c7257042a159cc9&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://6rats.blog62.fc2.com/blog-entry-78.html&quot;&gt;http://6rats.blog62.fc2.com/blog-entry-78.html&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;section&quot;&gt;最後に&lt;/h2&gt;
+
+&lt;p&gt;CentOS6.3 だったので yum から ImageMagick 入れられました。めでたしめでたし。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ sudo make uninstall
+$ sudo vi /etc/ld.so.conf # 変更を削除
+$ sudo /sbin/ldconfig
+
+$ sudo yum install ImageMagick ImageMagick-devel
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ImagMagick バージョンは 6.5.4.7 です。RMagick2 は 6.3.5 以上なのでインストールできます。&lt;/p&gt;
+
+</description>
+            <published>2012-07-17 00:00:00 +0900</published>
+            <link>http://akkunchoi.github.com/imagemagick-rmagick-centos.html</link>
+        </item>
+        
+        <item>
+            <title>rbenv + ruby-build で ruby をインストール</title>
+            <description>&lt;h1 id=&quot;rbenv--ruby-build--ruby-&quot;&gt;rbenv + ruby-build で ruby をインストール&lt;/h1&gt;
+&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#rbenv--ruby-build--ruby-&quot;&gt;rbenv + ruby-build で ruby をインストール&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#macosx&quot;&gt;MacOSX&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#centos&quot;&gt;CentOS&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;macosx&quot;&gt;MacOSX&lt;/h1&gt;
+&lt;p&gt;rvmからよりシンプルな構成であるrbenv+ruby-buildに乗り換えたのでメモ。&lt;/p&gt;
+
+&lt;p&gt;方針gemはroot権限でbundlerのみ持たせて
+一般ユーザーが各自bundle installする&lt;/p&gt;
+
+&lt;p&gt;まずは rvm を削除。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ rvm implode
+# bashrc等に追加した読み込み設定を手動で削除する。
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;rbenv, ruby-build を homebrew でインストール。
+たったの５コマンドでOK。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ brew install rbenv
+$ if which rbenv &amp;gt; /dev/null; then eval &quot;$(rbenv init -)&quot;; fi
+$ brew install ruby-build
+$ rbenv install 1.9.3-p194 # バージョンを指定しなければ一欄が出る
+$ rbenv rehash
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;MacPortsでも下記CentOSの方法を使ってインストールできるかと思っていたが、上手くいかないらしい。portにruby1.9があるのでそれを使う方が良さそう。&lt;/p&gt;
+
+&lt;h1 id=&quot;centos&quot;&gt;CentOS&lt;/h1&gt;
+
+&lt;p&gt;CentOSにもrubyを入れる機会があったので、rbenvで入れてみる。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;/usr/local&lt;/code&gt;にroot権限でインストールし、ユーザー共通にする。
+gemはbundlerやpassengerのみ入れる。その他はアプリケーションごとにbundleで個別インストールさせる。このようにしておけば、グローバルな場所にgemライブラリをインストールする時にroot権限が必要になるのでわかりやすい。&lt;/p&gt;
+
+&lt;p&gt;まずは必要なライブラリをインストール&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ sudo yum -y update
+$ sudo yum -y install gcc kernel-devel zlib-devel openssl-devel readline-devel curl-devel libyaml-devel sqlite-devel
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ちなみに zlib-devel がない状態でrubyをコンパイルするとこんなエラーが出ます。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ERROR:  Loading command: install (LoadError)
+cannot load such file -- zlib
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;rbenvとruby-buildはgitから取得する。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ cd /usr/local/share
+$ git clone git://github.com/sstephenson/rbenv.git
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code&gt;/etc/profile.d/rbenv.sh&lt;/code&gt;を作成する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;export PATH=&quot;/usr/local/share/rbenv/bin:$PATH&quot;
+export RBENV_VERSION=&quot;1.9.3-p194&quot;
+export RBENV_DIR=/usr/local/share/rbenv
+export RBENV_ROOT=/usr/local/share/rbenv
+eval &quot;$(rbenv init -)&quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;権限設定して、読み込む。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ chmod 755 /etc/profile.d/rbenv.sh
+$ . /etc/profile.d/rbenv.sh
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ruby-buildのインストール&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ cd /usr/local/src
+$ sudo git clone git://github.com/sstephenson/ruby-build.git
+$ cd ruby-build
+$ sudo ./install.sh
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;rubyをインストール&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ rbenv install 1.9.3-p194
+$ rbenv rehash
+$ rbenv global 1.9.3-p194
+$ gem install bundler
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ロケーションとバージョンを確認&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ ruby -v
+$ which ruby
+$ gem -v 
+$ which gem
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;このままでは&lt;code&gt;sudo ruby&lt;/code&gt;や&lt;code&gt;sudo gem&lt;/code&gt;ができない。sudo時のパスが違うからだ。パスはsudoersによって管理されている。設定方法は２つある。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ visudo
+
+# env_keep設定で一般ユーザーのパスを引き継ぐようになる。
+# 一般ユーザーが`/usr/local/bin`パスを設定しておけば良い
+Defaults env_keep+=&quot;PATH&quot; 
+
+# またはsecure_pathでsudo時のパスを直接指定できる（セキュリティ的にどうなんだろうか）
+Defaults secure_path = &quot;/sbin:/bin:/usr/local/share/rbenv/shims:usr/local/bin:/usr/bin:&quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;基本的なことだけど、上手くいかない場合はパスの問題であることが多い。&lt;/p&gt;
+
+&lt;p&gt;パスの設定が間違っていると元々入っているrubyやgemやbundleが呼ばれる場合がある。
+&lt;code&gt;gem env&lt;/code&gt;や&lt;code&gt;echo $PATH&lt;/code&gt;などで常にどこにgemがインストールされるか、何が優先されるのかを把握しておくと良い。
+使う予定のない古いバージョンの実行ファイルは削除しておくと良い。&lt;/p&gt;
+
+</description>
+            <published>2012-07-15 00:00:00 +0900</published>
+            <link>http://akkunchoi.github.com/rbenv-ruby-build.html</link>
+        </item>
+        
+        <item>
+            <title>Jekyll + github pages を使って git + markdown でサイト構築</title>
+            <description>&lt;p&gt;&lt;a href=&quot;http://pages.github.com/&quot;&gt;github pages&lt;/a&gt;と&lt;a href=&quot;https://github.com/mojombo/jekyll/&quot;&gt;Jekyll&lt;/a&gt;を使ってサイト構築してみました。&lt;/p&gt;
+
+&lt;h2 id=&quot;section&quot;&gt;はじめに&lt;/h2&gt;
+
+&lt;p&gt;git + markdown でのサイト管理が便利そうなので、ホスティングまでできる&lt;a href=&quot;http://pages.github.com/&quot;&gt;github pages&lt;/a&gt;を使ってみました。&lt;/p&gt;
+
+&lt;p&gt;ちなみに&lt;a href=&quot;http://octopress.org/&quot;&gt;Octopress&lt;/a&gt;, &lt;a href=&quot;http://jekyllbootstrap.com/&quot;&gt;Jekyll bootstrap&lt;/a&gt;を使えばもっと簡単に設置できるとみたいです（後で知った）。&lt;/p&gt;
+
+&lt;h2 id=&quot;usernamegithubcom-&quot;&gt;[username].github.com の取得&lt;/h2&gt;
+
+&lt;p&gt;まずは github pages のユーザーページをセットアップ。&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;github &lt;a href=&quot;https://github.com/new&quot;&gt;Create a New Repo&lt;/a&gt; へ。&lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Repository name に “[username].github.com” と入力。[username]は自分のIDです。&lt;/p&gt;
+
+    &lt;p&gt;&lt;span style=&quot;color: grey&quot;&gt;
+  “username = 自分のユーザID” でない場合はドメインのルートにならず、パスを切るようです。
+  例えば akkunchoi.github.com/hoge.github.com になる。
+ &lt;/span&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;普通にリポジトリを作成する。&lt;/p&gt;
+
+    &lt;pre&gt;&lt;code&gt; mkdir username.github.com
+ cd username.github.com
+ git init
+ touch README
+ git add README
+ git commit -m 'first commit'
+ git remote add origin git@github.com:username/username.github.com
+ git push -u origin master
+&lt;/code&gt;&lt;/pre&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;リポジトリページの Admin から GitHub Pages 内の Automatic Page Generator で適当にテーマ選択。&lt;/p&gt;
+
+    &lt;div style=&quot;color: grey&quot;&gt;
+   自分のユーザIDをドメインにした場合（ID: akkunchoiならakkunchoi.github.com）はGeneratorのデータが自動的にmasterにマージされたが、そうでない場合は gh-pages ブランチに作成された。
+
+   また、README から HTML 作成ができるので、ペライチでいいなら Jekyll 使わなくてもいい。
+ &lt;/div&gt;
+  &lt;/li&gt;
+  &lt;li&gt;以上で github pages のセットアップ完了。&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;jekyll-&quot;&gt;Jekyll のインストール&lt;/h2&gt;
+
+&lt;p&gt;インストールはgemから。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ gem install jekyll
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;最初rvmで動作させていたのを忘れて、&lt;code&gt;sudo gem install jekyll&lt;/code&gt;してしまった。すると、違う場所に保存されたり、root権限になってたりでややこしいことになったが、uninstall して、&lt;code&gt;sudo&lt;/code&gt; せずに install で問題なくインストールできた。&lt;/p&gt;
+
+&lt;h2 id=&quot;jekyll--1&quot;&gt;Jekyll 用にファイルを配置する&lt;/h2&gt;
+
+&lt;p&gt;最低限必要なファイルは次の通り。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;/
+|-- _config.yml
+|-- _layouts
+     `-- default.html
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;_config.yml の内容はこんな感じで。&lt;a href=&quot;https://github.com/mojombo/jekyll/wiki/Configuration&quot;&gt;設定オプション一欄&lt;/a&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;auto: true
+server: true
+markdown: kramdown
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;当サイトの場合、default.html には Auto Generator で生成されたHTMLを元に作成しました。コンテンツ部分を &lt;code&gt;｛｛ content ｝｝&lt;/code&gt; に置き換えるだけです。&lt;/p&gt;
+
+&lt;p&gt;この作業には &lt;a href=&quot;http://radiumsoftware.tumblr.com/post/10518849682&quot;&gt;Radium Software&lt;/a&gt;さんの
+&lt;a href=&quot;https://github.com/unity-yb/unity-yb.github.com&quot;&gt;リポジトリ&lt;/a&gt;を参考にしました。&lt;/p&gt;
+
+&lt;h2 id=&quot;section-1&quot;&gt;ページを作成してみる&lt;/h2&gt;
+
+&lt;p&gt;index.md を作成します。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;---
+layout: default
+---
+
+## トップページです
+
+....
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code&gt;---&lt;/code&gt; で囲まれた部分はページのメタデータです。layoutは必須です。タイトル、カテゴリ、タグなども設定できます。詳細は&lt;a href=&quot;https://github.com/mojombo/jekyll/wiki/YAML-Front-Matter&quot;&gt;YAML-Front-Matter&lt;/a&gt;。&lt;/p&gt;
+
+&lt;p&gt;jekyllを起動&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ jekyll
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://localhost:4000&quot;&gt;http://localhost:4000&lt;/a&gt; で表示できればOKです。&lt;/p&gt;
+
+&lt;h2 id=&quot;section-2&quot;&gt;公開&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;push&lt;/code&gt; するだけでOK。 github pagesが内部でJekyllを動作させて、生成してくれます。http://[username].github.com/ で表示されていれば完了。&lt;/p&gt;
+
+&lt;p&gt;ただ、動的な出力を行うプラグインを入れていたり、使用できない処理を入れると失敗すことがある。&lt;/p&gt;
+
+&lt;p&gt;Octpressは、静的HTMLをローカルで生成してアップロードしているそうだ。動的な出力を行うプラグインを動作させるためにはこの方法にするか、自分でホスティングするしかなさそう。&lt;/p&gt;
+
+&lt;h2 id=&quot;section-3&quot;&gt;他わかったこと&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;_config.ymlに設定した変数はテンプレート内では site.hoge で取得できる。&lt;/li&gt;
+  &lt;li&gt;layout: nil でレイアウトなし出力できる。&lt;/li&gt;
+  &lt;li&gt;テンプレートエンジン &lt;a href=&quot;https://github.com/Shopify/liquid/wiki/Liquid-for-Designers&quot;&gt;Liquid デザイナー用マニュアル&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;Liquidの raw を使用すると Page build failure （ダブルブラケットが入力できない！）。&lt;/li&gt;
+&lt;/ul&gt;
+
+</description>
+            <published>2012-07-04 00:00:00 +0900</published>
+            <link>http://akkunchoi.github.com/jekyll-github-blogging.html</link>
+        </item>
+        
+        <item>
+            <title>Ruby Multi Hash</title>
+            <description>&lt;h2 id=&quot;ruby-&quot;&gt;Ruby 多次元ハッシュ&lt;/h2&gt;
+
+&lt;p&gt;PHPでこんなことをRubyでもやりたい。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$a = array();
+$a['foo']['bar']['fuga'] = 'hoge';
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;PHPのノリでやるとこうなる。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;gt; a = {}
+ =&amp;gt; {} 
+
+&amp;gt; a['foo']['bar'] = 'hoge'
+NoMethodError: undefined method `[]' for nil:NilClass
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Hashの場合、キーが存在しない場合の処理、というtrap::Hashなるものが作成できる。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# 存在しない場合の処理をブロックで渡す
+&amp;gt; a = Hash.new{ |hash,key| hash[key] = {} }
+ =&amp;gt; {}
+ 
+# foo は存在しないキーだが、ここで先ほどのブロックが発動
+#   a['foo'] = {} が呼び出された後に処理が実行されるのでエラーが発生しない
+# 
+&amp;gt; a['foo']['bar'] = 'hoge'
+ =&amp;gt; &quot;hoge&quot;
+&amp;gt; a
+ =&amp;gt; {&quot;foo&quot;=&amp;gt;{&quot;bar&quot;=&amp;gt;&quot;hoge&quot;}}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;しかし多次元になる場合、Arrayの場合はめんどくさい&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.ruby-lang.org/ja/old-man/html/Hash.html&quot;&gt;http://www.ruby-lang.org/ja/old-man/html/Hash.html&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://k.try-z.com/?p=264&quot;&gt;http://k.try-z.com/?p=264&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+</description>
+            <published>2012-06-29 00:00:00 +0900</published>
+            <link>http://akkunchoi.github.com/ruby-multi-hash.html</link>
+        </item>
+        
+        <item>
+            <title>Gitリファレンス</title>
+            <description>&lt;h1 id=&quot;git&quot;&gt;Gitリファレンス&lt;/h1&gt;
+
+&lt;p&gt;gitの使い方まとめ&lt;/p&gt;
+
+&lt;p&gt;最終更新日: 2012-07-20&lt;/p&gt;
+
+&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#git&quot;&gt;Gitリファレンス&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#basic---ok&quot;&gt;Basic - 基本（とりあえずこれ覚えればOK）&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#log---&quot;&gt;log - ログ&lt;/a&gt;        &lt;ul&gt;
+          &lt;li&gt;&lt;a href=&quot;#commit---amend--reset---hard-head-&quot;&gt;commit –amend や reset –hard HEAD^^ などで消えたコミットを確認する&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#commit---&quot;&gt;commit - コミット&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#branch---&quot;&gt;branch - ブランチ&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#merge---&quot;&gt;merge - マージ&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#tag---&quot;&gt;tag - タグ&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#remote---&quot;&gt;remote - 共有&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#submodule---&quot;&gt;submodule - サブモジュール&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#git-svn&quot;&gt;git-svn&lt;/a&gt;        &lt;ul&gt;
+          &lt;li&gt;&lt;a href=&quot;#git-svn-dcommit-idid&quot;&gt;git-svn dcommit できなかったのでコミットID見たら、違うIDになってた…。&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#git-svn-dcommit&quot;&gt;ローカルに未コミットの変更があるけどgit-svn-dcommitしたい&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#svnexternals&quot;&gt;svn:externalsのようなことをしたい&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#section&quot;&gt;空のディレクトリはバージョン管理できない&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#subversiongit&quot;&gt;複数のモジュールを含むSubversionリポジトリをGitへ移行する。&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#section-1&quot;&gt;部分的なチェックアウトできない&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#trunk-branches-tags&quot;&gt;trunk, branches, tags&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#etc---&quot;&gt;etc - その他&lt;/a&gt;        &lt;ul&gt;
+          &lt;li&gt;&lt;a href=&quot;#section-2&quot;&gt;過去のバージョンを取得、表示&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#section-3&quot;&gt;パッチを作って適用する&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#section-4&quot;&gt;コンフリクト状態が残ってしまった場合&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#mergeconflict&quot;&gt;mergeを実行したらconflictが大量に出てしまったので取り消したい&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#untracked&quot;&gt;untrackedなファイルを取り除きたい&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#merge--rebase-&quot;&gt;merge と rebase の違い&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#git-pullremote&quot;&gt;git pullでremoteを自動的に指定&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#section-5&quot;&gt;コミットの圧縮&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#section-6&quot;&gt;コミットを操作する&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#revert-&quot;&gt;revert コミットを打ち消す&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#section-7&quot;&gt;参考&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;basic---ok&quot;&gt;Basic - 基本（とりあえずこれ覚えればOK）&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;$ git init hoge # git リポジトリを作成。または...
+$ git clone hoge@example.com:myrepo.git # 外部から取得
+
+... some change
+
+$ git add *
+$ git commit -m &quot;my commit&quot;
+$ git status # 状態を見る
+$ git push origin master  # remoteに送信
+$ git pull # remoteの更新を取得
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;log---&quot;&gt;log - ログ&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;$ git log -p                # diffも出力する
+$ git log --stat            # 変更したファイルの一覧
+$ git log --pretty=oneline  #１行で
+$ git log --pretty=format:&quot;%h - %an, %ar : %s&quot; # 独自のフォーマットで
+$ git log --since=2.weeks   # 日付指定
+$ git log -[n]              # n件表示
+$ git log --graph --oneline # ブランチ・マージ状態の確認
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&quot;commit---amend--reset---hard-head-&quot;&gt;commit –amend や reset –hard HEAD^^ などで消えたコミットを確認する&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code&gt;$ git reflog
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;HEADの移り変わりを確認できる。ブランチの移動など。reset –hardした直後なら、reflogでコミットが確認できる。&lt;/p&gt;
+
+&lt;p&gt;この方法でも辿れなくなる場合はあるのでしょうか。&lt;/p&gt;
+
+&lt;h2 id=&quot;commit---&quot;&gt;commit - コミット&lt;/h2&gt;
+
+&lt;p&gt;この３手順で&lt;code&gt;svn commit&lt;/code&gt;とだいたい同じ動作になる。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ git add hoge.txt        # コミット前に `git add` でステージングが必要
+$ git commit -m &quot;message&quot; # -m オプションは同じ
+$ git push                # リモートに送信する
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;といっても、add するのが面倒な時は -a オプションが使用できる（add済みファイルに限る）。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ git commit -a hoge.txt
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;直前のコミットを書き換える。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ git commit --amend
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;直前のコミットをなかった事にして一つ前のコミット状態に戻す。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ git reset --hard HEAD^  # HEAD^で１つ前、HEAD^^で２つ前
+$ git reflog              # 間違えた場合は reflog で確認
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ステージング&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ git add hoge.txt
+$ git add -p hoge.txt # interactiveに部分的なステージングができる
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ステージングの取り消し&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ git reset HEAD hoge.txt
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;svn revertのようなもの。ステージングしていない変更の取り消し。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ git checkout -- hoge.txt
+$ git checkout -- . # こうするとカレントディレクトリ以下の全更新が消えるよ
+$ git checkout -p hoge.txt # interactiveに操作する
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;branch---&quot;&gt;branch - ブランチ&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://progit.org/book/ja/ch3-1.html&quot;&gt;http://progit.org/book/ja/ch3-1.html&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;HEAD&lt;/code&gt;とは「あなたが作業しているローカルブランチへのポインタ」&lt;/p&gt;
+
+&lt;p&gt;testing ブランチを作成（切り替えはしない）&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ git branch testing
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;切り替える&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ git checkout testing
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;作成して切り替える&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ git checkout -b issue53
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;merge---&quot;&gt;merge - マージ&lt;/h2&gt;
+
+&lt;p&gt;通常のマージはFast forward ポインタを前に進めるだけ。
+&lt;a href=&quot;http://keijinsonyaban.blogspot.jp/2010/10/successful-git-branching-model.html&quot;&gt;A Successful Git branching model&lt;/a&gt;では –no-ff オプション推奨。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ git merge issue53
+$ git merge --no-commit issue53 # &quot;Merged branch ...&quot; とコミットしない
+$ git merge --no-squash issue53 # 変更をワーキングツリーに適用する。
+                                # マージもコミットもしない。
+                                # ブランチ上での履歴は失われる。
+$ git merge --no-ff issue53     # Fast forwardを行わない。    
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;マージを取り消す場合も通常のコミット同様&lt;code&gt;reset --hard&lt;/code&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ git reset --hard HEAD
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code&gt;merge&lt;/code&gt;は二本に分かれた枝を一本に合わせる。 &lt;code&gt;rebase&lt;/code&gt;は枝が一本になるように作り直す。&lt;a href=&quot;#merge-and-rebase&quot;&gt;mergeとrebaseの違い&lt;/a&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ git rebase master
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;あるコミットの変更分だけを適用する。rebaseは連続して cherry-pick しているだけのもの。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ git cherry-pick {commit}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;tag---&quot;&gt;tag - タグ&lt;/h2&gt;
+
+&lt;p&gt;タグの一覧&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ git tag
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;タグを作成&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ git tag v0.1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;注釈付きタグの作成（コミットするかどうかの違いらしいが、どう使い分けるのかよくわかりません）&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ git tag -a v1.4 -m 'my version 1.4'
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;タグの共有
+    $ git push origin v1.5
+    $ git push origin –tags # 共有されてないもの全部
+    $ git push origin :missing_tag # リモートのタグを削除&lt;/p&gt;
+
+&lt;h2 id=&quot;remote---&quot;&gt;remote - 共有&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://progit.org/book/ja/ch3-5.html&quot;&gt;http://progit.org/book/ja/ch3-5.html&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;「こっちの serverfix で、リモートの awesomebranch を更新しろ」&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ git push origin serverfix:awesomebranch
+
+$ git push origin master
+$ git push                # track していれば省略できる
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;リモートにデータを送信&lt;/p&gt;
+
+&lt;p&gt;「こっちの (何もなし) で、向こうの [remotebranch] を更新しろ」&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ git push origin :serverfix
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ドッカーン。これでブランチはサーバーから消えてしまいました。&lt;/p&gt;
+
+&lt;p&gt;リモートのデータを取得&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ git fetch origin
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;fetchしたものとマージ&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ git merge origin/master
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;origin/serverfix が指す先から作業を開始するためのローカルブランチができあがりました。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ git checkout -b serverfix origin/serverfix
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;追跡ブランチ。cloneすると自動的に追跡ブランチする。これが引数なしでgit pushやgit pullが動作する理由。&lt;/p&gt;
+
+&lt;p&gt;これは同じ意味。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ git checkout --track origin/serverfix
+$ git checkout -b serverfix origin/serverfix
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;push時にもセットできる&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ git push -u origin master
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;pull は fetch と merge を自動でやってくれる&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ git pull
+$ git pull --rebase # mergeではなくrebaseします。
+                    # ちょっとしたローカルの変更がある場合に
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;リモートブランチを削除しても、別の場所してクローンされてるとずっと残る。追加は自動だけど削除は自動でしてくれない。そういう場合に prune を使う。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# 状態を確認する
+$ git remote show origin
+$ git remote prune origin
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;リポジトリを破壊します！&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ git push --force origin master
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;submodule---&quot;&gt;submodule - サブモジュール&lt;/h2&gt;
+
+&lt;p&gt;http://progit.org/book/ja/ch6-6.html&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ git submodule add git://github.com/chneukirchen/rack.git rack
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;submoduleのあるリポジトリをcloneした後、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ git submodule init
+$ git submodule update
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;サブモジュールの外部の変更を取り込むには毎回これをやる&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ git merge origin/master
+$ git submodule update
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;サブモジュールはあるポイントしか見ない！！親プロジェクトはそのポイントを記録する&lt;/p&gt;
+
+&lt;p&gt;問題点。特定のバージョンをポイントしている（detached head）ので、git submodule updateで手元の変更が失われやすい&lt;/p&gt;
+
+&lt;p&gt;.gitmodulesを見ればわかる&lt;/p&gt;
+
+&lt;p&gt;サブモジュールを削除&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt; .git/config の該当モジュールを削除
+
+$ git rm --cached path/to/hoge
+$ git commit
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;git-svn&quot;&gt;git-svn&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://progit.org/book/ja/ch8-1.html&quot;&gt;http://progit.org/book/ja/ch8-1.html&lt;/a&gt;
+&lt;a href=&quot;http://d.hatena.ne.jp/idesaku/20090323/1237825080&quot;&gt;http://d.hatena.ne.jp/idesaku/20090323/1237825080&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;svn checkoutのようなもの
+svnからgitリポジトリを作成。 -s(standard)オプションはsvnのtrunk/branches/tags構成をそのままインポートする&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ git svn clone file:///tmp/test-svn -s
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;svnのデータだけ取得&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ git svn fetch
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;svn upのようなもの
+svnのデータを取り込む&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ git svn rebase
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;svn commitのようなもの
+svnにコミット。gitのコミットIDが書き換わる！注意！
+コミットできたらgit-svn-id属性が付く。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ git svn dcommit
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;git-svnで削除されたリモートブランチをローカルでも削除する方法&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ git branch -r -d my-remote-branch
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;svnにブランチ作成&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ git svn branch new_branch_name
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;svnにタグ作成&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ git svn tag new_tag_name
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&quot;git-svn-dcommit-idid&quot;&gt;git-svn dcommit できなかったのでコミットID見たら、違うIDになってた…。&lt;/h4&gt;
+
+&lt;p&gt;patch を作成する&lt;/p&gt;
+
+&lt;h4 id=&quot;git-svn-dcommit&quot;&gt;ローカルに未コミットの変更があるけどgit-svn-dcommitしたい&lt;/h4&gt;
+
+&lt;p&gt;stashを使う&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ git stash
+$ git svn dcommit
+$ git stash apply
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&quot;svnexternals&quot;&gt;svn:externalsのようなことをしたい&lt;/h4&gt;
+
+&lt;p&gt;git submoduleを使う。&lt;/p&gt;
+
+&lt;p&gt;移行スクリプト。でもうまくいかなかった…&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://github.com/garbas/garbasgit.svnexternals&quot;&gt;http://github.com/garbas/garbasgit.svnexternals&lt;/a&gt;
+via &lt;a href=&quot;http://d.hatena.ne.jp/Sixeight/20090210/1234272295&quot;&gt;http://d.hatena.ne.jp/Sixeight/20090210/1234272295&lt;/a&gt;&lt;/p&gt;
+
+&lt;h4 id=&quot;section&quot;&gt;空のディレクトリはバージョン管理できない&lt;/h4&gt;
+
+&lt;p&gt;.gitignoreとか何でもいいから空ファイルを作成すればOK。&lt;/p&gt;
+
+&lt;h4 id=&quot;subversiongit&quot;&gt;複数のモジュールを含むSubversionリポジトリをGitへ移行する。&lt;/h4&gt;
+
+&lt;p&gt;http://iteman.jp/blog/2009/02/subversiongit.html&lt;/p&gt;
+
+&lt;h4 id=&quot;section-1&quot;&gt;部分的なチェックアウトできない&lt;/h4&gt;
+
+&lt;p&gt;svn checkout はパスを指定すればどの階層でもワーキングコピーを作成できる。
+git clone すると今までの履歴含め、全てをコピーしなければならない。
+なのでプロジェクト/モジュールごとにリポジトリを作成するのがベストだろう。&lt;/p&gt;
+
+&lt;p&gt;そのため、ディレクトリ同士のマージができない。これはどうにもできないかも。&lt;/p&gt;
+
+&lt;h4 id=&quot;trunk-branches-tags&quot;&gt;trunk, branches, tags&lt;/h4&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Subversionはディレクトリ構造として表現&lt;/li&gt;
+  &lt;li&gt;Gitはbranchesとtagsが別のシステムになっている。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;etc---&quot;&gt;etc - その他&lt;/h2&gt;
+
+&lt;h3 id=&quot;section-2&quot;&gt;過去のバージョンを取得、表示&lt;/h3&gt;
+
+&lt;p&gt;特定のファイルを特定のバージョンに戻す。commit_id はブランチやタグ名、コミットIDなど。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ git checkout commit_id path/to/file
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;単に表示する場合は&lt;code&gt;git show&lt;/code&gt;で。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ git show commit_id:path/to/file
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&quot;section-3&quot;&gt;パッチを作って適用する&lt;/h3&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://blog.s21g.com/articles/680&quot;&gt;http://blog.s21g.com/articles/680&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;直前のコミットとその前との差分でパッチを作成する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ git format-patch -r HEAD~
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;パッチを適用する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ git am 0001-hoge.patch
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&quot;section-4&quot;&gt;コンフリクト状態が残ってしまった場合&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;# このようなメッセージがでた場合
+You have not concluded your merge (MERGE_HEAD exists).
+Please, commit your changes before you can merge
+
+$ git reset --merge
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&quot;mergeconflict&quot;&gt;mergeを実行したらconflictが大量に出てしまったので取り消したい&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;$ git reset --hard ORIG_HEAD
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&quot;untracked&quot;&gt;untrackedなファイルを取り除きたい&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;$ git clean -f
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&quot;merge--rebase-&quot;&gt;merge と rebase の違い&lt;/h3&gt;
+
+&lt;p&gt;masterのHEADはポイントAにあるとする&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;(master) ---A
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Aからブランチしたworkingを作成し、Bまで進める&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;(master) ---A 
+             \
+(working)     \----- B
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;そこからさらに masterでも変更し A’ まで進めたとする&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;(master) -- A ------------ A'
+             \
+(working)     \----- B
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;この状態で、&lt;/p&gt;
+
+&lt;p&gt;(master) git merge working した場合
+A’に B がマージされて C になる。
+C の HEAD^（一つ前） は A’&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;(master) ---A ------------ A' ---- C
+             \                   /
+(working)     \-----B------------
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;(master) git rebase working した場合
+コミットA’の存在はmasterからはなくなって、
+Bからの続きとして AからA’の差分がマージされて A’’ になる
+A’’ の HEAD^ は B&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;First, rewinding head to replay your work on top of it...
+Applying: commit B
+
+(master) ---A         ------ A''
+             \       /
+(working)     \-----B
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;mergeはブランチの履歴を残して一本にするけど、rebaseすると履歴も含めて一本に作り直す。そのためrebaseは注意が必要。&lt;/p&gt;
+
+&lt;h3 id=&quot;git-pullremote&quot;&gt;git pullでremoteを自動的に指定&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;#
+# remoteが指定されてない(trackしてない)場合はリモート指定なしで git pull しても「わからないよ」と言われる
+#
+(master) $ git pull
+
+You asked me to pull without telling me which branch you
+want to merge with, and 'branch.master.merge' in
+your configuration file does not tell me, either. Please
+specify which branch you want to use on the command line and
+try again (e.g. 'git pull &amp;lt;repository&amp;gt; &amp;lt;refspec&amp;gt;').
+See git-pull(1) for details.
+
+If you often merge with the same branch, you may want to
+use something like the following in your configuration file:
+
+    [branch &quot;master&quot;]
+    remote = &amp;lt;nickname&amp;gt;
+    merge = &amp;lt;remote-ref&amp;gt;
+    
+    [remote &quot;&amp;lt;nickname&amp;gt;&quot;]
+    url = &amp;lt;url&amp;gt;
+    fetch = &amp;lt;refspec&amp;gt;
+
+See git-config(1) for details.
+
+# 解決法１
+# 手動で指定
+#
+(master) $ git pull origin master
+
+# 解決法２
+# configで指定
+#
+$ vi .git/config
+
+[branch &quot;master&quot;]
+    remote = origin
+    merge = refs/heads/master
+
+# 解決法３
+# これだけでOK
+$ git push -u origin master    
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&quot;section-5&quot;&gt;コミットの圧縮&lt;/h3&gt;
+
+&lt;p&gt;マージするときにひとつのコミットにまとめる。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;git merge --squash something-new-feature
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;または git rebase -i でsquash する。（後述）&lt;/p&gt;
+
+&lt;h3 id=&quot;section-6&quot;&gt;コミットを操作する&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;# コミット２つあったとする
+git commit -am &quot;hoge&quot;
+git commit -am &quot;moge&quot;
+
+git rebase -i head^^
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;するとエディターが開かれる。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;pick 59d6190 hoge
+pick 0149644 moge
+
+# Rebase 36fde72..0149644 onto 36fde72
+# ...
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;この行を修正して保存することで、指示通りにrebaseが行われる。
+コマンドはコメントに書かれてある。&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;pick はそのままコミットを使う&lt;/li&gt;
+  &lt;li&gt;reword は保存後にrebaseが走るので、その時にコミットメッセージを変更するエディタが走る。（注：rebase -i した中でのコメントを変更するのではない。）&lt;/li&gt;
+  &lt;li&gt;edit はamendするためにストップする？よくわからん。&lt;/li&gt;
+  &lt;li&gt;squash は一つ前のコミットと結合する。コミットメッセージはrebaseで選択する。&lt;/li&gt;
+  &lt;li&gt;fixup は一つ前のコミットと結合する。コミットメッセージは前のが使われる。&lt;/li&gt;
+  &lt;li&gt;exec はshellを走らせるらしい。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;で、行を消すとそのコミットが失われる。でも全部消すとrebaseは中止になる。&lt;/p&gt;
+
+&lt;h3 id=&quot;revert-&quot;&gt;revert コミットを打ち消す&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;$ git revert commit_id
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;http://d.hatena.ne.jp/miau/20100709/1278699637&lt;/p&gt;
+
+&lt;h1 id=&quot;section-7&quot;&gt;参考&lt;/h1&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;http://git-scm.com/book/ja&quot;&gt;Pro Git&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://keijinsonyaban.blogspot.jp/2011/05/git.html&quot;&gt;Gitをボトムアップから理解する&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://keijinsonyaban.blogspot.jp/2010/10/successful-git-branching-model.html&quot;&gt;A Successful Git Branching Model&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+            <published>2012-06-01 00:00:00 +0900</published>
+            <link>http://akkunchoi.github.com/git-ref.html</link>
+        </item>
+        
+
+    </channel>
+</rss>

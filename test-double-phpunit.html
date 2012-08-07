@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Akkunchoi.github.com : " />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="/stylesheets/stylesheet.css">
+
+    <title>Test DoubleとPHPUnit | akkunchoi@github</title>
+    <link rel="alternate" type="application/rss+xml" title="RSS Feed for mysite.com" href="/feed.xml" />
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/akkunchoi">View on GitHub</a>
+
+          <h1 id="project_title">
+            <a href="/">akkunchoi.github.com</a>
+          </h1>
+          <h2 id="project_tagline"></h2>
+
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+
+      <h1 id="test-doublephpunit">Test DoubleとPHPUnit</h1>
+
+<h2 id="test-double">Test Doubleについて</h2>
+
+<p>単体テストを書く時に問題になるのが、依存コンポーネントの扱いだ。例えばデータベースが必要だったり、外部サービスへの接続が必要だったりすると、テストごとに毎回セットアップしていたら途方も無い時間がかかるし、そもそも依存関係が複雑でテストができない場合もある。</p>
+
+<p>このような場合に、実際のオブジェクトではなく代役（Double）のオブジェクトを使うのが Test Doubleというテスト技法だ。Test Doubleにはスタブ、モック、フェイク、ダミーなど様々な手法がある。</p>
+
+<p>特に重要で間違いやすいのが「モック」と「スタブ」だ。英単語では「モック」は模造品、「スタブ」は切り株、切り残しという意味だが、Test Doubleにおいては「モック」は出力の確認、「スタブ」は入力の差し替えを意味する。</p>
+
+<p><a href="http://xunitpatterns.com/Test%20Double.html">xUnit Patterns</a> にTest Doubleのより詳しい解説がある。Test Doubleを使用する理由は、テスト対象オブジェクト（SUT: System Under Test）が、あるコンポーネントに依存（DOC: depended-on component）するために、「 出力を確認できない」「 入力を設定できない」「 遅い」という原因によりテストが困難になるからである。</p>
+
+<h2 id="phpunit">PHPUnitの例</h2>
+
+<p>例として、CMS的なシステムを考える。テスト対象オブジェクト Page は作成者を意味する User と永続化を行う Database に依存している。</p>
+
+<p>テスト対象オブジェクト</p>
+
+<pre><code>class Page{
+  protected $user;
+  protected $title;
+  protected $body;
+  protected $database;
+
+  public function setUser($user) {
+    $this-&gt;user = $user;
+  }
+
+  public function setTitle($title) {
+    $this-&gt;title = $title;
+  }
+
+  public function setBody($body) {
+    $this-&gt;body = $body;
+  }
+
+  public function setDatabase(Database $database){
+    $this-&gt;database = $database;
+  }
+
+  public function save(){
+    $s = sprintf(
+      '%s wrote: "%s" %s', $this-&gt;user-&gt;getName(), $this-&gt;title, $this-&gt;body
+    );
+    $this-&gt;database-&gt;write($this-&gt;title, $s);
+  }
+}
+</code></pre>
+
+<p>依存コンポーネントの Database と User</p>
+
+<pre><code>interface Database{
+  public function write();
+}
+
+interface User{
+  public function getName();
+}
+</code></pre>
+
+<p>Pageのsaveメソッドをテストするには Database と User が必要である。しかし、Pageをテストするためだけなのに、わざわざ Database や User をインスタンス化する必要は全くない。User::getNameでダミーの値を返すようにしたり、 Database::write メソッドで何が与えられたか確認するだけで十分だ。</p>
+
+<p>PHPUnitにはモックとスタブの生成機能がある。どちらも getMock というメソッドで生成できる。テストコードはこのようになる。</p>
+
+<pre><code>class PageTest extends PHPUnit_Framework_TestCase{
+  public function testSave(){
+    // モック
+    $dbMock = $this-&gt;getMock('Database');
+    $dbMock-&gt;expects($this-&gt;once())
+            -&gt;method('write')
+            -&gt;with($this-&gt;equalTo('New Title'), $this-&gt;equalTo('aaa wrote: "New Title" New Text'));
+
+    // スタブ
+    $userStub = $this-&gt;getMock('User');
+    $userStub-&gt;expects($this-&gt;any())
+            -&gt;method('getName')
+            -&gt;will($this-&gt;returnValue('aaa'));
+
+    // Exercise
+    $page = new Page();
+    $page-&gt;setDatabase($dbMock);
+    $page-&gt;setUser($userStub);
+    $page-&gt;setBody('New Text');
+    $page-&gt;setTitle('New Title');
+
+    // Verify
+    $page-&gt;save();
+  }
+}
+</code></pre>
+
+<p>getMock メソッドによりモックを生成する。普通のクラスだけでなく、インタフェースでも抽象クラスでも良い。オプションでコンストラクタを実行するかどうかも制御できる。</p>
+
+<pre><code>$dbMock = $this-&gt;getMock('Database');
+</code></pre>
+
+<p>expects メソッドでどのような動作をするかをの設定を開始し、引数に何度呼ばれるべきかを設定する。<code>$this-&gt;once()</code>の他には any, never, atLeastOnce, once, exactly, at が利用できる。スタブとして生成するならコール回数の確認を行わない <code>$this-&gt;any()</code> にする。</p>
+
+<p>method メソッドでどのメソッドについての動作か指定する。</p>
+
+<p>with メソッドでexpectation を設定し、will メソッドで戻り値を設定する。</p>
+
+<pre><code>$dbMock-&gt;expects($this-&gt;once())
+        -&gt;method('write')
+        -&gt;with($this-&gt;equalTo('New Title'), $this-&gt;equalTo('aaa wrote: "New Title" New Text'));
+</code></pre>
+
+<p>このように、依存コンポーネントのimplementが存在しないにもかかわらず、対象オブジェクトがテストできるというのはとても強力だ。</p>
+
+<p>しかしPHPUnitのモック生成機能はわかりにくい（覚えにくい）。</p>
+
+<p>他にもSimpleTestがモック生成機能をサポートしていたり、Mockery, Phakeといったモック生成ライブラリがあるらしいので、そのうち調べてみようと思う。</p>
+
+<h2 id="section">参考</h2>
+
+<ul>
+  <li><a href="http://capsctrl.que.jp/kdmsnr/wiki/bliki/?TestDouble">bliki</a></li>
+  <li><a href="http://xunitpatterns.com/Test%20Double.html">xUnit Patterns</a></li>
+  <li><a href="http://www.phpunit.de/manual/3.6/ja/test-doubles.html">PHPUnit</a></li>
+</ul>
+
+
+
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    <script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-31706657-3']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+
+  </body>
+</html>

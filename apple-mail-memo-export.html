@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Akkunchoi.github.com : " />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="/stylesheets/stylesheet.css">
+
+    <title>Apple Mail (Mail.app) のメモをエクスポートする | akkunchoi@github</title>
+    <link rel="alternate" type="application/rss+xml" title="RSS Feed for mysite.com" href="/feed.xml" />
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/akkunchoi">View on GitHub</a>
+
+          <h1 id="project_title">
+            <a href="/">akkunchoi.github.com</a>
+          </h1>
+          <h2 id="project_tagline"></h2>
+
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+
+      <h1 id="apple-mail-mailapp-">Apple Mail (Mail.app) のメモをエクスポートする</h1>
+
+<p>Apple Mail (Mail.app) のメモは保存が早く、iPhoneと同期できて重宝していたのだけど、<a href="/apple-mail-memory-problem.html">変な問題</a> が解決できず、別のツールに乗り換えすることを検討してみた。</p>
+
+<p>問題はエクスポートをどうするか。メモはgmailに保存しているので、最悪IMAPでアクセスすれば取得できるのだけど、良いスクリプトを発見。</p>
+
+<p><a href="http://veritrope.com/tech/export-apple-mail-messages-and-notes-to-text-files/">http://veritrope.com/tech/export-apple-mail-messages-and-notes-to-text-files/</a></p>
+
+<p>Apple MailをAppleScriptで操作してファイルに書き出すというスクリプト。
+期待通り１メモが１ファイルで保存された。
+これはすごい。製作者に感謝。
+AppleScript習得したら色んなことができそうだ。</p>
+
+<p>使い方はの通り。</p>
+
+<ol>
+  <li>上記スクリプトをファイルに保存。</li>
+  <li>AppleScriptエディタで開く。</li>
+  <li>Apple Mailでエクスポートしたいメモを選択状態にして</li>
+  <li>実行する。</li>
+  <li>するとデスクトップの “Temp Export Folder” に保存される</li>
+</ol>
+
+<p>Notational Velocityに移行する予定なため、ファイル名の連番を消す（重複する場合は付ける）ように少し書き換えた。</p>
+
+<p><a href="https://gist.github.com/2847462">https://gist.github.com/2847462</a></p>
+
+
+
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    <script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-31706657-3']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+
+  </body>
+</html>
