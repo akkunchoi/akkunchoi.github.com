@@ -1,7 +1,14 @@
 #!/bin/sh
 
+if [ ! -d _deploy ]
+then
+  git clone git@github.com:akkunchoi/akkunchoi.github.com.git _deploy
+fi
+
 cp -r _site/* _deploy
 cd _deploy
 git add .
 git commit -m "update"
 git push
+
+# TODO delete file

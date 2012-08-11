@@ -16,3 +16,5 @@ permalink: /:categories/:title.html
 
 tag_title_prefix: "["
 tag_title_suffix: "]"
+
+exclude: [deploy, newpost]
