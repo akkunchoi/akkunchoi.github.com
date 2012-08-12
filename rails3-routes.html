@@ -44,205 +44,331 @@
   </header>
   <div class="posts-content">
   <ul id="markdown-toc">
-  <li><a href="#basics">Basics</a></li>
-  <li><a href="#resources">Resources</a>    <ul>
-      <li><a href="#namespace">Namespace</a></li>
-      <li><a href="#scope-controller">Scope (Controller)</a></li>
-      <li><a href="#scope-path">Scope (Path)</a></li>
-      <li><a href="#nested-resources">Nested Resources</a></li>
-      <li><a href="#member">member</a></li>
-      <li><a href="#collection">collection</a></li>
+  <li><a href="#section">はじめに</a></li>
+  <li><a href="#rails">ルーティングとRails</a></li>
+  <li><a href="#resource-routing">Resource Routing</a>    <ul>
+      <li><a href="#resources---">resources - 基本</a></li>
+      <li><a href="#resource---id">resource - idを伴わない場合</a></li>
+      <li><a href="#namespace---path-and-controller-prefix">namespace - path and controller prefix</a></li>
+      <li><a href="#scope---controller-prefix">scope - controller prefix</a></li>
+      <li><a href="#scope---path-prefix">scope - path prefix</a></li>
+      <li><a href="#nested-resources---hasmany">Nested Resources - has_manyな場合</a></li>
+      <li><a href="#member-collection---">member, collection - ルーティングを追加</a></li>
+      <li><a href="#membercollection--match-">member,collection と match の合わせ技</a></li>
     </ul>
   </li>
-  <li><a href="#non-resourceful">Non-Resourceful</a>    <ul>
+  <li><a href="#non-resourceful-routes">Non-Resourceful Routes</a>    <ul>
       <li><a href="#dynamic">dynamic</a></li>
       <li><a href="#static">static</a></li>
+      <li><a href="#query-strings">query strings</a></li>
       <li><a href="#defaults">defaults</a></li>
-      <li><a href="#named">named</a></li>
+      <li><a href="#naming---match">naming - matchでも名前を付ける</a></li>
+      <li><a href="#constraints-http-verb---http">constraints (HTTP verb) - HTTPメソッドで制約する</a></li>
+      <li><a href="#constraints-parameter---">constraints (parameter) - パラメータに制約する</a></li>
+      <li><a href="#constraints-request---">constraints (request) - リクエストで制約をする</a></li>
+      <li><a href="#advanced-constraints---">Advanced Constraints - 制約クラス</a></li>
       <li><a href="#glob">glob</a></li>
       <li><a href="#redirection">redirection</a></li>
+      <li><a href="#rack">Rack</a></li>
       <li><a href="#root">root</a></li>
     </ul>
   </li>
   <li><a href="#customized-resource">Customized Resource</a></li>
-  <li><a href="#section">こんなこともできました</a>    <ul>
+  <li><a href="#section-1">こんなこともできました</a>    <ul>
       <li><a href="#resourcesmatch">resourcesでmatchを使う</a></li>
     </ul>
   </li>
-  <li><a href="#section-1">参考</a></li>
+  <li><a href="#section-2">参考</a></li>
 </ul>
 
-<h2 id="basics">Basics</h2>
+<h2 id="section">はじめに</h2>
 
-<p>ルーティングとはURLとコントローラー、アクションとのマッピング。
-Railsでは<code>config/routes.rb</code>にDSLで記述する。
-Rails2とRails3ではかなり書き方が変わっている。</p>
+<p>これはRails3のルーティングを理解するための自分用メモです。</p>
 
-<p><code>resources</code>を上手く使うのがコツのようだ。
-<code>resources</code>を使うとリソース（って何なんだという話だけど）のCRUD（Create, Read, Update, Delete）を行うルーティングが生成される。これを使うと一貫性があり、記述量を減らすことができる。</p>
+<h2 id="rails">ルーティングとRails</h2>
 
-<p><a href="http://guides.rubyonrails.org/routing.html">公式のガイド</a>に沿って、まずは最もシンプルな例を試してみる。</p>
+<p>ルーティングとは「URL」と「コントローラー、アクション、パラメータ」とのマッピングのこと。</p>
+
+<p><a href="http://guides.rubyonrails.org/routing.html">公式のガイド</a>にはこう書いてある。</p>
+
+<blockquote>
+  <p>The Rails router recognizes URLs and dispatches them to a controller’s action. It can also generate paths and URLs, avoiding the need to hardcode strings in your views.</p>
+
+  <p>訳: RailsのルーターはURLを確認して、コントローラのアクションに処理を振り分けまする。また、パスやURLを生成することで、ビューへのハードコード避けることもできます。</p>
+</blockquote>
+
+<p>「URL =&gt; アクション」だけでなく、「アクション =&gt; URL」も可能だそうだ。</p>
+
+<p>ガイドに沿って、まずは最もシンプルな例を試してみる。Railsでは<code>config/routes.rb</code>にDSLで記述する。Rails2とRails3ではかなり書き方が違うので注意する（後方互換性はある？）。</p>
 
 <pre><code># -- config/routes.rb
 
 match "/patients/:id" =&gt; "patients#show"
 </code></pre>
 
-<p>この一行で<strong>/patients/17 に HTTP GET すると、PatientsController の show アクションが呼ばれる</strong>という設定になる。</p>
+<p>この一行で「<code>/patients/17</code> に HTTP GET すると、PatientsController の show アクションが呼ぶ」という設定になる。</p>
 
-<p>また、ビューで<code>patient_path(patient_id)</code>するとURL生成のヘルパーが使用できる(named_helperと言うらしい)
-_path ではなく _url にすると、host, port, path_prefix が付いたURLが生成できる。</p>
+<p>さらに（resourcesなどで設定していれば）ビューではこのような記述ができる</p>
 
-<p><code>rake routes</code>を実行すると、ルーティングの設定が確認できる。
-named_helperを<code>rails console</code>で試す場合は<code>app.users_path</code>で呼び出すことができる。</p>
-
-<p>以上で基本終わり。以降設定の詳細を見ていく。</p>
-
-<p>TODO named_helper生成の仕組み</p>
-
-<h2 id="resources">Resources</h2>
-
-<pre><code>#
-# HTTP Verb  Path             action  named_helper 
-# ---------  -----            ------  ----------
-# GET        /photos          index   photos_path 
-# GET        /photos/new      new     new_photo_path
-# POST       /photos          crete   photos_path
-# GET        /photos/:id      show    photo_path(:id)
-# GET        /photos/:id/edit edit    edit_photo_path(:id)
-# PUT        /photos/:id      update  photo_path(:id)
-# DELETE     /photos/:id      destroy photo_path(:id)
-
-resources :photos
+<pre><code># @patient = Patient.find(17)
+&lt;%= link_to "Patient Record", patient_path(@patient) %&gt;
 </code></pre>
 
-<h3 id="namespace">Namespace</h3>
+<p><code>patient_path(@patient)</code> は <code>/patients/17</code> を返す。これを<strong>named helper</strong>と呼ぶらしい。</p>
+
+<p>Railsでは「パス」と「URL」を区別している。URLはスキーム、ドメイン名を含む文字列<code>http://example.com/hoge/moge/</code>でパスは<code>/hoge/moge</code>の部分。ふだんはパスを使って、必要な時だけURLを使うようにするといい。<code>patient_url(@patient)</code>でURLを取得できる。</p>
+
+<p>コンソールから<code>rake routes</code>を実行すると、ルーティングの設定を確認できる。これはroutes.rbを書き換えた後や、現在の構成を確認したい場合など、頻繁に使うことになるだろう。</p>
+
+<p>named helperを<code>rails console</code>で試す場合は<code>app.users_path</code>で呼び出すことができる。</p>
+
+<p>Railsでのルーティングは<code>resources</code>を上手く使うのがコツらしい。
+<code>resources</code>を使うとリソース（って何なんだという話だけど）のCRUD（Create, Read, Update, Delete）を行うルーティングが一度に生成される。これを使うと一貫性があり、記述量を減らすことができる。詳しくは<a href="http://ja.wikipedia.org/wiki/REST">REST</a>へ。</p>
+
+<h2 id="resource-routing">Resource Routing</h2>
+
+<p>基本の設定</p>
+
+<pre><code>resources :photos
+</code></pre>
+
+<p>PhotosControllerに対して7つのルートを生成する。</p>
+
+<pre><code>HTTP Verb  Path             action    named_helper 
+---------  -----            ------    ----------
+GET        /photos          index     photos_path 
+GET        /photos/new      new       new_photo_path
+POST       /photos          create    photos_path
+GET        /photos/:id      show      photo_path(:id)
+GET        /photos/:id/edit edit      edit_photo_path(:id)
+PUT        /photos/:id      update    photo_path(:id)
+DELETE     /photos/:id      destroy   photo_path(:id)
+</code></pre>
+
+<p>Railsではこんな遷移を想定しているようです。</p>
+
+<pre><code>index (GET /photos)
+  |
+  |-- (GET /photos/new)      --&gt; new 
+  |                               |
+  |                               `-- (POST /photos) --&gt; create
+  |
+  |-- (GET /photos/:id)      --&gt; show
+  |
+  |-- (GET /photos/:id/edit) --&gt; edit 
+  |                               |
+  |                               `--(PUT /photos/:id)--&gt; update
+  |
+  `-- (DELETE /photos/:id)   --&gt; destroy
+</code></pre>
+
+<h3 id="resources---">resources - 基本</h3>
+
+<pre><code># PhotosControllerにひもづける
+resources :photos
+
+# 複数の場合は一行でもOK
+resources :photos, :books, :users
+</code></pre>
+
+<h3 id="resource---id">resource - idを伴わない場合</h3>
+
+<p>例えば、各ユーザーのプロフィールなど。
+コントローラは<code>ProfileController</code>ではなく、<code>ProfilesController</code>になるので注意（resourcesも同時使う場合に同じコントローラ使いたいだろうということらしい）。</p>
+
+<pre><code>resource :profile
+</code></pre>
+
+<p><code>resources</code>と異なるのは「index がない」「:id がない」の２点</p>
+
+<pre><code>GET        /profile/new      new       new_profile_path
+POST       /profile          create    profile_path
+GET        /profile          show      profile_path
+GET        /profile/edit     edit      edit_profile_path
+PUT        /profile          update    profile_path
+DELETE     /profile          destroy   profile_path
+</code></pre>
+
+<h3 id="namespace---path-and-controller-prefix">namespace - path and controller prefix</h3>
 
 <p>namespaceはpathとcontrollerに付けられるprefix</p>
 
-<pre><code># HTTP Verb  Path               action  named_helper 
+<pre><code>namespace :admin do
+  # Admin::PhotosController
+  resources :photos
+end
+
+
+# HTTP Verb  Path               action  named helper 
 # ---------  -----              ------  ----------
 # GET        /admin/photos      index   admin_photos_path 
 # GET        /admin/photos/new  new     new_admin_photo_path
 #   省略...
 # 
+</code></pre>
 
-namespace :admin do
+<h3 id="scope---controller-prefix">scope - controller prefix</h3>
+
+<p>controllerのみprefixを付ける。</p>
+
+<pre><code>scope :module =&gt; "admin" do
+  # Admin::PhotosController
   resources :photos
 end
 </code></pre>
 
-<h3 id="scope-controller">Scope (Controller)</h3>
+<p>または</p>
 
-<p>controllerのみprefix</p>
+<pre><code># Admin::PhotosController
+resources :photos, :module =&gt; "admin"
+</code></pre>
 
-<pre><code># HTTP Verb  Path         action  named_helper 
+<p>Path, named helperにはつかない。内部の構成をモジュール化したい場合に使える。</p>
+
+<pre><code># HTTP Verb  Path         action  named helper 
 # ---------  -----        ------  ----------
 # GET        /photos      index   photos_path 
 # GET        /photos/new  new     new_photo_path
 #   省略...
 # 
+</code></pre>
 
-scope :module =&gt; "admin" do
+<h3 id="scope---path-prefix">scope - path prefix</h3>
+
+<p>pathのみprefixを付ける場合</p>
+
+<pre><code>scope "/admin" do    
   resources :photos
 end
 </code></pre>
 
 <p>または</p>
 
-<pre><code>resources :photos, :module =&gt; "admin"
+<pre><code># :path は絶対パスで
+resources :photos, :path =&gt; '/admin/photos'
 </code></pre>
 
-<h3 id="scope-path">Scope (Path)</h3>
+<p>コントローラーとnamed helperには影響しない。URLだけ変更したい場合に使う。</p>
 
-<p>pathのみprefixを付ける場合場合</p>
-
-<pre><code># HTTP Verb  Path               action  named_helper 
+<pre><code># HTTP Verb  Path               action  named helper 
 # ---------  -----              ------  ----------
 # GET        /admin/photos      index   photos_path 
 # GET        /admin/photos/new  new     new_photo_path
 #   省略...
 # 
-
-scope "/admin" do    
-  resources :photos
-end
-</code></pre>
-
-<p>または</p>
-
-<pre><code>resources :photos, :path =&gt; '/admin/photos'
 </code></pre>
 
 <p><code>:path</code>を使えば自由にパスを変更できる</p>
 
-<pre><code># GET  /hoge
-
+<pre><code># photo_index   GET  /hoge  photo#index
+# :path は相対パスで
 resources :photos, :path =&gt; 'hoge' 
 </code></pre>
 
-<h3 id="nested-resources">Nested Resources</h3>
+<h3 id="nested-resources---hasmany">Nested Resources - has_manyな場合</h3>
 
 <pre><code>resources :photos do
   resources :comments
 end 
+
+# photo_comments GET /photos/:photo_id/comments     comments#index
+# photo_comment  GET /photos/:photo_id/comments/:id comments#show
 </code></pre>
 
-<p>TODO</p>
+<p>ネストは何階層でも可能だけど、混乱をまねくため１階層以上にすべきではない。named helperも長くなる。</p>
 
-<h3 id="member">member</h3>
+<h3 id="member-collection---">member, collection - ルーティングを追加</h3>
 
-<pre><code># GET /photos/:id/preview
+<p>基本の7ルート以外のルートを追加したい場合は<code>member</code>か<code>collection</code>を使う。memberは:id付きのルートで、collectionは:idなしのルート。</p>
 
-resources :photos do
+<p><code>GET /photos/:id/preview</code> で preview アクションが呼ばれるようにするためにはこうする。</p>
+
+<pre><code>resources :photos do
   member do
     get 'preview'
   end
-end
-
-... or
-
-resources :photos do
-  get 'preview', :on =&gt; :member
+  # または
+  # get 'preview', :on =&gt; :member
 end
 </code></pre>
 
-<h3 id="collection">collection</h3>
+<p><code>GET /photos/search</code>で search アクションが呼ばれるようにするためにはこうする。</p>
 
-<pre><code># GET /photos/search
-
-resources :photos do
+<pre><code>resources :photos do
   collection do
     get 'search'
   end
-end
-
-... or
-
-resources :photos do
-  get 'search', :on =&gt; :collection
+  # または
+  # get 'search', :on =&gt; :collection
 end
 </code></pre>
 
-<h2 id="non-resourceful">Non-Resourceful</h2>
+<h3 id="membercollection--match-">member,collection と match の合わせ技</h3>
+
+<p>いちいち定義するのは面倒なので match を使います。</p>
+
+<pre><code># TODO named helperも自動生成できないだろうか...
+# /hotels/:action hotels#(?-mix:[^0-9]+)
+
+resources :hotels do
+  collection do
+    # 数字の場合は :id に流れるようにする
+    match ':action', :action =&gt; /[^0-9]+/
+  end
+end
+</code></pre>
+
+<h2 id="non-resourceful-routes">Non-Resourceful Routes</h2>
 
 <h3 id="dynamic">dynamic</h3>
 
+<p>このようなルート設定で、</p>
+
 <pre><code>match ':controller(/:action(/:id))'
+</code></pre>
 
-# GET /photos/show/1/2
-# { :controller =&gt; “photos”, :action =&gt; “show”, :id =&gt; “1”, :user_id =&gt; “2” }
-match ':controller/:action/:id/:user_id'
+<p><code>GET /photos/show/1/2</code>すると、パラメータはこうなる。</p>
 
-match ':controller(/:action(/:id))', :controller =&gt; /admin\/[^\/]+/
+<pre><code>{ :controller =&gt; “photos”, :action =&gt; “show”, :id =&gt; “1”, :user_id =&gt; “2” }
+</code></pre>
+
+<p>パラメータは自由に追加できる</p>
+
+<pre><code>match ':controller/:action/:id/:user_id'
+</code></pre>
+
+<p>namespace, :moduleと、matchの:controllerは同時には使えない。そういう場合はこうする。</p>
+
+<pre><code>match ':controller(/:action(/:id))', :controller =&gt; /admin\/[^\/]+/
 </code></pre>
 
 <h3 id="static">static</h3>
 
-<pre><code># GET /photos/show/1/with_user/2
-# { :controller =&gt; “photos”, :action =&gt; “show”, :id =&gt; “1”, :user_id =&gt; “2” }
-match ':controller/:action/:id/with_user/:user_id'
+<p>URLに特定の文字列を含むような場合。</p>
+
+<p>このような設定で、</p>
+
+<pre><code>match ':controller/:action/:id/with_user/:user_id'
 </code></pre>
+
+<p><code>GET /photos/show/1/with_user/2</code> するとパラメータはこうなる</p>
+
+<pre><code>{ :controller =&gt; “photos”, :action =&gt; “show”, :id =&gt; “1”, :user_id =&gt; “2” }
+</code></pre>
+
+<h3 id="query-strings">query strings</h3>
+
+<p>このルーティングで、</p>
+
+<pre><code>match ':controller/:action/:id'
+</code></pre>
+
+<p><code>GET /photos/show/1?user_id=2</code>すると</p>
+
+<pre><code>{ :controller =&gt; “photos”, :action =&gt; “show”, :id =&gt; “1”, :user_id =&gt; “2” }
+</code></pre>
+
+<p><code>GET /photos/show/1?id=2</code> この場合はどうなるか？<code>:id =&gt; '1'</code>になる。クエリ文字列よりも:idの方が優先されるようだ。</p>
 
 <h3 id="defaults">defaults</h3>
 
@@ -251,41 +377,122 @@ match ':controller/:action/:id/with_user/:user_id'
 match 'photos/:id' =&gt; 'photos#show', :defaults =&gt; { :format =&gt; 'jpg' }
 </code></pre>
 
-<h3 id="named">named</h3>
+<h3 id="naming---match">naming - matchでも名前を付ける</h3>
 
 <pre><code># logout_path, logout_url
 match 'exit' =&gt; 'sessions#destroy', :as =&gt; :logout
 </code></pre>
 
-<p>TODO</p>
+<h3 id="constraints-http-verb---http">constraints (HTTP verb) - HTTPメソッドで制約する</h3>
 
-<ul>
-  <li>:via</li>
-  <li>:constraints</li>
-  <li>:subdomain</li>
-  <li>Advanced Constraints</li>
-</ul>
+<p><code>/photos/show</code>かつGETメソッドに限定する</p>
+
+<pre><code>match 'photos/show' =&gt; 'photos#show', :via =&gt; :get
+
+# 短縮形
+get 'photos/show'
+</code></pre>
+
+<p>複数のメソッドを付けられる</p>
+
+<pre><code>match 'photos/show' =&gt; 'photos#show', :via =&gt; [:get, :post]
+</code></pre>
+
+<h3 id="constraints-parameter---">constraints (parameter) - パラメータに制約する</h3>
+
+<p>これは、</p>
+
+<pre><code>match 'photos/:id' =&gt; 'photos#show', :constraints =&gt; { :id =&gt; /[A-Z]\d{5}/ }
+
+# これも同じ
+match 'photos/:id' =&gt; 'photos#show', :id =&gt; /[A-Z]\d{5}/ 
+</code></pre>
+
+<p><code>/photos/A12345</code>のようなパスにマッチする。</p>
+
+<p>制約は正規表現を受け取るが、<code>^ $ \b \B</code>は使えない。でも先頭に固定されているので使う必要がない。</p>
+
+<h3 id="constraints-request---">constraints (request) - リクエストで制約をする</h3>
+
+<p><a href="http://api.rubyonrails.org/classes/ActionDispatch/Request.html">ActionDispatch::Request</a>オブジェクトのメソッドで制約がかけられる。</p>
+
+<pre><code>match "photos", :constraints =&gt; {:subdomain =&gt; "admin"}
+
+# ブロックを与えることもできる
+namespace "admin" do
+  constraints :subdomain =&gt; "admin" do
+    resources :photos
+  end
+end
+</code></pre>
+
+<h3 id="advanced-constraints---">Advanced Constraints - 制約クラス</h3>
+
+<pre><code>match "*path" =&gt; "blacklist#index", :constraints =&gt; BlacklistConstraint.new
+
+class BlacklistConstraint
+  def matches?(request)
+    # マッチするならtrue 
+  end
+end
+</code></pre>
 
 <h3 id="glob">glob</h3>
 
+<p>これは、</p>
+
+<pre><code>match 'photos/*other' =&gt; 'photos#unknown'
+</code></pre>
+
+<p>こうなる。</p>
+
 <pre><code># GET /photos/12               :other =&gt; "12"
 # GET /photos/long/path/to/12, :other =&gt; "long/path/to/12".
-match 'photos/*other' =&gt; 'photos#unknown'
+</code></pre>
+
+<p>これは、</p>
+
+<pre><code>match 'books/*section/:title' =&gt; 'books#show'
+</code></pre>
+
+<p>こうなる。</p>
+
+<pre><code># GET /books/some/section/last-words-a-memoir
+# {:section =&gt; "some/section", :title =&gt; "last-words-a-memoir"}
 </code></pre>
 
 <h3 id="redirection">redirection</h3>
 
-<p>TODO</p>
+<p>301 “Moved Permanently” redirectになります。</p>
+
+<pre><code>match "/stories" =&gt; redirect("/posts")
+
+# 値を引き継ぐ場合
+match "/stories/:name" =&gt; redirect("/posts/%{name}")
+
+# ブロックでもいいよ
+match "/stories/:name" =&gt; redirect {|params| "/posts/#{params[:name].pluralize}" }
+match "/stories" =&gt; redirect {|p, req| "/posts/#{req.subdomain}" }
+</code></pre>
+
+<h3 id="rack">Rack</h3>
+
+<p>TODO </p>
+
+<pre><code>match "/application.js" =&gt; Sprockets
+</code></pre>
 
 <h3 id="root">root</h3>
 
-<p>TODO</p>
+<pre><code># GET /   =&gt; PagesController, 'main' action
+root :to =&gt; 'pages#main'
+</code></pre>
 
 <h2 id="customized-resource">Customized Resource</h2>
 
 <p>TODO</p>
 
-<h2 id="section">こんなこともできました</h2>
+<h2 id="section-1">こんなこともできました</h2>
 
 <h3 id="resourcesmatch">resourcesでmatchを使う</h3>
 
@@ -307,9 +514,12 @@ end
 category_user_images /users/:user_id/images/category/:category(.:format) images#index
 </code></pre>
 
-<h2 id="section-1">参考</h2>
+<h2 id="section-2">参考</h2>
+
 <ul>
+  <li><a href="http://d.hatena.ne.jp/willnet/20100424/1272119369">http://d.hatena.ne.jp/willnet/20100424/1272119369</a></li>
   <li><a href="http://guides.rubyonrails.org/routing.html">http://guides.rubyonrails.org/routing.html</a></li>
+  <li><a href="http://wiki.usagee.co.jp/ruby/rails/RailsGuides%E3%82%92%E3%82%86%E3%81%A3%E3%81%8F%E3%82%8A%E5%92%8C%E8%A8%B3%E3%81%97%E3%81%A6%E3%81%BF%E3%81%9F%E3%82%88/Rails%20Routing%20from%20the%20Outside%20In">http://wiki.usagee.co.jp/ruby/rails/RailsGuides…</a></li>
 </ul>
 
 
