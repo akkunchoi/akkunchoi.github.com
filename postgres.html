@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Akkunchoi.github.com : " />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="/stylesheets/stylesheet.css">
+
+    <title>PostgreSQL | akkunchoi@github</title>
+    <link rel="alternate" type="application/rss+xml" title="RSS Feed for mysite.com" href="/feed.xml" />
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/akkunchoi">View on GitHub</a>
+
+          <h1 id="project_title">
+            <a href="/">akkunchoi.github.com</a>
+          </h1>
+          <h2 id="project_tagline"></h2>
+
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+
+      <ul id="markdown-toc">
+  <li><a href="#postgresql">PostgreSQL</a>    <ul>
+      <li><a href="#on-macosx-with-homebrew">on MacOSX with homebrew</a>        <ul>
+          <li><a href="#startstop">start/stop</a></li>
+          <li><a href="#php">PHP</a></li>
+        </ul>
+      </li>
+      <li><a href="#psql">psql</a></li>
+    </ul>
+  </li>
+</ul>
+
+<h1 id="postgresql">PostgreSQL</h1>
+
+<h2 id="on-macosx-with-homebrew">on MacOSX with homebrew</h2>
+
+<p>インストールはhomebrewが楽。</p>
+
+<pre><code>$ brew install postgresql
+</code></pre>
+
+<p>9.1.4がインストールされました。</p>
+
+<pre><code>$ postgres --version
+postgres (PostgreSQL) 9.1.4
+</code></pre>
+
+<p>Build Notes にあれやこれやメッセージが出ます。
+初回インストールの場合はデータベース作成とlaunchctl登録を行います。</p>
+
+<pre><code># 見逃した場合は brew info で確認できる
+$ brew info postgres
+
+# If this is your first install, create a database with:
+$ initdb /usr/local/var/postgres
+
+# If this is your first install, automatically load on login with:
+$ mkdir -p ~/Library/LaunchAgents
+$ cp /usr/local/Cellar/postgresql/9.1.4/homebrew.mxcl.postgresql.plist ~/Library/LaunchAgents/
+$ launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.postgresql.plist
+</code></pre>
+
+<h3 id="startstop">start/stop</h3>
+
+<pre><code># start
+$ pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log start
+
+# stop
+$ pg_ctl -D /usr/local/var/postgres stop -s -m fast
+pg_ctl: server does not shut down になって止められない...
+</code></pre>
+
+<h3 id="php">PHP</h3>
+
+<p>PHPをpostgres付きでコンパイルしてなかったので再インストールする。</p>
+
+<p>まずは現状確認。</p>
+
+<pre><code>$ brew info php
+...
+Installed with: --with-mysql, --with-intl
+</code></pre>
+
+<p>オプションを確認する。</p>
+
+<pre><code>$ brew options php
+...
+--with-pgsql
+  Include PostgreSQL support
+</code></pre>
+
+<p>–with-pgsql オプションをつければいいみたい。</p>
+
+<p>一旦削除する。</p>
+
+<pre><code>$ brew uninstall php
+</code></pre>
+
+<p>PEARをsudoで実行したことがあるらしく、sudo付けないとuninstallできなかった</p>
+
+<p>pgsql付きでインストール。</p>
+
+<pre><code>$ brew install php --with-mysql --with-intl --with-pgsql
+</code></pre>
+
+<p>pg_connect関数が定義されていればOK</p>
+
+<h2 id="psql">psql</h2>
+
+<p>コマンドラインツール psql の使い方。</p>
+
+<p>データベース一覧を確認</p>
+
+<pre><code>$ psql -l
+</code></pre>
+
+<p>dbnameを指定してログイン。現在のUNIXユーザー名でログインする</p>
+
+<pre><code>$ psql dbname
+</code></pre>
+
+<p>ユーザーを指定する場合は -U オプション</p>
+
+<pre><code>$ psql dbname -U username
+</code></pre>
+
+<p>ログインできたらコマンドを受け付ける状態になる。
+ここでは psql で使用できるコマンドやSQLが実行可能</p>
+
+<pre><code>dbname=#
+</code></pre>
+
+<p>代表的な利用できるコマンド</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td>\l</td>
+      <td>データベース一覧</td>
+    </tr>
+    <tr>
+      <td>\d</td>
+      <td>テーブル一覧</td>
+    </tr>
+    <tr>
+      <td>\c</td>
+      <td>データベースを変更</td>
+    </tr>
+    <tr>
+      <td>\q</td>
+      <td>終了</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>SQLファイルを実行する場合</p>
+
+<pre><code>$ psql dbname &lt; hoge.sql
+</code></pre>
+
+
+
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    <script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-31706657-3']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+
+  </body>
+</html>
