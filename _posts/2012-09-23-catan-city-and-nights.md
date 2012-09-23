@@ -1,7 +1,7 @@
 ---
-layout: default
+layout: posts
 title: 騎士カタン
-tags: etc
+tags: game
 ---
 
 

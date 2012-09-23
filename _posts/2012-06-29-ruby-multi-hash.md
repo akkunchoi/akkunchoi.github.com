@@ -1,7 +1,7 @@
 ---
 layout: posts
-tags: ruby
 title: Ruby 多次元ハッシュ
+tags: ruby
 ---
 
 PHPでこんなことをRubyでもやりたい。
