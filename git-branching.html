@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Akkunchoi.github.com : " />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="/stylesheets/stylesheet.css">
+
+    <title>Gitの運用方法（ブランチング） | akkunchoi@github</title>
+    <link rel="alternate" type="application/rss+xml" title="RSS Feed for mysite.com" href="/feed.xml" />
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/akkunchoi">View on GitHub</a>
+
+          <h1 id="project_title">
+            <a href="/">akkunchoi.github.com</a>
+          </h1>
+          <h2 id="project_tagline"></h2>
+
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+
+      <article class="posts">
+  <header>
+    <h1>Gitの運用方法（ブランチング）</h1>
+    <ul class="tags">
+      
+      <li class="inline archive_list"><a class="tag_list_link" href="/tag/git">git</a></li>
+      
+    </ul>
+  </header>
+  <div class="posts-content">
+  <h2 id="git-flow">Git-flow</h2>
+
+<p>Vincent Driessenさんの <a href="http://nvie.com/posts/a-successful-git-branching-model/">A successful Git branching model</a> (<a href="http://keijinsonyaban.blogspot.jp/2010/10/successful-git-branching-model.html">日本語訳</a>)</p>
+
+<ul>
+  <li>メインブランチ (master, develop)</li>
+  <li>サポートブランチ
+    <ul>
+      <li>フィーチャーブランチ</li>
+      <li>リリースブランチ (release-*)</li>
+      <li>ホットフィックスブランチ (hotfix-*)</li>
+    </ul>
+  </li>
+</ul>
+
+<p>基本は２本のメインブランチ master と develop を持つ。masterは出荷可能な安定状態を保つ。develop 開発版の最新状態を保つ。</p>
+
+<p>develop ブランチのソースコードが安定した場合は、master ブランチにマージする。</p>
+
+<p>フィーチャーブランチ（トピックブランチ）は新機能を開発するためのブランチ。developから派生し、developにマージされる。</p>
+
+<p>マージは必ず –no-ff オプションを付ける（デフォルトにしたいができない）。</p>
+
+<p>リリースブランチは新しいリリースの準備をサポートする。 develop から派生し、develop や master にマージされる。リリースブランチでは新機能などの開発を行なってはいけない。master にマージして、タグ付けを行った後は削除する。</p>
+
+<p>ホットフィックスブランチは master から派生し、develop や master にマージする。緊急の修正を行うためのブランチ。</p>
+
+<p>まとめるとこのようになる。</p>
+
+<pre><code>master ------------------------------------------------&gt;
+  \                          \                /   /
+   \                          \--- hotfix --/    /
+    \                                           /
+     \                           /-- release --/
+      \                         /
+       \-- develop ------------------------------------&gt;
+             \               /
+              \-- feature --/
+</code></pre>
+
+<h2 id="akkunchoi">小規模プロジェクトでの運用（akkunchoi流）</h2>
+
+<p>最初は master ブランチしか持ちません。
+即終了するかもしれないプロジェクトのために不要なブランチを作る手間を省きます。
+この時点ではまだ、 master は開発版の役割です。</p>
+
+<p>安定版と開発版を分けたくなった段階で初めて master から dev ブランチを作成します。master は安定版で、dev を開発版とします。</p>
+
+<p>フィーチャーブランチはよほど大きな機能でない限りは作成しません。作成後は dev にマージします。dev がある程度安定した段階で master にマージします。</p>
+
+<p>ホットフィックスは master に直接コミットします。リリースブランチは作成しません。タグ付けは行います。</p>
+
+<p>master と dev のメインブランチが基本なのは git-flowモデルと同じです。一言で説明するとgit-flowのサポートブランチがないバージョンです。規模が大きくなってきたら git-flowモデルに移行してもいいと思います。</p>
+
+<p>マージする際は –no-ff 必須にします。</p>
+
+<h2 id="section">その他</h2>
+
+<p><a href="http://d.hatena.ne.jp/akihito_s/20111112">http://d.hatena.ne.jp/akihito_s/20111112</a>
+<a href="http://sourceforge.jp/projects/setucocms/wiki/Git%E3%83%AA%E3%83%9D%E3%82%B8%E3%83%88%E3%83%AA%E9%81%8B%E7%94%A8%E3%83%AB%E3%83%BC%E3%83%AB">http://sourceforge.jp/projects/setucocms/wiki/Git%E3%83%AA%E3%83%9D%E3%82%B8%E3%83%88%E3%83%AA%E9%81%8B%E7%94%A8%E3%83%AB%E3%83%BC%E3%83%AB</a>
+<a href="http://firn.jp/2011/05/24/git-flow">http://firn.jp/2011/05/24/git-flow</a>
+<a href="http://najeira.blogspot.jp/2012/01/git.html">http://najeira.blogspot.jp/2012/01/git.html</a></p>
+
+
+  </div>
+  <footer> 
+  <p>Last updated at <time></time></p>
+  <!-- <p>Published at <time>2012-09-23</time></p> -->
+  </footer>
+</article>
+
+
+
+
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    <script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-31706657-3']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+
+  </body>
+</html>

@@ -5,47 +5,112 @@
         <link>http://akkunchoi.github.com</link>
         <atom:link href="http://akkunchoi.github.com/rss.xml" rel="self" type="application/rss+xml" />
         <description>This site is a information for development written by akkunchoi</description>
-        <pubDate>Sun, 23 Sep 2012 13:44:32 +0900</pubDate>
-        <lastBuildDate>Sun, 23 Sep 2012 13:44:32 +0900</lastBuildDate>
+        <pubDate>Sun, 23 Sep 2012 14:33:33 +0900</pubDate>
+        <lastBuildDate>Sun, 23 Sep 2012 14:33:33 +0900</lastBuildDate>
+        
+        <item>
+            <title>Gitの運用方法（ブランチング）</title>
+            <description>&lt;h2 id=&quot;git-flow&quot;&gt;Git-flow&lt;/h2&gt;
+
+&lt;p&gt;Vincent Driessenさんの &lt;a href=&quot;http://nvie.com/posts/a-successful-git-branching-model/&quot;&gt;A successful Git branching model&lt;/a&gt; (&lt;a href=&quot;http://keijinsonyaban.blogspot.jp/2010/10/successful-git-branching-model.html&quot;&gt;日本語訳&lt;/a&gt;)&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;メインブランチ (master, develop)&lt;/li&gt;
+  &lt;li&gt;サポートブランチ
+    &lt;ul&gt;
+      &lt;li&gt;フィーチャーブランチ&lt;/li&gt;
+      &lt;li&gt;リリースブランチ (release-*)&lt;/li&gt;
+      &lt;li&gt;ホットフィックスブランチ (hotfix-*)&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;基本は２本のメインブランチ master と develop を持つ。masterは出荷可能な安定状態を保つ。develop 開発版の最新状態を保つ。&lt;/p&gt;
+
+&lt;p&gt;develop ブランチのソースコードが安定した場合は、master ブランチにマージする。&lt;/p&gt;
+
+&lt;p&gt;フィーチャーブランチ（トピックブランチ）は新機能を開発するためのブランチ。developから派生し、developにマージされる。&lt;/p&gt;
+
+&lt;p&gt;マージは必ず –no-ff オプションを付ける（デフォルトにしたいができない）。&lt;/p&gt;
+
+&lt;p&gt;リリースブランチは新しいリリースの準備をサポートする。 develop から派生し、develop や master にマージされる。リリースブランチでは新機能などの開発を行なってはいけない。master にマージして、タグ付けを行った後は削除する。&lt;/p&gt;
+
+&lt;p&gt;ホットフィックスブランチは master から派生し、develop や master にマージする。緊急の修正を行うためのブランチ。&lt;/p&gt;
+
+&lt;p&gt;まとめるとこのようになる。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;master ------------------------------------------------&amp;gt;
+  \                          \                /   /
+   \                          \--- hotfix --/    /
+    \                                           /
+     \                           /-- release --/
+      \                         /
+       \-- develop ------------------------------------&amp;gt;
+             \               /
+              \-- feature --/
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;akkunchoi&quot;&gt;小規模プロジェクトでの運用（akkunchoi流）&lt;/h2&gt;
+
+&lt;p&gt;最初は master ブランチしか持ちません。
+即終了するかもしれないプロジェクトのために不要なブランチを作る手間を省きます。
+この時点ではまだ、 master は開発版の役割です。&lt;/p&gt;
+
+&lt;p&gt;安定版と開発版を分けたくなった段階で初めて master から dev ブランチを作成します。master は安定版で、dev を開発版とします。&lt;/p&gt;
+
+&lt;p&gt;フィーチャーブランチはよほど大きな機能でない限りは作成しません。作成後は dev にマージします。dev がある程度安定した段階で master にマージします。&lt;/p&gt;
+
+&lt;p&gt;ホットフィックスは master に直接コミットします。リリースブランチは作成しません。タグ付けは行います。&lt;/p&gt;
+
+&lt;p&gt;master と dev のメインブランチが基本なのは git-flowモデルと同じです。一言で説明するとgit-flowのサポートブランチがないバージョンです。規模が大きくなってきたら git-flowモデルに移行してもいいと思います。&lt;/p&gt;
+
+&lt;p&gt;マージする際は –no-ff 必須にします。&lt;/p&gt;
+
+&lt;h2 id=&quot;section&quot;&gt;その他&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://d.hatena.ne.jp/akihito_s/20111112&quot;&gt;http://d.hatena.ne.jp/akihito_s/20111112&lt;/a&gt;
+&lt;a href=&quot;http://sourceforge.jp/projects/setucocms/wiki/Git%E3%83%AA%E3%83%9D%E3%82%B8%E3%83%88%E3%83%AA%E9%81%8B%E7%94%A8%E3%83%AB%E3%83%BC%E3%83%AB&quot;&gt;http://sourceforge.jp/projects/setucocms/wiki/Git%E3%83%AA%E3%83%9D%E3%82%B8%E3%83%88%E3%83%AA%E9%81%8B%E7%94%A8%E3%83%AB%E3%83%BC%E3%83%AB&lt;/a&gt;
+&lt;a href=&quot;http://firn.jp/2011/05/24/git-flow&quot;&gt;http://firn.jp/2011/05/24/git-flow&lt;/a&gt;
+&lt;a href=&quot;http://najeira.blogspot.jp/2012/01/git.html&quot;&gt;http://najeira.blogspot.jp/2012/01/git.html&lt;/a&gt;&lt;/p&gt;
+
+</description>
+            <published>2012-09-23 00:00:00 +0900</published>
+            <link>http://akkunchoi.github.com/git-branching.html</link>
+        </item>
         
         <item>
             <title>騎士カタン</title>
-            <description>&lt;h1 id=&quot;section&quot;&gt;騎士カタン&lt;/h1&gt;
-
-&lt;ul id=&quot;markdown-toc&quot;&gt;
-  &lt;li&gt;&lt;a href=&quot;#section&quot;&gt;騎士カタン&lt;/a&gt;    &lt;ul&gt;
-      &lt;li&gt;&lt;a href=&quot;#section-1&quot;&gt;初期配置&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#section-2&quot;&gt;交易品&lt;/a&gt;        &lt;ul&gt;
-          &lt;li&gt;&lt;a href=&quot;#section-3&quot;&gt;都市発展&lt;/a&gt;&lt;/li&gt;
-        &lt;/ul&gt;
-      &lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#section-4&quot;&gt;騎士&lt;/a&gt;        &lt;ul&gt;
-          &lt;li&gt;&lt;a href=&quot;#section-5&quot;&gt;作成&lt;/a&gt;&lt;/li&gt;
-          &lt;li&gt;&lt;a href=&quot;#section-6&quot;&gt;強化&lt;/a&gt;&lt;/li&gt;
-          &lt;li&gt;&lt;a href=&quot;#section-7&quot;&gt;騎士のアクション&lt;/a&gt;            &lt;ul&gt;
-              &lt;li&gt;&lt;a href=&quot;#section-8&quot;&gt;隣接する盗賊を動かす&lt;/a&gt;&lt;/li&gt;
-              &lt;li&gt;&lt;a href=&quot;#section-9&quot;&gt;移動&lt;/a&gt;&lt;/li&gt;
-            &lt;/ul&gt;
-          &lt;/li&gt;
-        &lt;/ul&gt;
-      &lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#section-10&quot;&gt;海賊&lt;/a&gt;        &lt;ul&gt;
-          &lt;li&gt;&lt;a href=&quot;#section-11&quot;&gt;海賊側が勝利した場合&lt;/a&gt;&lt;/li&gt;
-          &lt;li&gt;&lt;a href=&quot;#section-12&quot;&gt;騎士側が勝利した場合&lt;/a&gt;&lt;/li&gt;
-        &lt;/ul&gt;
-      &lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#section-13&quot;&gt;発展カード&lt;/a&gt;        &lt;ul&gt;
-          &lt;li&gt;&lt;a href=&quot;#section-14&quot;&gt;緑（紙）&lt;/a&gt;&lt;/li&gt;
-          &lt;li&gt;&lt;a href=&quot;#section-15&quot;&gt;青（コイン）&lt;/a&gt;&lt;/li&gt;
-          &lt;li&gt;&lt;a href=&quot;#section-16&quot;&gt;黄（皮）&lt;/a&gt;&lt;/li&gt;
-        &lt;/ul&gt;
-      &lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#section-17&quot;&gt;城塞&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#section-18&quot;&gt;勝利点&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#section-19&quot;&gt;攻略法など&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#section-20&quot;&gt;参考&lt;/a&gt;&lt;/li&gt;
+            <description>&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#section&quot;&gt;初期配置&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#section-1&quot;&gt;交易品&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#section-2&quot;&gt;都市発展&lt;/a&gt;&lt;/li&gt;
     &lt;/ul&gt;
   &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#section-3&quot;&gt;騎士&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#section-4&quot;&gt;作成&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#section-5&quot;&gt;強化&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#section-6&quot;&gt;騎士のアクション&lt;/a&gt;        &lt;ul&gt;
+          &lt;li&gt;&lt;a href=&quot;#section-7&quot;&gt;隣接する盗賊を動かす&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#section-8&quot;&gt;移動&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#section-9&quot;&gt;海賊&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#section-10&quot;&gt;海賊側が勝利した場合&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#section-11&quot;&gt;騎士側が勝利した場合&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#section-12&quot;&gt;発展カード&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#section-13&quot;&gt;緑（紙）&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#section-14&quot;&gt;青（コイン）&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#section-15&quot;&gt;黄（皮）&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#section-16&quot;&gt;城塞&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#section-17&quot;&gt;勝利点&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#section-18&quot;&gt;攻略法など&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#section-19&quot;&gt;参考&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;p&gt;iOS版カタンに騎士カタンが追加されました。通常カタンとの違いをざっくりまとめます。&lt;/p&gt;
@@ -58,11 +123,11 @@
 
 &lt;p&gt;サイコロ（赤、白、イベント）、交易品、騎士、海賊との戦闘、発展カードなどが通常カタンと異なる。&lt;/p&gt;
 
-&lt;h2 id=&quot;section-1&quot;&gt;初期配置&lt;/h2&gt;
+&lt;h2 id=&quot;section&quot;&gt;初期配置&lt;/h2&gt;
 
 &lt;p&gt;２つ目は開拓地ではなく都市を配置します。&lt;/p&gt;
 
-&lt;h2 id=&quot;section-2&quot;&gt;交易品&lt;/h2&gt;
+&lt;h2 id=&quot;section-1&quot;&gt;交易品&lt;/h2&gt;
 
 &lt;p&gt;交易品は３種類。次の資源に対応する。&lt;/p&gt;
 
@@ -76,7 +141,7 @@
 
 &lt;p&gt;交易品は資源と同様 4:1 貿易可能。&lt;/p&gt;
 
-&lt;h3 id=&quot;section-3&quot;&gt;都市発展&lt;/h3&gt;
+&lt;h3 id=&quot;section-2&quot;&gt;都市発展&lt;/h3&gt;
 
 &lt;p&gt;交易品は都市発展に使う。最初は１枚の交易品で１段階上昇&lt;/p&gt;
 
@@ -100,30 +165,30 @@
 
 &lt;p&gt;後から別のプレイヤーが５段階目にした場合は、（Longest RoadやLargest Armyと同様に）取られる。そして、５段階目以上がないため、もう奪われることがない。&lt;/p&gt;
 
-&lt;h2 id=&quot;section-4&quot;&gt;騎士&lt;/h2&gt;
+&lt;h2 id=&quot;section-3&quot;&gt;騎士&lt;/h2&gt;
 
-&lt;h3 id=&quot;section-5&quot;&gt;作成&lt;/h3&gt;
+&lt;h3 id=&quot;section-4&quot;&gt;作成&lt;/h3&gt;
 
 &lt;p&gt;羊1枚と鉄1枚で作成できる。
 騎士は開拓地と同様のルールで配置する。
 ただし、開拓地は間に１個飛ばす必要があったが、騎士はその必要がない。すなわち、開拓地の隣に騎士を配置できる。&lt;/p&gt;
 
-&lt;h3 id=&quot;section-6&quot;&gt;強化&lt;/h3&gt;
+&lt;h3 id=&quot;section-5&quot;&gt;強化&lt;/h3&gt;
 
 &lt;p&gt;騎士にさらに羊1枚、鉄1枚与えることで強化できる（強さ+1）。
 最初をレベル１として、通常レベル２まで強化できる。もし、青の都市レベル３段階に到達していた場合はレベル３にできる。
 １ターンにつき１回までしか強化できない。&lt;/p&gt;
 
-&lt;h3 id=&quot;section-7&quot;&gt;騎士のアクション&lt;/h3&gt;
+&lt;h3 id=&quot;section-6&quot;&gt;騎士のアクション&lt;/h3&gt;
 
 &lt;p&gt;騎士に麦1枚与えることで、アクティブ状態にできる。何かアクションを行うと解除される。
 アクティブな騎士は海賊との戦闘で、騎士の強さにカウントされる。&lt;/p&gt;
 
-&lt;h4 id=&quot;section-8&quot;&gt;隣接する盗賊を動かす&lt;/h4&gt;
+&lt;h4 id=&quot;section-7&quot;&gt;隣接する盗賊を動かす&lt;/h4&gt;
 
 &lt;p&gt;通常カタンのナイトカードと同様。ただし、サイコロを振る前には動かすことはできない&lt;/p&gt;
 
-&lt;h4 id=&quot;section-9&quot;&gt;移動&lt;/h4&gt;
+&lt;h4 id=&quot;section-8&quot;&gt;移動&lt;/h4&gt;
 
 &lt;p&gt;今いる場所から道がつながっている
 他の配置可能な場所に移動できる。&lt;/p&gt;
@@ -133,7 +198,7 @@
 
 &lt;p&gt;騎士は開拓地と同様に道を塞ぐことができる&lt;/p&gt;
 
-&lt;h2 id=&quot;section-10&quot;&gt;海賊&lt;/h2&gt;
+&lt;h2 id=&quot;section-9&quot;&gt;海賊&lt;/h2&gt;
 
 &lt;p&gt;イベントダイスで「海賊」が出た場合、海賊コマを１進める。
 海賊が到達したら、海賊との戦闘が行われる。&lt;/p&gt;
@@ -150,18 +215,18 @@
 
 &lt;p&gt;海賊処理を行った後、通常のダイス処理を行う。&lt;/p&gt;
 
-&lt;h3 id=&quot;section-11&quot;&gt;海賊側が勝利した場合&lt;/h3&gt;
+&lt;h3 id=&quot;section-10&quot;&gt;海賊側が勝利した場合&lt;/h3&gt;
 
 &lt;p&gt;最も騎士の強さが弱いプレイヤー全員、都市を開拓地にしなければならない。
 もし、最も弱いプレイヤーが都市を持っていない場合は次に弱いプレイヤーが都市を壊さなければならない。
 大都市しかない、開拓地しかない、すでに開拓地が５個使われてコマがない場合も破壊されない&lt;/p&gt;
 
-&lt;h3 id=&quot;section-12&quot;&gt;騎士側が勝利した場合&lt;/h3&gt;
+&lt;h3 id=&quot;section-11&quot;&gt;騎士側が勝利した場合&lt;/h3&gt;
 
 &lt;p&gt;最も騎士力が高いプレイヤーが単独の場合は勝利点+1
 最も騎士力が高いプレイヤーが複数の場合は好きな色の発展カードを引くことができる&lt;/p&gt;
 
-&lt;h2 id=&quot;section-13&quot;&gt;発展カード&lt;/h2&gt;
+&lt;h2 id=&quot;section-12&quot;&gt;発展カード&lt;/h2&gt;
 
 &lt;p&gt;通常カタンの発展カードは使わない&lt;/p&gt;
 
@@ -173,7 +238,7 @@
 
 &lt;p&gt;（括弧内はゲーム内でのカードの枚数）&lt;/p&gt;
 
-&lt;h3 id=&quot;section-14&quot;&gt;緑（紙）&lt;/h3&gt;
+&lt;h3 id=&quot;section-13&quot;&gt;緑（紙）&lt;/h3&gt;
 
 &lt;ul&gt;
   &lt;li&gt;Alchemist(2): サイコロを振る前に使う。サイコロの出目を自由に決める。イベントダイスは振る&lt;/li&gt;
@@ -188,7 +253,7 @@
   &lt;li&gt;Smith(2): 騎士を２つまで、１段階強化できる。&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h3 id=&quot;section-15&quot;&gt;青（コイン）&lt;/h3&gt;
+&lt;h3 id=&quot;section-14&quot;&gt;青（コイン）&lt;/h3&gt;
 &lt;ul&gt;
   &lt;li&gt;Bishop(2): 盗賊を動かす。盗賊の移動先のマスに隣接するすべてのプレイヤーから１枚ずつカードを引ける&lt;/li&gt;
   &lt;li&gt;Constitution(1):　勝利点+1&lt;/li&gt;
@@ -201,7 +266,7 @@
   &lt;li&gt;Wedding(2): 自分より勝利点が高いプレイヤーから、資源または交易品を２枚もらう&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h3 id=&quot;section-16&quot;&gt;黄（皮）&lt;/h3&gt;
+&lt;h3 id=&quot;section-15&quot;&gt;黄（皮）&lt;/h3&gt;
 
 &lt;ul&gt;
   &lt;li&gt;Commercial Harbor(2): 相手プレイヤーそれぞれに対して、相手が交易品を持っていれば、自分は資源カードを１枚選び、相手は交易品を１枚選んで交換する&lt;/li&gt;
@@ -212,14 +277,14 @@
   &lt;li&gt;Trade Monopoly(2): 交易品を一つ選択。その交易品を持っている他のプレイヤーからその交易品を１枚ずつもらう&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h2 id=&quot;section-17&quot;&gt;城塞&lt;/h2&gt;
+&lt;h2 id=&quot;section-16&quot;&gt;城塞&lt;/h2&gt;
 
 &lt;p&gt;土2枚で都市に城塞を建てることができる。&lt;/p&gt;
 
 &lt;p&gt;バーストの枚数が２枚増える
 城塞は３つまで。&lt;/p&gt;
 
-&lt;h2 id=&quot;section-18&quot;&gt;勝利点&lt;/h2&gt;
+&lt;h2 id=&quot;section-17&quot;&gt;勝利点&lt;/h2&gt;
 
 &lt;ul&gt;
   &lt;li&gt;開拓地 +1&lt;/li&gt;
@@ -233,7 +298,7 @@
 
 &lt;p&gt;通常は13点勝利&lt;/p&gt;
 
-&lt;h2 id=&quot;section-19&quot;&gt;攻略法など&lt;/h2&gt;
+&lt;h2 id=&quot;section-18&quot;&gt;攻略法など&lt;/h2&gt;
 
 &lt;p&gt;まず騎士を作成するために、羊と鉄を確保します。
 次に、騎士をアクティブにするための麦を手に入れます。麦は安定して供給する必要があります。&lt;/p&gt;
@@ -245,7 +310,7 @@
 
 &lt;p&gt;なんだかんだで、都市強化と騎士強化ができれば勝てます。&lt;/p&gt;
 
-&lt;h2 id=&quot;section-20&quot;&gt;参考&lt;/h2&gt;
+&lt;h2 id=&quot;section-19&quot;&gt;参考&lt;/h2&gt;
 
 &lt;p&gt;下記ブログを参考にしました。&lt;/p&gt;
 
