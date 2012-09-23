@@ -15,12 +15,11 @@ fi
 
 cat <<EOD > $file
 ---
-layout: default
+layout: posts
 title: $1
+tags: etc
 ---
 
-{{ page.title }}
-================
 EOD
 
 vim "_posts/$day-$1.md"

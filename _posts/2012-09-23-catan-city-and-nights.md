@@ -5,9 +5,6 @@ tags: game
 ---
 
 
-{{ page.title }}
-================
-
 * toc
 {:toc}
 
