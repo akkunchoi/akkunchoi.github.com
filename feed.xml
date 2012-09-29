@@ -5,8 +5,8 @@
         <link>http://akkunchoi.github.com</link>
         <atom:link href="http://akkunchoi.github.com/rss.xml" rel="self" type="application/rss+xml" />
         <description>This site is a information for development written by akkunchoi</description>
-        <pubDate>Sun, 23 Sep 2012 14:33:33 +0900</pubDate>
-        <lastBuildDate>Sun, 23 Sep 2012 14:33:33 +0900</lastBuildDate>
+        <pubDate>Sun, 30 Sep 2012 05:22:01 +0900</pubDate>
+        <lastBuildDate>Sun, 30 Sep 2012 05:22:01 +0900</lastBuildDate>
         
         <item>
             <title>Gitの運用方法（ブランチング）</title>
@@ -82,35 +82,34 @@
             <title>騎士カタン</title>
             <description>&lt;ul id=&quot;markdown-toc&quot;&gt;
   &lt;li&gt;&lt;a href=&quot;#section&quot;&gt;初期配置&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#section-1&quot;&gt;交易品&lt;/a&gt;    &lt;ul&gt;
-      &lt;li&gt;&lt;a href=&quot;#section-2&quot;&gt;都市発展&lt;/a&gt;&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#section-3&quot;&gt;騎士&lt;/a&gt;    &lt;ul&gt;
-      &lt;li&gt;&lt;a href=&quot;#section-4&quot;&gt;作成&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#section-5&quot;&gt;強化&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#section-6&quot;&gt;騎士のアクション&lt;/a&gt;        &lt;ul&gt;
-          &lt;li&gt;&lt;a href=&quot;#section-7&quot;&gt;隣接する盗賊を動かす&lt;/a&gt;&lt;/li&gt;
-          &lt;li&gt;&lt;a href=&quot;#section-8&quot;&gt;移動&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#section-1&quot;&gt;ダイス&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#section-2&quot;&gt;交易品&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#section-3&quot;&gt;都市発展&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#section-4&quot;&gt;騎士&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#section-5&quot;&gt;作成&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#section-6&quot;&gt;強化&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#section-7&quot;&gt;騎士のアクション&lt;/a&gt;        &lt;ul&gt;
+          &lt;li&gt;&lt;a href=&quot;#section-8&quot;&gt;隣接する盗賊を動かす&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#section-9&quot;&gt;移動&lt;/a&gt;&lt;/li&gt;
         &lt;/ul&gt;
       &lt;/li&gt;
     &lt;/ul&gt;
   &lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#section-9&quot;&gt;海賊&lt;/a&gt;    &lt;ul&gt;
-      &lt;li&gt;&lt;a href=&quot;#section-10&quot;&gt;海賊側が勝利した場合&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#section-11&quot;&gt;騎士側が勝利した場合&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#section-10&quot;&gt;海賊&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#section-11&quot;&gt;海賊側が勝利した場合&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#section-12&quot;&gt;騎士側が勝利した場合&lt;/a&gt;&lt;/li&gt;
     &lt;/ul&gt;
   &lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#section-12&quot;&gt;発展カード&lt;/a&gt;    &lt;ul&gt;
-      &lt;li&gt;&lt;a href=&quot;#section-13&quot;&gt;緑（紙）&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#section-14&quot;&gt;青（コイン）&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#section-15&quot;&gt;黄（皮）&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#section-13&quot;&gt;発展カード&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#section-14&quot;&gt;緑（紙）&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#section-15&quot;&gt;青（コイン）&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#section-16&quot;&gt;黄（皮）&lt;/a&gt;&lt;/li&gt;
     &lt;/ul&gt;
   &lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#section-16&quot;&gt;城塞&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#section-17&quot;&gt;勝利点&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#section-18&quot;&gt;攻略法など&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#section-19&quot;&gt;参考&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#section-17&quot;&gt;城塞&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#section-18&quot;&gt;勝利点&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#section-19&quot;&gt;攻略法など&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#section-20&quot;&gt;参考&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;p&gt;iOS版カタンに騎士カタンが追加されました。通常カタンとの違いをざっくりまとめます。&lt;/p&gt;
@@ -123,122 +122,149 @@
 
 &lt;p&gt;サイコロ（赤、白、イベント）、交易品、騎士、海賊との戦闘、発展カードなどが通常カタンと異なる。&lt;/p&gt;
 
+&lt;p&gt;&lt;img src=&quot;images/posts/catan-game.png&quot; alt=&quot;game&quot; /&gt;&lt;/p&gt;
+
 &lt;h2 id=&quot;section&quot;&gt;初期配置&lt;/h2&gt;
 
 &lt;p&gt;２つ目は開拓地ではなく都市を配置します。&lt;/p&gt;
 
-&lt;h2 id=&quot;section-1&quot;&gt;交易品&lt;/h2&gt;
+&lt;p&gt;ここで注意しなければならないのは、都市に隣接する鉄・羊・木は資源２枚もらえるのではなく、１枚は交易品になってしまうことです。交易品については後述します。&lt;/p&gt;
 
-&lt;p&gt;交易品は３種類。次の資源に対応する。&lt;/p&gt;
+&lt;h2 id=&quot;section-1&quot;&gt;ダイス&lt;/h2&gt;
+
+&lt;p&gt;ダイスがひとつ増えました。数字のサイコロの一方が赤いサイコロになりました。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;images/posts/catan-dice.png&quot; alt=&quot;dice&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;右のイベントダイスは海賊３面と都市発展の各種類の３面があります。
+これにより、海賊の襲撃が起きるかどうかと、どの発展カードがもらえるかどうかが決まります。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;images/posts/catan-dice1.png&quot; alt=&quot;dice1&quot; /&gt;
+&lt;img src=&quot;images/posts/catan-dice2.png&quot; alt=&quot;dice2&quot; /&gt;
+&lt;img src=&quot;images/posts/catan-dice3.png&quot; alt=&quot;dice3&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;赤いサイコロは発展カードをもらえるかどうかが、各プレイヤーの現在の都市レベルに応じて決まります。&lt;/p&gt;
+
+&lt;h2 id=&quot;section-2&quot;&gt;交易品&lt;/h2&gt;
+
+&lt;p&gt;交易品は３種類。各資源に対応しています。&lt;/p&gt;
 
 &lt;ul&gt;
-  &lt;li&gt;鉄 -&amp;gt; コイン&lt;/li&gt;
-  &lt;li&gt;羊 -&amp;gt; 皮&lt;/li&gt;
-  &lt;li&gt;木 -&amp;gt; 紙&lt;/li&gt;
+  &lt;li&gt;鉄 : コイン&lt;/li&gt;
+  &lt;li&gt;羊 : 皮&lt;/li&gt;
+  &lt;li&gt;木 : 紙&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;例えば鉄に置いた都市は鉄２枚もらえる代わりに鉄１枚、コイン１枚もらう。木、羊も同様。麦と土は通常通り２枚もらう。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;images/posts/catan-trade.png&quot; alt=&quot;Trade&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;交易品は資源と同様 4:1 貿易可能。&lt;/p&gt;
+&lt;p&gt;例えば鉄に隣接する都市は、鉄２枚もらえる代わりに鉄１枚、コイン１枚もらいます。木ならば紙、羊ならば皮です。麦と土は通常通り２枚もらいます。&lt;/p&gt;
 
-&lt;h3 id=&quot;section-2&quot;&gt;都市発展&lt;/h3&gt;
+&lt;p&gt;交易品は資源と同様 4:1 貿易(3:1があればそれも)可能です。&lt;/p&gt;
 
-&lt;p&gt;交易品は都市発展に使う。最初は１枚の交易品で１段階上昇&lt;/p&gt;
+&lt;h2 id=&quot;section-3&quot;&gt;都市発展&lt;/h2&gt;
 
-&lt;p&gt;都市発展すると、対応する赤ダイスとイベントダイスが出た場合に発展カードが引ける。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;images/posts/catan-cityimprovment.png&quot; alt=&quot;City Improvment&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;例えば皮（黄色）が２段階目の場合、赤ダイス1,2,3 かつ 黄色のイベントダイスが出た場合に発展カードが引ける。&lt;/p&gt;
+&lt;p&gt;交易品は都市発展に使います。最初は１枚の交易品で１段階上昇。次は２枚で１段階、その次は３枚で、という様に最終的に５段階上げることができます。&lt;/p&gt;
 
-&lt;p&gt;３段階目に到達すると永続的な効果が得られる&lt;/p&gt;
+&lt;p&gt;都市発展すると、対応する赤ダイスとイベントダイスが出た場合に発展カードが引けます。
+例えば皮（黄色）が２段階目の場合、赤ダイス1,2,3 かつ 黄色のイベントダイスが出た場合に発展カードが引けます。&lt;/p&gt;
+
+&lt;p&gt;また、３段階目に到達すると永続的な効果が得られます。&lt;/p&gt;
 
 &lt;ul&gt;
-  &lt;li&gt;黄（皮）: 交易品を2:1貿易できる&lt;/li&gt;
+  &lt;li&gt;黄（皮）: 交易品を 2:1 貿易できる&lt;/li&gt;
   &lt;li&gt;青（コイン）: ３段階目の騎士に強化できる&lt;/li&gt;
   &lt;li&gt;緑（紙）: 7以外で、資源や交易品が取れなかったターンに好きな資源を1枚もらえる&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;４段階目に到達すると、都市を大都市（メトロポリス）にすることができる
+&lt;p&gt;４段階目に到達すると、都市を大都市（メトロポリス）にすることができます。
 メトロポリスにすると勝利点+2。都市の分と合わせて合計4点
-海賊が来ても破壊されない&lt;/p&gt;
+メトロポリスは海賊が来ても破壊されません。&lt;/p&gt;
 
-&lt;p&gt;メトロポリスは島内でその色ごとに１つしか建てることができない。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;images/posts/catan-metropolis.png&quot; alt=&quot;dice&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;後から別のプレイヤーが５段階目にした場合は、（Longest RoadやLargest Armyと同様に）取られる。そして、５段階目以上がないため、もう奪われることがない。&lt;/p&gt;
+&lt;p&gt;メトロポリスは島内でその色ごとに１つしか建てることができません。
+後から別のプレイヤーが５段階目にした場合は、（Longest RoadやLargest Armyと同様に）取られます。そして、５段階目以上がないため、もう奪われることがないです。&lt;/p&gt;
 
-&lt;h2 id=&quot;section-3&quot;&gt;騎士&lt;/h2&gt;
+&lt;h2 id=&quot;section-4&quot;&gt;騎士&lt;/h2&gt;
 
-&lt;h3 id=&quot;section-4&quot;&gt;作成&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&quot;images/posts/catan-knightaction.png&quot; alt=&quot;dice&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;section-5&quot;&gt;作成&lt;/h3&gt;
 
 &lt;p&gt;羊1枚と鉄1枚で作成できる。
-騎士は開拓地と同様のルールで配置する。
-ただし、開拓地は間に１個飛ばす必要があったが、騎士はその必要がない。すなわち、開拓地の隣に騎士を配置できる。&lt;/p&gt;
+騎士は開拓地のように、自分の道の空きポイントの上に配置します。開拓地は１個飛ばしにする必要があったけど、騎士はその必要ないです。開拓地の隣に騎士を配置できます。配置できる箇所がなければ、騎士を作成することはできません。&lt;/p&gt;
 
-&lt;h3 id=&quot;section-5&quot;&gt;強化&lt;/h3&gt;
+&lt;h3 id=&quot;section-6&quot;&gt;強化&lt;/h3&gt;
 
-&lt;p&gt;騎士にさらに羊1枚、鉄1枚与えることで強化できる（強さ+1）。
-最初をレベル１として、通常レベル２まで強化できる。もし、青の都市レベル３段階に到達していた場合はレベル３にできる。
-１ターンにつき１回までしか強化できない。&lt;/p&gt;
+&lt;p&gt;騎士にさらに羊1枚、鉄1枚与えることで強化できます。強化すると騎士力が１増えます。
+最初をレベル１として、通常レベル２まで強化できます。もし、青の都市レベル３段階に到達していた場合はレベル３にできます。
+１ターンにつき１回までしか強化できません。&lt;/p&gt;
 
-&lt;h3 id=&quot;section-6&quot;&gt;騎士のアクション&lt;/h3&gt;
+&lt;h3 id=&quot;section-7&quot;&gt;騎士のアクション&lt;/h3&gt;
 
-&lt;p&gt;騎士に麦1枚与えることで、アクティブ状態にできる。何かアクションを行うと解除される。
-アクティブな騎士は海賊との戦闘で、騎士の強さにカウントされる。&lt;/p&gt;
+&lt;p&gt;騎士に麦1枚与えることで、アクティブ状態にできます。何かアクションを行うと解除されます。
+アクティブな騎士は海賊との戦闘で、騎士の強さにカウントされます。&lt;/p&gt;
 
-&lt;h4 id=&quot;section-7&quot;&gt;隣接する盗賊を動かす&lt;/h4&gt;
+&lt;h4 id=&quot;section-8&quot;&gt;隣接する盗賊を動かす&lt;/h4&gt;
 
 &lt;p&gt;通常カタンのナイトカードと同様。ただし、サイコロを振る前には動かすことはできない&lt;/p&gt;
 
-&lt;h4 id=&quot;section-8&quot;&gt;移動&lt;/h4&gt;
+&lt;h4 id=&quot;section-9&quot;&gt;移動&lt;/h4&gt;
 
-&lt;p&gt;今いる場所から道がつながっている
-他の配置可能な場所に移動できる。&lt;/p&gt;
+&lt;p&gt;今いる場所から道がつながっている他の配置可能な場所に移動できます。&lt;/p&gt;
 
 &lt;p&gt;もし自分の騎士の方が強ければ（同じ強さではできない）、他プレイヤーの騎士を追い出すことができる。
-相手の騎士が他に移動可能な場所がなければ、島から取り除く。&lt;/p&gt;
+相手の騎士が他に移動可能な場所がなければ、島から取り除かなければならない。&lt;/p&gt;
 
-&lt;p&gt;騎士は開拓地と同様に道を塞ぐことができる&lt;/p&gt;
+&lt;p&gt;騎士は開拓地と同様に道を塞ぐこともできる。&lt;/p&gt;
 
-&lt;h2 id=&quot;section-9&quot;&gt;海賊&lt;/h2&gt;
+&lt;h2 id=&quot;section-10&quot;&gt;海賊&lt;/h2&gt;
 
-&lt;p&gt;イベントダイスで「海賊」が出た場合、海賊コマを１進める。
-海賊が到達したら、海賊との戦闘が行われる。&lt;/p&gt;
+&lt;p&gt;イベントダイスで「海賊」が出た場合、海賊コマを１進めます。
+海賊が到達したら、海賊との戦闘が発生！&lt;/p&gt;
 
 &lt;p&gt;海賊の強さは都市（または大都市）の合計数。
-騎士の強さは&lt;strong&gt;アクティブになっている&lt;/strong&gt;騎士レベルの数。&lt;/p&gt;
+騎士の強さは&lt;strong&gt;アクティブになっている&lt;/strong&gt;騎士のレベルの合計数。&lt;/p&gt;
 
 &lt;p&gt;海賊の強さ &amp;lt;= 騎士の強さ ならば 騎士側の勝利。
 そうでなければ、海賊側の勝利。&lt;/p&gt;
 
-&lt;p&gt;戦闘終了後、すべての騎士はアクティブ状態が解除される。
+&lt;p&gt;戦闘終了後、すべての騎士はアクティブ状態が解除されます。
 もし、海賊が初めて島に来た場合、砂漠に盗賊を配置する。７と同時に来た場合は盗賊も動かす。
 盗賊がいない時はバーストの処理だけ行う。&lt;/p&gt;
 
 &lt;p&gt;海賊処理を行った後、通常のダイス処理を行う。&lt;/p&gt;
 
-&lt;h3 id=&quot;section-10&quot;&gt;海賊側が勝利した場合&lt;/h3&gt;
+&lt;h3 id=&quot;section-11&quot;&gt;海賊側が勝利した場合&lt;/h3&gt;
 
 &lt;p&gt;最も騎士の強さが弱いプレイヤー全員、都市を開拓地にしなければならない。
 もし、最も弱いプレイヤーが都市を持っていない場合は次に弱いプレイヤーが都市を壊さなければならない。
 大都市しかない、開拓地しかない、すでに開拓地が５個使われてコマがない場合も破壊されない&lt;/p&gt;
 
-&lt;h3 id=&quot;section-11&quot;&gt;騎士側が勝利した場合&lt;/h3&gt;
+&lt;h3 id=&quot;section-12&quot;&gt;騎士側が勝利した場合&lt;/h3&gt;
 
 &lt;p&gt;最も騎士力が高いプレイヤーが単独の場合は勝利点+1
 最も騎士力が高いプレイヤーが複数の場合は好きな色の発展カードを引くことができる&lt;/p&gt;
 
-&lt;h2 id=&quot;section-12&quot;&gt;発展カード&lt;/h2&gt;
+&lt;h2 id=&quot;section-13&quot;&gt;発展カード&lt;/h2&gt;
 
-&lt;p&gt;通常カタンの発展カードは使わない&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;images/posts/catan-progresscard.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;都市発展レベルと赤ダイスとイベントダイスに対応する発展カードが引ける
-今回の発展カードは一度に何枚でも使うことができる
-使ったカードは山札の一番下に戻す
-発展カードは４枚まで持つことができる。自分のターン以外で５枚になった場合は１枚捨てる
-勝利点カードはすぐ表にする。制限の４枚にはカウントしない。&lt;/p&gt;
+&lt;p&gt;通常カタンの発展カードは使いません。&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;都市発展レベルと赤ダイスとイベントダイスに対応する発展カードが引ける。&lt;/li&gt;
+  &lt;li&gt;今回の発展カードは一度に何枚でも使うことができる。&lt;/li&gt;
+  &lt;li&gt;使ったカードは山札の一番下に戻す。&lt;/li&gt;
+  &lt;li&gt;発展カードは４枚まで持つことができる。自分のターン以外で５枚になった場合は１枚捨てる。&lt;/li&gt;
+  &lt;li&gt;勝利点カードはすぐ表にする。制限の４枚にはカウントしない。&lt;/li&gt;
+&lt;/ul&gt;
 
 &lt;p&gt;（括弧内はゲーム内でのカードの枚数）&lt;/p&gt;
 
-&lt;h3 id=&quot;section-13&quot;&gt;緑（紙）&lt;/h3&gt;
+&lt;h3 id=&quot;section-14&quot;&gt;緑（紙）&lt;/h3&gt;
 
 &lt;ul&gt;
   &lt;li&gt;Alchemist(2): サイコロを振る前に使う。サイコロの出目を自由に決める。イベントダイスは振る&lt;/li&gt;
@@ -253,7 +279,7 @@
   &lt;li&gt;Smith(2): 騎士を２つまで、１段階強化できる。&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h3 id=&quot;section-14&quot;&gt;青（コイン）&lt;/h3&gt;
+&lt;h3 id=&quot;section-15&quot;&gt;青（コイン）&lt;/h3&gt;
 &lt;ul&gt;
   &lt;li&gt;Bishop(2): 盗賊を動かす。盗賊の移動先のマスに隣接するすべてのプレイヤーから１枚ずつカードを引ける&lt;/li&gt;
   &lt;li&gt;Constitution(1):　勝利点+1&lt;/li&gt;
@@ -266,7 +292,7 @@
   &lt;li&gt;Wedding(2): 自分より勝利点が高いプレイヤーから、資源または交易品を２枚もらう&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h3 id=&quot;section-15&quot;&gt;黄（皮）&lt;/h3&gt;
+&lt;h3 id=&quot;section-16&quot;&gt;黄（皮）&lt;/h3&gt;
 
 &lt;ul&gt;
   &lt;li&gt;Commercial Harbor(2): 相手プレイヤーそれぞれに対して、相手が交易品を持っていれば、自分は資源カードを１枚選び、相手は交易品を１枚選んで交換する&lt;/li&gt;
@@ -277,14 +303,13 @@
   &lt;li&gt;Trade Monopoly(2): 交易品を一つ選択。その交易品を持っている他のプレイヤーからその交易品を１枚ずつもらう&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h2 id=&quot;section-16&quot;&gt;城塞&lt;/h2&gt;
+&lt;h2 id=&quot;section-17&quot;&gt;城塞&lt;/h2&gt;
 
 &lt;p&gt;土2枚で都市に城塞を建てることができる。&lt;/p&gt;
 
-&lt;p&gt;バーストの枚数が２枚増える
-城塞は３つまで。&lt;/p&gt;
+&lt;p&gt;建てるとバーストにならない枚数が２枚増える。城塞は３つまで。&lt;/p&gt;
 
-&lt;h2 id=&quot;section-17&quot;&gt;勝利点&lt;/h2&gt;
+&lt;h2 id=&quot;section-18&quot;&gt;勝利点&lt;/h2&gt;
 
 &lt;ul&gt;
   &lt;li&gt;開拓地 +1&lt;/li&gt;
@@ -298,7 +323,7 @@
 
 &lt;p&gt;通常は13点勝利&lt;/p&gt;
 
-&lt;h2 id=&quot;section-18&quot;&gt;攻略法など&lt;/h2&gt;
+&lt;h2 id=&quot;section-19&quot;&gt;攻略法など&lt;/h2&gt;
 
 &lt;p&gt;まず騎士を作成するために、羊と鉄を確保します。
 次に、騎士をアクティブにするための麦を手に入れます。麦は安定して供給する必要があります。&lt;/p&gt;
@@ -310,7 +335,7 @@
 
 &lt;p&gt;なんだかんだで、都市強化と騎士強化ができれば勝てます。&lt;/p&gt;
 
-&lt;h2 id=&quot;section-19&quot;&gt;参考&lt;/h2&gt;
+&lt;h2 id=&quot;section-20&quot;&gt;参考&lt;/h2&gt;
 
 &lt;p&gt;下記ブログを参考にしました。&lt;/p&gt;
 
