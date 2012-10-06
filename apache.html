@@ -66,8 +66,15 @@
       <li><a href="#php-3">アクセスログに情報を追加する (PHP)</a></li>
     </ul>
   </li>
-  <li><a href="#section-8">メモ</a></li>
-  <li><a href="#todo">TODO</a></li>
+  <li><a href="#basic-1">Basic認証</a>    <ul>
+      <li><a href="#basic-2">Basic認証の仕組み</a></li>
+      <li><a href="#htpasswd-">.htpasswd ファイルを作成する</a></li>
+      <li><a href="#httpdconf--htaccess-">httpd.conf / .htaccess での設定</a></li>
+      <li><a href="#section-8">特定のファイルには認証をかけない</a></li>
+      <li><a href="#ip">特定のIPからのアクセスには認証をかけない</a></li>
+    </ul>
+  </li>
+  <li><a href="#section-9">メモ</a></li>
 </ul>
 
 <p>モジュールのマニュアル</p>
@@ -218,15 +225,56 @@ apache_note("originallog", $val);
 
 <p>例えばユーザーIDなどを埋め込むと便利。</p>
 
-<h1 id="section-8">メモ</h1>
+<h1 id="basic-1">Basic認証</h1>
+
+<h2 id="basic-2">Basic認証の仕組み</h2>
+
+<ol>
+  <li>クライアントがページをリクエストする（この時点ではまだ認証がかかってるかどうか知らない）</li>
+  <li>クライアントに401レスポンスを返す</li>
+  <li>ユーザにIDとパスワードの入力を求める</li>
+  <li>認証ヘッダを含めてページをリクエストする</li>
+  <li>成功すれば、通常のページを。そうでなければ再度401を返す</li>
+</ol>
+
+<h2 id="htpasswd-">.htpasswd ファイルを作成する</h2>
+
+<pre><code># -c ファイル新規作成
+# -s パスワードをSHA1
+$ htpasswd -c -s .htpasswd username
+</code></pre>
+
+<h2 id="httpdconf--htaccess-">httpd.conf / .htaccess での設定</h2>
+
+<pre><code>AuthUserFile    /path/to/.htpasswd
+AuthName        "basic auth"
+AuthType        Basic
+Require valid-user
+</code></pre>
+
+<h2 id="section-8">特定のファイルには認証をかけない</h2>
+
+<p><a href="http://httpd.apache.org/docs/2.2/mod/core.html#satisfy">Satisfy</a> ディレクティブを使う。
+これは、RequireとAllowが両方使われている場合に、詳細な設定を行う場合に使用する。</p>
+
+<pre><code># 画像のみ認証をかけない
+&lt;FilesMatch "\.(gif|jpe?g|png)$"&gt;
+    Satisfy Any
+    Allow from all
+&lt;/FilesMatch&gt;
+</code></pre>
+
+<h2 id="ip">特定のIPからのアクセスには認証をかけない</h2>
+
+<pre><code>Satisfy Any
+Allow from 127.0.0.1
+</code></pre>
+
+<h1 id="section-9">メモ</h1>
 
 <ul>
   <li>同じパスのDirectoryディレクティブを２つ書くと、常に後に記述した方のみが適用され、前の方の設定は失われるっぽい。</li>
 </ul>
-
-<h1 id="todo">TODO</h1>
-
-<p>昔の記事…</p>
 
 
   </div>

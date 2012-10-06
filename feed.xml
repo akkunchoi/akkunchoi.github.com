@@ -5,8 +5,8 @@
         <link>http://akkunchoi.github.com</link>
         <atom:link href="http://akkunchoi.github.com/rss.xml" rel="self" type="application/rss+xml" />
         <description>This site is a information for development written by akkunchoi</description>
-        <pubDate>Sun, 30 Sep 2012 05:22:01 +0900</pubDate>
-        <lastBuildDate>Sun, 30 Sep 2012 05:22:01 +0900</lastBuildDate>
+        <pubDate>Sat, 06 Oct 2012 09:01:06 +0900</pubDate>
+        <lastBuildDate>Sat, 06 Oct 2012 09:01:06 +0900</lastBuildDate>
         
         <item>
             <title>Gitの運用方法（ブランチング）</title>
@@ -500,64 +500,6 @@ Installed with: --with-mysql, --with-intl
         </item>
         
         <item>
-            <title>Apache Basic認証</title>
-            <description>&lt;ul id=&quot;markdown-toc&quot;&gt;
-  &lt;li&gt;&lt;a href=&quot;#basic&quot;&gt;Basic認証の仕組み&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#htpasswd-&quot;&gt;.htpasswd ファイルを作成する&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#httpdconf--htaccess-&quot;&gt;httpd.conf / .htaccess での設定&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#section&quot;&gt;特定のファイルには認証をかけない&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#ip&quot;&gt;特定のIPからのアクセスには認証をかけない&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;basic&quot;&gt;Basic認証の仕組み&lt;/h2&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;クライアントがページをリクエストする（この時点ではまだ認証がかかってるかどうか知らない）&lt;/li&gt;
-  &lt;li&gt;クライアントに401レスポンスを返す&lt;/li&gt;
-  &lt;li&gt;ユーザにIDとパスワードの入力を求める&lt;/li&gt;
-  &lt;li&gt;認証ヘッダを含めてページをリクエストする&lt;/li&gt;
-  &lt;li&gt;成功すれば、通常のページを。そうでなければ再度401を返す&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h2 id=&quot;htpasswd-&quot;&gt;.htpasswd ファイルを作成する&lt;/h2&gt;
-
-&lt;pre&gt;&lt;code&gt;# -c ファイル新規作成
-# -s パスワードをSHA1
-$ htpasswd -c -s .htpasswd username
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&quot;httpdconf--htaccess-&quot;&gt;httpd.conf / .htaccess での設定&lt;/h2&gt;
-
-&lt;pre&gt;&lt;code&gt;AuthUserFile    /path/to/.htpasswd
-AuthName        &quot;basic auth&quot;
-AuthType        Basic
-Require valid-user
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&quot;section&quot;&gt;特定のファイルには認証をかけない&lt;/h2&gt;
-
-&lt;p&gt;&lt;a href=&quot;http://httpd.apache.org/docs/2.2/mod/core.html#satisfy&quot;&gt;Satisfy&lt;/a&gt; ディレクティブを使う。
-これは、RequireとAllowが両方使われている場合に、詳細な設定を行う場合に使用する。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;# 画像のみ認証をかけない
-&amp;lt;FilesMatch &quot;\.(gif|jpe?g|png)$&quot;&amp;gt;
-    Satisfy Any
-    Allow from all
-&amp;lt;/FilesMatch&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&quot;ip&quot;&gt;特定のIPからのアクセスには認証をかけない&lt;/h2&gt;
-
-&lt;pre&gt;&lt;code&gt;Satisfy Any
-Allow from 127.0.0.1
-&lt;/code&gt;&lt;/pre&gt;
-
-</description>
-            <published>2012-07-31 00:00:00 +0900</published>
-            <link>http://akkunchoi.github.com/apache-basic-auth.html</link>
-        </item>
-        
-        <item>
             <title>Apache 設定例</title>
             <description>&lt;ul id=&quot;markdown-toc&quot;&gt;
   &lt;li&gt;&lt;a href=&quot;#section&quot;&gt;起動&lt;/a&gt;&lt;/li&gt;
@@ -584,8 +526,15 @@ Allow from 127.0.0.1
       &lt;li&gt;&lt;a href=&quot;#php-3&quot;&gt;アクセスログに情報を追加する (PHP)&lt;/a&gt;&lt;/li&gt;
     &lt;/ul&gt;
   &lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#section-8&quot;&gt;メモ&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#todo&quot;&gt;TODO&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#basic-1&quot;&gt;Basic認証&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#basic-2&quot;&gt;Basic認証の仕組み&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#htpasswd-&quot;&gt;.htpasswd ファイルを作成する&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#httpdconf--htaccess-&quot;&gt;httpd.conf / .htaccess での設定&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#section-8&quot;&gt;特定のファイルには認証をかけない&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#ip&quot;&gt;特定のIPからのアクセスには認証をかけない&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#section-9&quot;&gt;メモ&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;p&gt;モジュールのマニュアル&lt;/p&gt;
@@ -736,15 +685,56 @@ apache_note(&quot;originallog&quot;, $val);
 
 &lt;p&gt;例えばユーザーIDなどを埋め込むと便利。&lt;/p&gt;
 
-&lt;h1 id=&quot;section-8&quot;&gt;メモ&lt;/h1&gt;
+&lt;h1 id=&quot;basic-1&quot;&gt;Basic認証&lt;/h1&gt;
+
+&lt;h2 id=&quot;basic-2&quot;&gt;Basic認証の仕組み&lt;/h2&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;クライアントがページをリクエストする（この時点ではまだ認証がかかってるかどうか知らない）&lt;/li&gt;
+  &lt;li&gt;クライアントに401レスポンスを返す&lt;/li&gt;
+  &lt;li&gt;ユーザにIDとパスワードの入力を求める&lt;/li&gt;
+  &lt;li&gt;認証ヘッダを含めてページをリクエストする&lt;/li&gt;
+  &lt;li&gt;成功すれば、通常のページを。そうでなければ再度401を返す&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;htpasswd-&quot;&gt;.htpasswd ファイルを作成する&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;# -c ファイル新規作成
+# -s パスワードをSHA1
+$ htpasswd -c -s .htpasswd username
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;httpdconf--htaccess-&quot;&gt;httpd.conf / .htaccess での設定&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;AuthUserFile    /path/to/.htpasswd
+AuthName        &quot;basic auth&quot;
+AuthType        Basic
+Require valid-user
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;section-8&quot;&gt;特定のファイルには認証をかけない&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://httpd.apache.org/docs/2.2/mod/core.html#satisfy&quot;&gt;Satisfy&lt;/a&gt; ディレクティブを使う。
+これは、RequireとAllowが両方使われている場合に、詳細な設定を行う場合に使用する。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# 画像のみ認証をかけない
+&amp;lt;FilesMatch &quot;\.(gif|jpe?g|png)$&quot;&amp;gt;
+    Satisfy Any
+    Allow from all
+&amp;lt;/FilesMatch&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;ip&quot;&gt;特定のIPからのアクセスには認証をかけない&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;Satisfy Any
+Allow from 127.0.0.1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&quot;section-9&quot;&gt;メモ&lt;/h1&gt;
 
 &lt;ul&gt;
   &lt;li&gt;同じパスのDirectoryディレクティブを２つ書くと、常に後に記述した方のみが適用され、前の方の設定は失われるっぽい。&lt;/li&gt;
 &lt;/ul&gt;
-
-&lt;h1 id=&quot;todo&quot;&gt;TODO&lt;/h1&gt;
-
-&lt;p&gt;昔の記事…&lt;/p&gt;
 
 </description>
             <published>2012-07-31 00:00:00 +0900</published>
@@ -1115,6 +1105,13 @@ mysql&amp;gt; repair table mytable;
 &lt;/ul&gt;
 
 &lt;p&gt;Mail.appのIMAPアクセスは不安定、Lionでも発生するらしい。&lt;/p&gt;
+
+&lt;h2 id=&quot;section&quot;&gt;2012-10-06 追記&lt;/h2&gt;
+
+&lt;p&gt;1ヶ月ほど前、メモ機能とGmailとの相性が悪いのではないかと考え、Mobile Meのアカウントを設定してそちらにメモを移動させた。
+それと同時に、1500件ほどあったメモの内、古いメモを削除した。半分程度になった。&lt;/p&gt;
+
+&lt;p&gt;それから1ヶ月経過したが、今のところメモリを消費する現象は発生していない。&lt;/p&gt;
 
 </description>
             <published>2012-07-28 00:00:00 +0900</published>
