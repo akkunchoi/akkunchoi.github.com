@@ -5,8 +5,175 @@
         <link>http://akkunchoi.github.com</link>
         <atom:link href="http://akkunchoi.github.com/rss.xml" rel="self" type="application/rss+xml" />
         <description>This site is a information for development written by akkunchoi</description>
-        <pubDate>Sat, 06 Oct 2012 09:01:06 +0900</pubDate>
-        <lastBuildDate>Sat, 06 Oct 2012 09:01:06 +0900</lastBuildDate>
+        <pubDate>Wed, 10 Oct 2012 11:50:40 +0900</pubDate>
+        <lastBuildDate>Wed, 10 Oct 2012 11:50:40 +0900</lastBuildDate>
+        
+        <item>
+            <title>驚的速記！Notational Velocity</title>
+            <description>&lt;p&gt;最近もっぱら愛用中のノートアプリ、&lt;a href=&quot;http://notational.net/&quot;&gt;Notational Velocity&lt;/a&gt;を紹介します。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;images/posts/nv1.png&quot; alt=&quot;nv1&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Notational Velocityはノートアプリとして必要最低限の機能と革新的なUIが売りです。
+キーボードで操作可能なので、慣れるととても速く使うことができます。&lt;/p&gt;
+
+&lt;p&gt;ノートアプリで重要なのは「書きたい！」と思った時にすぐ書ける、「あれどこだっけ？」という時にすぐに見つかることです。このアプリはそのどちらも実現できています。&lt;/p&gt;
+
+&lt;p&gt;SimpleNoteやDropboxで同期できるのでクラウド環境も備えてます。&lt;/p&gt;
+
+&lt;h2 id=&quot;section&quot;&gt;使い方&lt;/h2&gt;
+
+&lt;p&gt;「Cmd + L」で検索フィールドにフォーカスします。
+検索フィールドに「メモ」と入力します。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;images/posts/nv2.png&quot; alt=&quot;nv2&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Enterすると、右側のコンテンツ欄に移動します。&lt;/p&gt;
+
+&lt;p&gt;作成ステップは&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Cmd + Lで検索フィールドにフォーカス&lt;/li&gt;
+  &lt;li&gt;タイトルを打って&lt;/li&gt;
+  &lt;li&gt;Enter&lt;/li&gt;
+  &lt;li&gt;中身を打つ&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;img src=&quot;images/posts/nv3.png&quot; alt=&quot;nv3&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;さて、今ここに４つの項目があります。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;images/posts/nv4.png&quot; alt=&quot;nv4&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;この状態で「メ」と打ちます&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;images/posts/nv5.png&quot; alt=&quot;nv5&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;すると、すべてのメモ内を全文検索します。
+このままEnterを押すと「メモ」のコンテンツを入力できます。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;作成と検索を同じフィールドで行うことができる&lt;/strong&gt;のが素晴らしいポイント。
+検索も同時に行うので重複したメモの存在を減らすことができる。&lt;/p&gt;
+
+&lt;h2 id=&quot;section-1&quot;&gt;キーボードで操作可能&lt;/h2&gt;
+
+&lt;p&gt;たったこれだけの操作で必要なことができます。&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Cmd + L&lt;/td&gt;
+      &lt;td&gt;検索フィールドにフォーカス&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Cmd + J&lt;/td&gt;
+      &lt;td&gt;下のノートに移動&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Cmd + K&lt;/td&gt;
+      &lt;td&gt;上のノートに移動&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Tab&lt;/td&gt;
+      &lt;td&gt;ノート一覧からコンテンツ欄へ移動&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Cmd + R&lt;/td&gt;
+      &lt;td&gt;リネーム&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Shift + Cmd + T&lt;/td&gt;
+      &lt;td&gt;タグを編集&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h2 id=&quot;section-2&quot;&gt;その他の機能&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;iPhoneでは &lt;a href=&quot;http://itunes.apple.com/jp/app/plaintext-dropbox-text-editing/id391254385?mt=8&quot;&gt;PlainText&lt;/a&gt; でDropboxと同期できる&lt;/li&gt;
+  &lt;li&gt;フォーク版の &lt;a href=&quot;http://brettterpstra.com/project/nvalt/&quot;&gt;nvALT&lt;/a&gt; ではMarkdownプレビュー機能などがついてる&lt;/li&gt;
+  &lt;li&gt;リンク機能&lt;/li&gt;
+  &lt;li&gt;ブックマーク&lt;/li&gt;
+  &lt;li&gt;タグ&lt;/li&gt;
+  &lt;li&gt;ソート（タイトル、タグ、更新日、作成日）&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;section-3&quot;&gt;デメリット・問題点&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;タイトル必須。タイトルを考えないといけない&lt;/li&gt;
+  &lt;li&gt;フォルダ分けはできない&lt;/li&gt;
+  &lt;li&gt;もちろん、画像は表示できない&lt;/li&gt;
+  &lt;li&gt;複数端末でDropbox同期で同時に起動して使うと、いつの間にかノート消去されてる時がある。Dropboxから戻せるし、同時起動しなければ良いが、ちょっと問題。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;section-4&quot;&gt;プレーンテキストで管理する&lt;/h2&gt;
+
+&lt;p&gt;色々この系統のアプリを試してきましたが、Notational Velocity は自分の好みにマッチしてます。&lt;/p&gt;
+
+&lt;p&gt;Apple Mailのメモは書く時のレスポンスは最高だけど、バグが多い。検索が遅い。
+Evernoteは高機能すぎる、重い。&lt;/p&gt;
+
+&lt;p&gt;そもそもデータがアプリケーションに依存してしまうのが怖い。
+ちょっとメモを見たいだけなのに、わざわざアプリケーションを起動しなければならない。
+果たして10年後、20年後もEvernoteは動いているだろうか。&lt;/p&gt;
+
+&lt;p&gt;もっとデータを自分で管理したい。
+プレーンテキストで保存しておけば、どんなソフトでも読み書きできる。スクリプトを組めば自動化や検索も簡単にできる。&lt;/p&gt;
+
+&lt;p&gt;必要最小限で可能性無限のプレーンテキスト、その導入としてNotational Velocityは良いアプリケーションだと思います。&lt;/p&gt;
+
+</description>
+            <published>2012-10-10 00:00:00 +0900</published>
+            <link>http://akkunchoi.github.com/notational-velocity.html</link>
+        </item>
+        
+        <item>
+            <title>Composer - PHPのパッケージ管理システム</title>
+            <description>&lt;p&gt;&lt;a href=&quot;&quot;&gt;Composer&lt;/a&gt;をダウンロードします。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ curl -s https://getcomposer.org/installer | php
+$ curl -s https://getcomposer.org/installer | php -- --install-dir=bin
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;composer.json を用意します。&lt;/p&gt;
+
+&lt;p&gt;例えば、&lt;a href=&quot;&quot;&gt;Slim&lt;/a&gt;を使い、src ディレクトリに Acme パッケージを配置している場合はこうなります。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;{
+  &quot;require&quot;: {
+    &quot;slim/slim&quot;: &quot;2.*&quot;
+  },
+  &quot;autoload&quot;: {
+    &quot;psr-0&quot;: {&quot;Acme&quot;: &quot;src&quot;}
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;インストールします。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ php composer.phar install
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;パッケージは vendor ディレクトリにインストールされます。&lt;/p&gt;
+
+&lt;p&gt;composer.jsonを書き換えた後はクラスマッピングを更新する必要があるので &lt;code&gt;php composer.phar update&lt;/code&gt; を実行します。&lt;/p&gt;
+
+&lt;p&gt;autoloadを読み込みます。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;lt;?php
+require 'vendor/autoload.php';
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;以上。&lt;/p&gt;
+
+&lt;p&gt;オートローダーとしても使えるので便利です。&lt;/p&gt;
+
+</description>
+            <published>2012-10-10 00:00:00 +0900</published>
+            <link>http://akkunchoi.github.com/composer.html</link>
+        </item>
         
         <item>
             <title>Gitの運用方法（ブランチング）</title>
@@ -742,8 +909,10 @@ Allow from 127.0.0.1
         </item>
         
         <item>
-            <title>xpdfを使ってPDFから日本語抽出 (homebrew, MacOSX)</title>
-            <description>&lt;p&gt;homebrewでxpdfをインストールする。&lt;/p&gt;
+            <title>xpdfを使ってPDFから日本語抽出</title>
+            <description>&lt;p&gt;環境はMacOSX, homebrewです。&lt;/p&gt;
+
+&lt;p&gt;homebrewでxpdfをインストールする。&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;$ brew install xpdf
 &lt;/code&gt;&lt;/pre&gt;
