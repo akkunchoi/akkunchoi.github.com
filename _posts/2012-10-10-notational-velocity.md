@@ -1,7 +1,7 @@
 ---
 layout: posts
 title: 驚的速記！Notational Velocity
-tags: tool, MacOSX
+tags: tool MacOSX
 ---
 
 最近もっぱら愛用中のノートアプリ、[Notational Velocity]を紹介します。
