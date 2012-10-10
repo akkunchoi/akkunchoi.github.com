@@ -1,7 +1,7 @@
 ---
 layout: posts
 title: teleport - Mac間でマウス、キーボード、クリップボード共有
-tags: MacOSX
+tags: tool MacOSX
 ---
 
 <http://abyssoft.com/software/teleport/>
