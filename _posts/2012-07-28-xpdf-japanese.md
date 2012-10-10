@@ -1,8 +1,10 @@
 ---
 layout: posts
-title: xpdfを使ってPDFから日本語抽出 (homebrew, MacOSX) 
-tags: pdf MacOSX
+title: xpdfを使ってPDFから日本語抽出
+tags: pdf 
 ---
+
+環境はMacOSX, homebrewです。
 
 homebrewでxpdfをインストールする。
 
