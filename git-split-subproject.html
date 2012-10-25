@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Akkunchoi.github.com : " />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="/stylesheets/stylesheet.css">
+
+    <title>Git サブプロジェクトの切り出し | akkunchoi@github</title>
+    <link rel="alternate" type="application/rss+xml" title="RSS Feed for mysite.com" href="/feed.xml" />
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/akkunchoi">View on GitHub</a>
+
+          <h1 id="project_title">
+            <a href="/">akkunchoi.github.com</a>
+          </h1>
+          <h2 id="project_tagline"></h2>
+
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+
+      <article class="posts">
+  <header>
+    <h1>Git サブプロジェクトの切り出し</h1>
+    <ul class="tags">
+      
+      <li class="inline archive_list"><a class="tag_list_link" href="/tag/git">git</a></li>
+      
+    </ul>
+  </header>
+  <div class="posts-content">
+  <p>サブプロジェクトを切り出して、リポジトリを分割する方法。</p>
+
+<h2 id="section">サブプロジェクトの切り出し</h2>
+
+<p>あらかじめサブプロジェクトを subproject_dir ディレクトリにまとめておきます。</p>
+
+<p>サブプロジェクトから、ブランチを生成します。</p>
+
+<pre><code>git subtree split -P subproject_dir -b subproject_branch
+</code></pre>
+
+<p>subproject_branch に今までの履歴込でブランチが作成されました。ただし、<strong>切り出し元とは共通の祖先はありません</strong>。</p>
+
+<p>別のリポジトリにしたいならリモート指定すれば良いし、subtreeで管理してもいい。</p>
+
+<h2 id="section-1">切り出したサブプロジェクトを削除</h2>
+
+<p>切り出し元からサブプロジェクトを完全に削除するならもう一手間いります。</p>
+
+<p>切り出し元の方で subproject_dir を削除します。これは<strong>歴史改変</strong>を行います。超危険コマンドです。関係者の同意のもと行なって下さい。</p>
+
+<pre><code>git filter-branch --tree-filter 'rm -rf subproject_dir' HEAD
+</code></pre>
+
+<p>これで subproject_dir に関する変更は今までの履歴も含めて削除されます。</p>
+
+<p>歴史改変された master はそのままでは push できません。
+push するとこんなこと言われます。
+（オプションで削除できるようにすることもできるみたい）</p>
+
+<blockquote>
+  <p> ! [remote rejected] master (deletion of the current branch prohibited)</p>
+</blockquote>
+
+<p>filter-branch 後の状態でブランチを切っておきます。</p>
+
+<pre><code>git co -b filtered
+</code></pre>
+
+<p>master はresetして巻き戻します。</p>
+
+<pre><code>git reset --hard {最初のコミットまで戻す}
+git push -f origin master
+</code></pre>
+
+<p>これで巻き戻せました。
+filter-branch 後の結果を master にマージします。</p>
+
+<pre><code>git merge filtered
+</code></pre>
+
+
+  </div>
+  <footer> 
+  <p>Last updated at <time></time></p>
+  <!-- <p>Published at <time>2012-10-26</time></p> -->
+  </footer>
+</article>
+
+
+
+
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    <script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-31706657-3']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+
+  </body>
+</html>

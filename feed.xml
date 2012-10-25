@@ -5,8 +5,128 @@
         <link>http://akkunchoi.github.com</link>
         <atom:link href="http://akkunchoi.github.com/rss.xml" rel="self" type="application/rss+xml" />
         <description>This site is a information for development written by akkunchoi</description>
-        <pubDate>Wed, 10 Oct 2012 11:52:30 +0900</pubDate>
-        <lastBuildDate>Wed, 10 Oct 2012 11:52:30 +0900</lastBuildDate>
+        <pubDate>Fri, 26 Oct 2012 06:50:27 +0900</pubDate>
+        <lastBuildDate>Fri, 26 Oct 2012 06:50:27 +0900</lastBuildDate>
+        
+        <item>
+            <title>Git サブプロジェクトの切り出し</title>
+            <description>&lt;p&gt;サブプロジェクトを切り出して、リポジトリを分割する方法。&lt;/p&gt;
+
+&lt;h2 id=&quot;section&quot;&gt;サブプロジェクトの切り出し&lt;/h2&gt;
+
+&lt;p&gt;あらかじめサブプロジェクトを subproject_dir ディレクトリにまとめておきます。&lt;/p&gt;
+
+&lt;p&gt;サブプロジェクトから、ブランチを生成します。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;git subtree split -P subproject_dir -b subproject_branch
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;subproject_branch に今までの履歴込でブランチが作成されました。ただし、&lt;strong&gt;切り出し元とは共通の祖先はありません&lt;/strong&gt;。&lt;/p&gt;
+
+&lt;p&gt;別のリポジトリにしたいならリモート指定すれば良いし、subtreeで管理してもいい。&lt;/p&gt;
+
+&lt;h2 id=&quot;section-1&quot;&gt;切り出したサブプロジェクトを削除&lt;/h2&gt;
+
+&lt;p&gt;切り出し元からサブプロジェクトを完全に削除するならもう一手間いります。&lt;/p&gt;
+
+&lt;p&gt;切り出し元の方で subproject_dir を削除します。これは&lt;strong&gt;歴史改変&lt;/strong&gt;を行います。超危険コマンドです。関係者の同意のもと行なって下さい。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;git filter-branch --tree-filter 'rm -rf subproject_dir' HEAD
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;これで subproject_dir に関する変更は今までの履歴も含めて削除されます。&lt;/p&gt;
+
+&lt;p&gt;歴史改変された master はそのままでは push できません。
+push するとこんなこと言われます。
+（オプションで削除できるようにすることもできるみたい）&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt; ! [remote rejected] master (deletion of the current branch prohibited)&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;filter-branch 後の状態でブランチを切っておきます。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;git co -b filtered
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;master はresetして巻き戻します。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;git reset --hard {最初のコミットまで戻す}
+git push -f origin master
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;これで巻き戻せました。
+filter-branch 後の結果を master にマージします。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;git merge filtered
+&lt;/code&gt;&lt;/pre&gt;
+
+</description>
+            <published>2012-10-26 00:00:00 +0900</published>
+            <link>http://akkunchoi.github.com/git-split-subproject.html</link>
+        </item>
+        
+        <item>
+            <title>Git 空ブランチ</title>
+            <description>&lt;h2 id=&quot;section&quot;&gt;空ブランチ&lt;/h2&gt;
+
+&lt;p&gt;Gitではコミットやブランチを作成する場合、必ず親を指定する必要があります。今までの歴史を全て辿れるようにするためです。&lt;/p&gt;
+
+&lt;p&gt;空ブランチを作成すると、今までの歴史とは全く別の新たな歴史を、同じリポジトリ内で開始することができます。親が存在しない、新たな歴史のコミットはどう使うのでしょうか。&lt;/p&gt;
+
+&lt;h2 id=&quot;section-1&quot;&gt;空ブランチの用途&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://www.kernel.org/pub/software/scm/git/docs/git-checkout.html&quot;&gt;git-checkout&lt;/a&gt; のヘルプには全履歴を見せずにツリーを公開したい場合や、公開すべきでないコードが履歴に含まれている場合に有効だそうです。&lt;/p&gt;
+
+&lt;p&gt;Github pagesは、プロジェクトサイトの生成用として、空ブランチを使っています。&lt;/p&gt;
+
+&lt;p&gt;自分はサーバーサイドによる制御ができないプロジェクトで、完成品を生成するために空ブランチを使いました。&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;github pagesのユーザーページ。Jekyllプラグインを使用するためにソースとは別に出力HTMLだけの空ブランチを作成。&lt;/li&gt;
+  &lt;li&gt;HTML/CSS/JSのプロジェクト。公開用ブランチはディレクトリのルートが開発用ブランチとは違ったため、公開用の空ブランチを作成。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;空ブランチを作成しなくても、新たにリポジトリを作成するという手段もあります。
+ただ、リポジトリ作成よりも空ブランチ作成の方が手軽です。&lt;/p&gt;
+
+&lt;h2 id=&quot;github-pages&quot;&gt;作成方法１: Github pagesの場合&lt;/h2&gt;
+
+&lt;p&gt;Github pages でプロジェクトサイトを作成する際にはプロジェクトのリポジトリ内で空ブランチを作成します。空ブランチを使う理由はわかりませんが、プロジェクト本体には影響させず、リポジトリ内に同梱させる方法としては良い方法だと思います。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# HEADをnew_branchに切り替える。
+git symbolic-ref HEAD refs/heads/new_branch
+
+# symbolic-refを直接変更した場合はインデックスとワーキングツリーが残るので削除する
+rm .git/index
+git clean -fdx
+
+# new_branchの内容をコミット
+touch .gitignore
+git add .
+git commit
+git push -u origin new_branch
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://d.hatena.ne.jp/kanonji/20110221/1298263044&quot;&gt;各コマンドの意味はこちらを参考にしました&lt;/a&gt;。&lt;/p&gt;
+
+&lt;p&gt;他にも&lt;a href=&quot;http://d.hatena.ne.jp/gnarl/20091110/1257846415&quot;&gt;このような&lt;/a&gt;方法があるそうです。&lt;/p&gt;
+
+&lt;h2 id=&quot;orphan&quot;&gt;作成方法２: orphanオプション&lt;/h2&gt;
+
+&lt;p&gt;Git 1.7.2 では checkout に orphan オプションがが追加されました。これで、空ブランチ（orphan branch）が簡単に作成できるようになります。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;git checkout --orphan new_branch_name
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;orphan とは孤児のことです。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://irohiroki.com/2010/08/02/push-orphan-to-heroku&quot;&gt;http://irohiroki.com/2010/08/02/push-orphan-to-heroku&lt;/a&gt;&lt;/p&gt;
+
+</description>
+            <published>2012-10-26 00:00:00 +0900</published>
+            <link>http://akkunchoi.github.com/git-empty-branch.html</link>
+        </item>
         
         <item>
             <title>驚的速記！Notational Velocity</title>
