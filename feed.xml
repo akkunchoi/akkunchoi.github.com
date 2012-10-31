@@ -5,8 +5,64 @@
         <link>http://akkunchoi.github.com</link>
         <atom:link href="http://akkunchoi.github.com/rss.xml" rel="self" type="application/rss+xml" />
         <description>This site is a information for development written by akkunchoi</description>
-        <pubDate>Fri, 26 Oct 2012 06:50:27 +0900</pubDate>
-        <lastBuildDate>Fri, 26 Oct 2012 06:50:27 +0900</lastBuildDate>
+        <pubDate>Wed, 31 Oct 2012 11:23:40 +0900</pubDate>
+        <lastBuildDate>Wed, 31 Oct 2012 11:23:40 +0900</lastBuildDate>
+        
+        <item>
+            <title>jQuery Deferred and $(document).ready()</title>
+            <description>&lt;p&gt;&lt;code&gt;$(document).ready()&lt;/code&gt;の後にajaxリクエストすると、レンダリング中にムダに待機してしまいます。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code data-language=&quot;javascript&quot;&gt;$(document).ready(function(){
+  $.ajax('contents', function(response){
+    // process
+  });
+});
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code&gt;ready()&lt;/code&gt;内ではなく、外でajaxリクエストすれば真っ先にリクエストできます。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code data-language=&quot;javascript&quot;&gt;$.ajax('contents', function(response){
+  // process?
+});
+$(document).ready(function(){
+  // process?
+});
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;しかしこれでは ajax リクエストの完了と ready になった後に実行するというのが難しくなります。無理やり実装するならばこんな感じでしょうか。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code data-language=&quot;javascript&quot;&gt;var ajaxDone = false, ready = false;
+$.ajax('contents', function(response){
+  if (ready){
+    // process
+  }
+  ajaxDone = true;
+});
+$(document).ready(function(){
+  if (ajaxDone){
+    // process
+  }
+  ready = true;
+});
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;カッコ悪いですし、ajaxリクエストが増えた場合に面倒ですね。&lt;/p&gt;
+
+&lt;p&gt;このようなコールバックのフローを上手く扱うには &lt;a href=&quot;http://api.jquery.com/category/deferred-object/&quot;&gt;jQuery.Deferred&lt;/a&gt; を使います。この場合、次のように記述することができます。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code data-language=&quot;javascript&quot;&gt;var ready = $.Deferred();
+$(document).ready(ready.resolve);
+$.when(ready, $.ajax('contents')).then(function($, response) {
+  // process
+});
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;参考: &lt;a href=&quot;http://stackoverflow.com/questions/6177187/can-i-get-a-jquery-deferred-on-document-ready&quot;&gt;http://stackoverflow.com/questions/6177187/can-i-get-a-jquery-deferred-on-document-ready&lt;/a&gt;&lt;/p&gt;
+
+</description>
+            <published>2012-10-31 00:00:00 +0900</published>
+            <link>http://akkunchoi.github.com/jquery-deferred-and-document-ready.html</link>
+        </item>
         
         <item>
             <title>Git サブプロジェクトの切り出し</title>

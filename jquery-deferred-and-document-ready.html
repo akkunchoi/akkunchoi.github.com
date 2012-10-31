@@ -9,7 +9,7 @@
     <link rel="stylesheet" type="text/css" media="screen" href="/stylesheets/rainbow-github.css">
     <link rel="stylesheet" type="text/css" media="screen" href="/stylesheets/stylesheet.css">
 
-    <title>SPFを設定して迷惑メール回避する | akkunchoi@github</title>
+    <title>jQuery Deferred and $(document).ready() | akkunchoi@github</title>
     <link rel="alternate" type="application/rss+xml" title="RSS Feed for mysite.com" href="/feed.xml" />
     <script type="text/javascript" src="/javascripts/rainbow-custom.min.js"></script>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
@@ -43,42 +43,68 @@ $(document).ready(function($){
 
       <article class="posts">
   <header>
-    <h1>SPFを設定して迷惑メール回避する</h1>
+    <h1>jQuery Deferred and $(document).ready()</h1>
     <ul class="tags">
       
-      <li class="inline archive_list"><a class="tag_list_link" href="/tag/mail">mail</a></li>
-      
-      <li class="inline archive_list"><a class="tag_list_link" href="/tag/SPF">SPF</a></li>
-      
-      <li class="inline archive_list"><a class="tag_list_link" href="/tag/DNS">DNS</a></li>
+      <li class="inline archive_list"><a class="tag_list_link" href="/tag/jQuery">jQuery</a></li>
       
     </ul>
   </header>
   <div class="posts-content">
-  <h2 id="section">設定方法</h2>
+  <p><code>$(document).ready()</code>の後にajaxリクエストすると、レンダリング中にムダに待機してしまいます。</p>
 
-<p>TXTレコードに <code>v=spf1 a:example.com ~all</code></p>
-
-<h2 id="section-1">確認方法</h2>
-
-<p>DNSの確認はTXTレコードを見る。</p>
-
-<pre><code>$ nslookup -query=TXT example.com
+<pre><code data-language="javascript">$(document).ready(function(){
+  $.ajax('contents', function(response){
+    // process
+  });
+});
 </code></pre>
 
-<p>次にメールヘッダを確認する。
-“Received-Spf: pass” になっていれば迷惑メール回避されているはず。</p>
+<p><code>ready()</code>内ではなく、外でajaxリクエストすれば真っ先にリクエストできます。</p>
 
-<ul>
-  <li>ムームードメインの場合 <a href="http://laugh.rinazo.com/2012/03/28/857">http://laugh.rinazo.com/2012/03/28/857</a></li>
-  <li>詳しい解説 <a href="http://webos-goodies.jp/archives/51103006.html">http://webos-goodies.jp/archives/51103006.html</a></li>
-  <li>設定例 <a href="http://www.au.kddi.com/service/email/support/chui/spf_record.html">http://www.au.kddi.com/service/email/support/chui/spf_record.html</a> </li>
-</ul>
+<pre><code data-language="javascript">$.ajax('contents', function(response){
+  // process?
+});
+$(document).ready(function(){
+  // process?
+});
+</code></pre>
+
+<p>しかしこれでは ajax リクエストの完了と ready になった後に実行するというのが難しくなります。無理やり実装するならばこんな感じでしょうか。</p>
+
+<pre><code data-language="javascript">var ajaxDone = false, ready = false;
+$.ajax('contents', function(response){
+  if (ready){
+    // process
+  }
+  ajaxDone = true;
+});
+$(document).ready(function(){
+  if (ajaxDone){
+    // process
+  }
+  ready = true;
+});
+</code></pre>
+
+<p>カッコ悪いですし、ajaxリクエストが増えた場合に面倒ですね。</p>
+
+<p>このようなコールバックのフローを上手く扱うには <a href="http://api.jquery.com/category/deferred-object/">jQuery.Deferred</a> を使います。この場合、次のように記述することができます。</p>
+
+<pre><code data-language="javascript">var ready = $.Deferred();
+$(document).ready(ready.resolve);
+$.when(ready, $.ajax('contents')).then(function($, response) {
+  // process
+});
+</code></pre>
+
+<p>参考: <a href="http://stackoverflow.com/questions/6177187/can-i-get-a-jquery-deferred-on-document-ready">http://stackoverflow.com/questions/6177187/can-i-get-a-jquery-deferred-on-document-ready</a></p>
+
 
   </div>
   <footer> 
-  <p>Last updated at <time>2012-09-23 13:52:29 +0900</time></p>
-  <!-- <p>Published at <time>2012-07-28</time></p> -->
+  <p>Last updated at <time></time></p>
+  <!-- <p>Published at <time>2012-10-31</time></p> -->
   </footer>
 </article>
 
