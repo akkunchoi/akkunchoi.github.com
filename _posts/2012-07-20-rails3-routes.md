@@ -9,71 +9,95 @@ tags: ruby rails
 
 ## はじめに
 
-これはRails3のルーティングを理解するための自分用メモです。
+この記事はRails3のルーティングを理解するための自分用メモです。随時書き足し、整理していきます。
 
-## ルーティングとRails
 
-ルーティングとは「URL」と「コントローラー、アクション、パラメータ」とのマッピングのこと。
+## ルーティングとは
 
-[公式のガイド]にはこう書いてある。
+まずルーティングとは何か？[公式のガイド] にはこう書かれてます。
 
 > The Rails router recognizes URLs and dispatches them to a controller’s action. It can also generate paths and URLs, avoiding the need to hardcode strings in your views.
->
-> 訳: RailsのルーターはURLを確認して、コントローラのアクションに処理を振り分けまする。また、パスやURLを生成することで、ビューへのハードコード避けることもできます。
 
-「URL => アクション」だけでなく、「アクション => URL」も可能だそうだ。
+訳: RailsのルーターはURLを確認して、コントローラのアクションに処理を振り分けます。また、パスやURLを生成することで、ビューへのハードコードを避けることもできます。
 
+Railsのルーティングは大きく分けて２つの機能を持ちます。
 
-ガイドに沿って、まずは最もシンプルな例を試してみる。Railsでは`config/routes.rb`にDSLで記述する。Rails2とRails3ではかなり書き方が違うので注意する（後方互換性はある？）。
+- URL から、「どのコントローラー」の「どのアクション」に「どういうパラメータ」を与えて処理を実行するかを定義する
+- ビューに URL を記述する際は、ハードコーディングを避けるためURLを直接記述せずに、専用の方法で生成する
 
-    # -- config/routes.rb
+この機能のおかげで、URL構造とアプリケーション構造を独立して設計することを可能にします。
+URL構造とアプリケーション構造の橋渡しの役目が `config/routes.rb` です。
 
-    match "/patients/:id" => "patients#show"
+Railsではルーティングを `config/routes.rb` に専用DSLで記述します。
+Rails2とRails3ではかなり書き方が違うので注意が必要です（後方互換性はある？）。このページでは Rails3 においてのDSLを解説しています。
 
-この一行で「`/patients/17` に HTTP GET すると、PatientsController の show アクションが呼ぶ」という設定になる。
+## シンプルな例
 
+<pre><code data-language="ruby"># config/routes.rb
+match "/patients/:id" => "patients#show", :as => :patient
+</code></pre>
 
-さらに（resourcesなどで設定していれば）ビューではこのような記述ができる
+この一行の設定で「**/patients/17** に HTTP GET すると、**PatientsController の show アクションを id=17 のパラメータで実行する**」という設定になります。
 
-    # @patient = Patient.find(17)
-    <%= link_to "Patient Record", patient_path(@patient) %>
+そして名前付きルート (Named Route Helper) を使用して URL を生成することができます。
 
-`patient_path(@patient)` は `/patients/17` を返す。これを**named helper**と呼ぶらしい。
+<pre><code data-language="ruby"># on view..
+patient_path(17) # /patients/17
+</code></pre>
 
-Railsでは「パス」と「URL」を区別している。URLはスキーム、ドメイン名を含む文字列`http://example.com/hoge/moge/`でパスは`/hoge/moge`の部分。ふだんはパスを使って、必要な時だけURLを使うようにするといい。`patient_url(@patient)`でURLを取得できる。
+名前付きルートを使うことで、アプリケーション側ではURL構造を気にせず設計できるようになります。
 
-コンソールから`rake routes`を実行すると、ルーティングの設定を確認できる。これはroutes.rbを書き換えた後や、現在の構成を確認したい場合など、頻繁に使うことになるだろう。
+また、名前付きルートには path の他に url もあります。
 
-named helperを`rails console`で試す場合は`app.users_path`で呼び出すことができる。
+<pre><code data-language="ruby"># on view..
+patient_url(17)  # http://localhost:3000/patients/17
+</code></pre>
+
+## デバッグ
+
+コンソールから `rake routes` を実行すると、現在のルーティングの設定を確認できます。
+
+    $ rake routes
+    patient        /patients/:id(.:format)       patients#show
+                 
+名前付きルートを `rails console` で試す場合は `app.patient_path` のようにすると呼び出すことができます。
+
+    $ rails console
+    [1] (main)> app.patient_path(17)
+    => "/patients/17"
     
-
-Railsでのルーティングは`resources`を上手く使うのがコツらしい。
-`resources`を使うとリソース（って何なんだという話だけど）のCRUD（Create, Read, Update, Delete）を行うルーティングが一度に生成される。これを使うと一貫性があり、記述量を減らすことができる。詳しくは[REST]へ。
-
-
 ## Resource Routing
 
-基本の設定
+match を使ってアクションを定義していくのは面倒ですよね。Webアプリケーションはほとんど**CRUD**の構造なので、CRUDのアクションを自動で設定できれば楽になります。Railsでは `resources` を使って７のアクション(index, new, create, show, edit, update, destroy) を一度に設定できます。
 
-    resources :photos
+Railsのデフォルトはこの Resource Routing で、これをうまく使うことで一貫性がある構造になり、記述量も格段に減らすことができます。
 
-PhotosControllerに対して7つのルートを生成する。
+### 生成されるルート
+
+<pre><code data-language="ruby"># config/routes.rb
+resources :photos
+</code></pre>
+
+この一行で７つのルートが生成されます。
     
-    HTTP Verb  Path             action    named_helper 
-    ---------  -----            ------    ----------
-    GET        /photos          index     photos_path 
-    GET        /photos/new      new       new_photo_path
-    POST       /photos          create    photos_path
-    GET        /photos/:id      show      photo_path(:id)
-    GET        /photos/:id/edit edit      edit_photo_path(:id)
-    PUT        /photos/:id      update    photo_path(:id)
-    DELETE     /photos/:id      destroy   photo_path(:id)
+    HTTP Verb       Path                    action       named_helper 
+    ---------       -----                   ------       ----------
+    GET             /photos                 index        photos_path 
+    GET             /photos/new             new          new_photo_path
+    POST            /photos                 create       photos_path
+    GET             /photos/:id             show         photo_path(:id)
+    GET             /photos/:id/edit        edit         edit_photo_path(:id)
+    PUT             /photos/:id             update       photo_path(:id)
+    DELETE          /photos/:id             destroy      photo_path(:id)
+    
+それぞれ、PhotosControllerの index, new, create, show, edit, update, destroy アクションに対応しています。
 
-Railsではこんな遷移を想定しているようです。
+newとcreate、editとupdateは対になっており、フォームと実行を想定しています。
+Railsではこんな遷移を想定しています。
 
     index (GET /photos)
       |
-      |-- (GET /photos/new)      --> new 
+      |--> (GET /photos/new)      --> new 
       |                               |
       |                               `-- (POST /photos) --> create
       |
@@ -85,22 +109,34 @@ Railsではこんな遷移を想定しているようです。
       |
       `-- (DELETE /photos/:id)   --> destroy
 
-### resources - 基本
 
-    # PhotosControllerにひもづける
-    resources :photos
+### 基本
 
-    # 複数の場合は一行でもOK
-    resources :photos, :books, :users
+<pre><code data-language="ruby"># config/routes.rb
+# PhotosControllerにひもづける
+resources :photos
 
-### resource - idを伴わない場合
+# 複数のリソースを定義する場合は一行で書いてもOK
+resources :photos, :books, :users
+</code></pre>
 
-例えば、各ユーザーのプロフィールなど。
-コントローラは`ProfileController`ではなく、`ProfilesController`になるので注意（resourcesも同時使う場合に同じコントローラ使いたいだろうということらしい）。
+### idを伴わない場合
 
-    resource :profile
+デフォルトでは show, edit, update, destroy は id を含むようになっています。
+しかし各ユーザーのマイページのように、パラメータが不要なURLの場合もあります。
 
-`resources`と異なるのは「index がない」「:id がない」の２点
+その場合は resource**s** ではなく、resource にします。
+
+<pre><code data-language="ruby"># config/routes.rb
+resource :profile
+</code></pre>
+
+:profile は複数形にしなくても、対応するコントローラは ProfilesController と複数形になるのに注意。
+これは resources と同時に使う場合に、同じコントローラになった方がいいだろうという優しさらしい。
+
+resource**s**と異なるのは「index がない」「:id がない」の２点。
+
+生成されるのは以下の６つのルート。
 
     GET        /profile/new      new       new_profile_path
     POST       /profile          create    profile_path
@@ -109,130 +145,144 @@ Railsではこんな遷移を想定しているようです。
     PUT        /profile          update    profile_path
     DELETE     /profile          destroy   profile_path
 
-### namespace - path and controller prefix
+### Namespace - path and controller prefix
 
-namespaceはpathとcontrollerに付けられるprefix
+namespace は path と controller に付けられるプレフィックスです。
 
-    namespace :admin do
-      # Admin::PhotosController
-      resources :photos
-    end
+<pre><code data-language="ruby"># config/routes.rb
+namespace :admin do
+  # コントローラは Admin::PhotosController です
+  resources :photos
+end
+</code></pre>
 
+URLと Named helper はこうなります。
 
-    # HTTP Verb  Path               action  named helper 
-    # ---------  -----              ------  ----------
     # GET        /admin/photos      index   admin_photos_path 
     # GET        /admin/photos/new  new     new_admin_photo_path
-    #   省略...
-    # 
+    # 省略...
 
-### scope - controller prefix 
+### Scope - controller prefix 
 
-controllerのみprefixを付ける。
+Scope はコントローラのみプレフィックスを付けます。
 
-    scope :module => "admin" do
-      # Admin::PhotosController
-      resources :photos
-    end
+<pre><code data-language="ruby"># config/routes.rb
+scope :module => "admin" do
+  # コントローラは Admin::PhotosController です
+  resources :photos
+end
 
-または
+# またはこのようにも記述できます
+resources :photos, :module => "admin"
+</code></pre>
 
-    # Admin::PhotosController
-    resources :photos, :module => "admin"
-
-Path, named helperにはつかない。内部の構成をモジュール化したい場合に使える。
+パス、Named helperにはつかない。コントローラの構成をモジュール化したい場合に使えます。
     
-    # HTTP Verb  Path         action  named helper 
-    # ---------  -----        ------  ----------
-    # GET        /photos      index   photos_path 
-    # GET        /photos/new  new     new_photo_path
-    #   省略...
-    # 
+    # GET        /photos         index      admin_photos_path 
+    # GET        /photos/new     new        new_admin_photo_path
+    # 省略...
 
-### scope - path prefix
+### Scope - path prefix
 
-pathのみprefixを付ける場合
+パスのみプレフィックスを付ける場合
 
-    scope "/admin" do    
-      resources :photos
-    end
+<pre><code data-language="ruby"># config/routes.rb
+scope "/admin" do    
+  # コントローラは PhotosController です
+  resources :photos
+end
 
-または
+# またはこのようにも記述できます
+# :path は絶対パスで
+resources :photos, :path => '/admin/photos'
+</code></pre>
 
-    # :path は絶対パスで
-    resources :photos, :path => '/admin/photos'
+コントローラーとNamed helperには影響しない。URLだけ変更したい場合に使います。
 
-コントローラーとnamed helperには影響しない。URLだけ変更したい場合に使う。
+    # GET        /admin/photos          index       photos_path 
+    # GET        /admin/photos/new      new         new_photo_path
+    # 省略...
 
-    # HTTP Verb  Path               action  named helper 
-    # ---------  -----              ------  ----------
-    # GET        /admin/photos      index   photos_path 
-    # GET        /admin/photos/new  new     new_photo_path
-    #   省略...
-    # 
+さらに、`:path` を使えば自由にパスを変更できます。
 
-`:path`を使えば自由にパスを変更できる
+<pre><code data-language="ruby"># config/routes.rb
+# :path は相対パスにする
+# /hoge => photo#index に対応
+resources :photos, :path => 'hoge' 
+</code></pre>
 
-    # photo_index   GET  /hoge  photo#index
-    # :path は相対パスで
-    resources :photos, :path => 'hoge' 
+### Nested Resources - has_manyな場合に
 
-### Nested Resources - has_manyな場合
+<pre><code data-language="ruby"># config/routes.rb
+resources :photos do
+  resources :comments
+end 
 
-    resources :photos do
-      resources :comments
-    end 
+# photo_comments GET /photos/:photo_id/comments     comments#index
+# photo_comment  GET /photos/:photo_id/comments/:id comments#show
+</code></pre>
     
-    # photo_comments GET /photos/:photo_id/comments     comments#index
-    # photo_comment  GET /photos/:photo_id/comments/:id comments#show
+ネストは何階層でも可能だけど、混乱をまねくため１階層以上にすべきではない。Named helperも長くなる。
+
+### member, collection - 追加のアクション
+
+基本の7ルート以外のルートを追加したい場合は`member`か`collection`を使う。
+`member`は :id 付きのルートで、`collection`は:idなしのルート。
+
+`GET /photos/:id/preview` で preview アクションを呼ぶ設定。
+
+<pre><code data-language="ruby"># config/routes.rb
+resources :photos do
+  member do
+    get 'preview'
+  end
+
+  # または
+  get 'preview', :on => :member
+end
+</code></pre>
     
-ネストは何階層でも可能だけど、混乱をまねくため１階層以上にすべきではない。named helperも長くなる。
+`GET /photos/search`で search アクションを呼ぶ設定。
 
-### member, collection - ルーティングを追加
+<pre><code data-language="ruby"># config/routes.rb
+resources :photos do
+  collection do
+    get 'search'
+  end
 
-基本の7ルート以外のルートを追加したい場合は`member`か`collection`を使う。memberは:id付きのルートで、collectionは:idなしのルート。
+  # または
+  get 'search', :on => :collection
+end
+</code></pre>
 
-`GET /photos/:id/preview` で preview アクションが呼ばれるようにするためにはこうする。
+### collection と match
 
-    resources :photos do
-      member do
-        get 'preview'
-      end
-      # または
-      # get 'preview', :on => :member
-    end
-    
-`GET /photos/search`で search アクションが呼ばれるようにするためにはこうする。
+/photos/hoge, /photos/moge といちいちアクションを定義するのが面倒な場合は match を使います。
 
-    resources :photos do
-      collection do
-        get 'search'
-      end
-      # または
-      # get 'search', :on => :collection
-    end
+<pre><code data-language="ruby"># config/routes.rb
+resources :photos do
+  # TODO Named helperも自動生成できないだろうか...
+  # /photos/:action photos#(?-mix:[^0-9]+)
+  collection do
+    # 数字の場合は member アクションに流れるようにする
+    match ':action', :action => /[^0-9]+/
+  end
+end
+</code></pre>
 
-### member,collection と match の合わせ技
 
-いちいち定義するのは面倒なので match を使います。
-
-    # TODO named helperも自動生成できないだろうか...
-    # /hotels/:action hotels#(?-mix:[^0-9]+)
-
-    resources :hotels do
-      collection do
-        # 数字の場合は :id に流れるようにする
-        match ':action', :action => /[^0-9]+/
-      end
-    end
 
 ## Non-Resourceful Routes
 
-### dynamic
+resources じゃないルート。
 
-このようなルート設定で、
+### Dynamic
 
-    match ':controller(/:action(/:id))'
+この設定で、
+
+<pre><code data-language="ruby"># config/routes.rb
+match ':controller(/:action(/:id))'
+</code></pre>
 
 `GET /photos/show/1/2`すると、パラメータはこうなる。
 
@@ -240,19 +290,25 @@ pathのみprefixを付ける場合
 
 パラメータは自由に追加できる
 
-    match ':controller/:action/:id/:user_id'
+<pre><code data-language="ruby"># config/routes.rb
+match ':controller/:action/:id/:user_id'
+</code></pre>
 
-namespace, :moduleと、matchの:controllerは同時には使えない。そういう場合はこうする。
+namespaceの:moduleと、matchの:controllerは同時には使えない。そういう場合はこうする。
 
-    match ':controller(/:action(/:id))', :controller => /admin\/[^\/]+/
+<pre><code data-language="ruby"># config/routes.rb
+match ':controller(/:action(/:id))', :controller => /admin\/[^\/]+/
+</code></pre>
 
-### static
+### Static
 
 URLに特定の文字列を含むような場合。
 
-このような設定で、
+この設定で、
 
-    match ':controller/:action/:id/with_user/:user_id'
+<pre><code data-language="ruby"># config/routes.rb
+match ':controller/:action/:id/with_user/:user_id'
+</code></pre>
     
 `GET /photos/show/1/with_user/2` するとパラメータはこうなる
 
@@ -260,83 +316,98 @@ URLに特定の文字列を含むような場合。
 
 ### query strings
 
-このルーティングで、
+この設定で
 
-    match ':controller/:action/:id'
+<pre><code data-language="ruby"># config/routes.rb
+match ':controller/:action/:id'
+</code></pre>
 
 `GET /photos/show/1?user_id=2`すると
 
     { :controller => “photos”, :action => “show”, :id => “1”, :user_id => “2” }
 
-`GET /photos/show/1?id=2` この場合はどうなるか？`:id => '1'`になる。クエリ文字列よりも:idの方が優先されるようだ。
+`GET /photos/show/1?id=2` この場合はどうなるか？
+`:id => '1'`になる。クエリ文字列よりも :id の方が優先されるようです。
 
 
-### defaults
+### Defaults
 
-    # GET /photos/1
-    # { :controller => "photos", :action => "show", :id => "1", :format => "jpg"
-    match 'photos/:id' => 'photos#show', :defaults => { :format => 'jpg' }
+<pre><code data-language="ruby"># config/routes.rb
+# GET /photos/1
+# { :controller => "photos", :action => "show", :id => "1", :format => "jpg"
+match 'photos/:id' => 'photos#show', :defaults => { :format => 'jpg' }
+</code></pre>
 
-### naming - matchでも名前を付ける
+### Naming - matchでも名前を付ける
 
-    # logout_path, logout_url
-    match 'exit' => 'sessions#destroy', :as => :logout
+<pre><code data-language="ruby"># config/routes.rb
+# logout_path, logout_url
+match 'exit' => 'sessions#destroy', :as => :logout
+</code></pre>
 
-### constraints (HTTP verb) - HTTPメソッドで制約する
+### Constraints (HTTP verb) - HTTPメソッドで制約する
 
 `/photos/show`かつGETメソッドに限定する
 
-    match 'photos/show' => 'photos#show', :via => :get
+<pre><code data-language="ruby"># config/routes.rb
+match 'photos/show' => 'photos#show', :via => :get
 
-    # 短縮形
-    get 'photos/show'
+# 上記と下記は同じ。短縮形
+get 'photos/show'
+</code></pre>
+
     
-複数のメソッドを付けられる
+複数のメソッドを付けられます
 
-    match 'photos/show' => 'photos#show', :via => [:get, :post]
+<pre><code data-language="ruby"># config/routes.rb
+match 'photos/show' => 'photos#show', :via => [:get, :post]
+</code></pre>
 
+### Constraints (parameter) - パラメータを制約する
 
-### constraints (parameter) - パラメータに制約する
+こうすると`/photos/A12345`のようなパスにマッチする。
+`/photos/12`にはマッチしない。
 
-これは、
-
-    match 'photos/:id' => 'photos#show', :constraints => { :id => /[A-Z]\d{5}/ }
-
-    # これも同じ
-    match 'photos/:id' => 'photos#show', :id => /[A-Z]\d{5}/ 
-
-`/photos/A12345`のようなパスにマッチする。
+<pre><code data-language="ruby"># config/routes.rb
+match 'photos/:id' => 'photos#show', :constraints => { :id => /[A-Z]\d{5}/ }
+# これは同じ意味
+match 'photos/:id' => 'photos#show', :id => /[A-Z]\d{5}/ 
+</code></pre>
 
 制約は正規表現を受け取るが、`^ $ \b \B`は使えない。でも先頭に固定されているので使う必要がない。
 
-### constraints (request) - リクエストで制約をする 
+### Constraints (request) - リクエストで制約をする 
 
 [ActionDispatch::Request]オブジェクトのメソッドで制約がかけられる。
 
-    match "photos", :constraints => {:subdomain => "admin"}
+<pre><code data-language="ruby"># config/routes.rb
+match "photos", :constraints => {:subdomain => "admin"}
 
-    # ブロックを与えることもできる
-    namespace "admin" do
-      constraints :subdomain => "admin" do
-        resources :photos
-      end
-    end
+# ブロックを与えることもできる
+namespace "admin" do
+  constraints :subdomain => "admin" do
+    resources :photos
+  end
+end
+</code></pre>
 
 ### Advanced Constraints - 制約クラス
 
-    match "*path" => "blacklist#index", :constraints => BlacklistConstraint.new
-    
-    class BlacklistConstraint
-      def matches?(request)
-        # マッチするならtrue 
-      end
-    end
+<pre><code data-language="ruby"># config/routes.rb
+match "*path" => "blacklist#index", :constraints => BlacklistConstraint.new
+
+class BlacklistConstraint
+  def matches?(request)
+    # マッチするならtrue 
+  end
+end
+</code></pre>
 
 ### glob
 
-これは、
-
-    match 'photos/*other' => 'photos#unknown'
+<pre><code data-language="ruby"># config/routes.rb
+match 'photos/*other' => 'photos#unknown'
+</code></pre>
 
 こうなる。
 
@@ -346,7 +417,9 @@ URLに特定の文字列を含むような場合。
 
 これは、
 
-    match 'books/*section/:title' => 'books#show'
+<pre><code data-language="ruby"># config/routes.rb
+match 'books/*section/:title' => 'books#show'
+</code></pre>
 
 こうなる。
 
@@ -358,47 +431,55 @@ URLに特定の文字列を含むような場合。
 
 301 “Moved Permanently” redirectになります。
 
-    match "/stories" => redirect("/posts")
-    
-    # 値を引き継ぐ場合
-    match "/stories/:name" => redirect("/posts/%{name}")
+<pre><code data-language="ruby"># config/routes.rb
+match "/stories" => redirect("/posts")
 
-    # ブロックでもいいよ
-    match "/stories/:name" => redirect {|params| "/posts/#{params[:name].pluralize}" }
-    match "/stories" => redirect {|p, req| "/posts/#{req.subdomain}" }
+# 値を引き継ぐ場合
+match "/stories/:name" => redirect("/posts/%{name}")
+
+# ブロックでもいいよ
+match "/stories/:name" => redirect {|params| "/posts/#{params[:name].pluralize}" }
+match "/stories" => redirect {|p, req| "/posts/#{req.subdomain}" }
+</code></pre>
+
 
 ### Rack
 
 TODO 
 
-    match "/application.js" => Sprockets
+<pre><code data-language="ruby"># config/routes.rb
+match "/application.js" => Sprockets
+</code></pre>
 
-### root
+### トップページ - root
 
-    # GET /   => PagesController, 'main' action
-    root :to => 'pages#main'
+<pre><code data-language="ruby"># config/routes.rb
+# GET /   => PagesController, 'main' action
+root :to => 'pages#main'
+</code></pre>
 
 ## Customized Resource
 
 TODO
 
-## こんなこともできました
+## 設定例
 
-### resourcesでmatchを使う
+### Resource で Static な文字列を挟みたい時
 
-    resources :users do
-      member do
-        match 'category/:category', :action => :show, :as => :category
-      end
-      resources :images do
-        collection do
-          match 'category/:category', :action => :index, :as => :category
-        end
-      end
+<pre><code data-language="ruby"># config/routes.rb
+resources :users do
+  member do
+    match 'category/:category', :action => :show, :as => :category
+  end
+  resources :images do
+    collection do
+      match 'category/:category', :action => :index, :as => :category
     end
+  end
+end
+</code></pre>
 
-$ rake routes
-
+    $ rake routes
     category_user        /users/:id/category/:category(.:format)             users#show
     category_user_images /users/:user_id/images/category/:category(.:format) images#index
 
@@ -410,6 +491,5 @@ $ rake routes
 - <http://guides.rubyonrails.org/routing.html>
 - [http://wiki.usagee.co.jp/ruby/rails/RailsGuides...](<http://wiki.usagee.co.jp/ruby/rails/RailsGuides%E3%82%92%E3%82%86%E3%81%A3%E3%81%8F%E3%82%8A%E5%92%8C%E8%A8%B3%E3%81%97%E3%81%A6%E3%81%BF%E3%81%9F%E3%82%88/Rails%20Routing%20from%20the%20Outside%20In>)
 
-[REST]: http://ja.wikipedia.org/wiki/REST
 [公式のガイド]: http://guides.rubyonrails.org/routing.html
 [ActionDispatch::Request]: http://api.rubyonrails.org/classes/ActionDispatch/Request.html
