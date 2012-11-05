@@ -5,8 +5,8 @@
         <link>http://akkunchoi.github.com</link>
         <atom:link href="http://akkunchoi.github.com/rss.xml" rel="self" type="application/rss+xml" />
         <description>This site is a information for development written by akkunchoi</description>
-        <pubDate>Wed, 31 Oct 2012 11:23:40 +0900</pubDate>
-        <lastBuildDate>Wed, 31 Oct 2012 11:23:40 +0900</lastBuildDate>
+        <pubDate>Mon, 05 Nov 2012 16:55:35 +0900</pubDate>
+        <lastBuildDate>Mon, 05 Nov 2012 16:55:35 +0900</lastBuildDate>
         
         <item>
             <title>jQuery Deferred and $(document).ready()</title>
@@ -1512,111 +1512,142 @@ AppleScript習得したら色んなことができそうだ。&lt;/p&gt;
             <title>Rails3 routes.rb まとめ</title>
             <description>&lt;ul id=&quot;markdown-toc&quot;&gt;
   &lt;li&gt;&lt;a href=&quot;#section&quot;&gt;はじめに&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#rails&quot;&gt;ルーティングとRails&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#section-1&quot;&gt;ルーティングとは&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#section-2&quot;&gt;シンプルな例&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#section-3&quot;&gt;デバッグ&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#resource-routing&quot;&gt;Resource Routing&lt;/a&gt;    &lt;ul&gt;
-      &lt;li&gt;&lt;a href=&quot;#resources---&quot;&gt;resources - 基本&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#resource---id&quot;&gt;resource - idを伴わない場合&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#namespace---path-and-controller-prefix&quot;&gt;namespace - path and controller prefix&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#scope---controller-prefix&quot;&gt;scope - controller prefix&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#scope---path-prefix&quot;&gt;scope - path prefix&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#nested-resources---hasmany&quot;&gt;Nested Resources - has_manyな場合&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#member-collection---&quot;&gt;member, collection - ルーティングを追加&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#membercollection--match-&quot;&gt;member,collection と match の合わせ技&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#section-4&quot;&gt;生成されるルート&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#section-5&quot;&gt;基本&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#id&quot;&gt;idを伴わない場合&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#namespace---path-and-controller-prefix&quot;&gt;Namespace - path and controller prefix&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#scope---controller-prefix&quot;&gt;Scope - controller prefix&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#scope---path-prefix&quot;&gt;Scope - path prefix&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#nested-resources---hasmany&quot;&gt;Nested Resources - has_manyな場合に&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#member-collection---&quot;&gt;member, collection - 追加のアクション&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#collection--match&quot;&gt;collection と match&lt;/a&gt;&lt;/li&gt;
     &lt;/ul&gt;
   &lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#non-resourceful-routes&quot;&gt;Non-Resourceful Routes&lt;/a&gt;    &lt;ul&gt;
-      &lt;li&gt;&lt;a href=&quot;#dynamic&quot;&gt;dynamic&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#static&quot;&gt;static&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#dynamic&quot;&gt;Dynamic&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#static&quot;&gt;Static&lt;/a&gt;&lt;/li&gt;
       &lt;li&gt;&lt;a href=&quot;#query-strings&quot;&gt;query strings&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#defaults&quot;&gt;defaults&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#naming---match&quot;&gt;naming - matchでも名前を付ける&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#constraints-http-verb---http&quot;&gt;constraints (HTTP verb) - HTTPメソッドで制約する&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#constraints-parameter---&quot;&gt;constraints (parameter) - パラメータに制約する&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#constraints-request---&quot;&gt;constraints (request) - リクエストで制約をする&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#defaults&quot;&gt;Defaults&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#naming---match&quot;&gt;Naming - matchでも名前を付ける&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#constraints-http-verb---http&quot;&gt;Constraints (HTTP verb) - HTTPメソッドで制約する&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#constraints-parameter---&quot;&gt;Constraints (parameter) - パラメータを制約する&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#constraints-request---&quot;&gt;Constraints (request) - リクエストで制約をする&lt;/a&gt;&lt;/li&gt;
       &lt;li&gt;&lt;a href=&quot;#advanced-constraints---&quot;&gt;Advanced Constraints - 制約クラス&lt;/a&gt;&lt;/li&gt;
       &lt;li&gt;&lt;a href=&quot;#glob&quot;&gt;glob&lt;/a&gt;&lt;/li&gt;
       &lt;li&gt;&lt;a href=&quot;#redirection&quot;&gt;redirection&lt;/a&gt;&lt;/li&gt;
       &lt;li&gt;&lt;a href=&quot;#rack&quot;&gt;Rack&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#root&quot;&gt;root&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#root&quot;&gt;トップページ - root&lt;/a&gt;&lt;/li&gt;
     &lt;/ul&gt;
   &lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#customized-resource&quot;&gt;Customized Resource&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#section-1&quot;&gt;こんなこともできました&lt;/a&gt;    &lt;ul&gt;
-      &lt;li&gt;&lt;a href=&quot;#resourcesmatch&quot;&gt;resourcesでmatchを使う&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#section-6&quot;&gt;設定例&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#resource--static-&quot;&gt;Resource で Static な文字列を挟みたい時&lt;/a&gt;&lt;/li&gt;
     &lt;/ul&gt;
   &lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#section-2&quot;&gt;参考&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#section-7&quot;&gt;参考&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;h2 id=&quot;section&quot;&gt;はじめに&lt;/h2&gt;
 
-&lt;p&gt;これはRails3のルーティングを理解するための自分用メモです。&lt;/p&gt;
+&lt;p&gt;この記事はRails3のルーティングを理解するための自分用メモです。随時書き足し、整理していきます。&lt;/p&gt;
 
-&lt;h2 id=&quot;rails&quot;&gt;ルーティングとRails&lt;/h2&gt;
+&lt;h2 id=&quot;section-1&quot;&gt;ルーティングとは&lt;/h2&gt;
 
-&lt;p&gt;ルーティングとは「URL」と「コントローラー、アクション、パラメータ」とのマッピングのこと。&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;http://guides.rubyonrails.org/routing.html&quot;&gt;公式のガイド&lt;/a&gt;にはこう書いてある。&lt;/p&gt;
+&lt;p&gt;まずルーティングとは何か？&lt;a href=&quot;http://guides.rubyonrails.org/routing.html&quot;&gt;公式のガイド&lt;/a&gt; にはこう書かれてます。&lt;/p&gt;
 
 &lt;blockquote&gt;
   &lt;p&gt;The Rails router recognizes URLs and dispatches them to a controller’s action. It can also generate paths and URLs, avoiding the need to hardcode strings in your views.&lt;/p&gt;
-
-  &lt;p&gt;訳: RailsのルーターはURLを確認して、コントローラのアクションに処理を振り分けまする。また、パスやURLを生成することで、ビューへのハードコード避けることもできます。&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;p&gt;「URL =&amp;gt; アクション」だけでなく、「アクション =&amp;gt; URL」も可能だそうだ。&lt;/p&gt;
+&lt;p&gt;訳: RailsのルーターはURLを確認して、コントローラのアクションに処理を振り分けます。また、パスやURLを生成することで、ビューへのハードコードを避けることもできます。&lt;/p&gt;
 
-&lt;p&gt;ガイドに沿って、まずは最もシンプルな例を試してみる。Railsでは&lt;code&gt;config/routes.rb&lt;/code&gt;にDSLで記述する。Rails2とRails3ではかなり書き方が違うので注意する（後方互換性はある？）。&lt;/p&gt;
+&lt;p&gt;Railsのルーティングは大きく分けて２つの機能を持ちます。&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;# -- config/routes.rb
+&lt;ul&gt;
+  &lt;li&gt;URL から、「どのコントローラー」の「どのアクション」に「どういうパラメータ」を与えて処理を実行するかを定義する&lt;/li&gt;
+  &lt;li&gt;ビューに URL を記述する際は、ハードコーディングを避けるためURLを直接記述せずに、専用の方法で生成する&lt;/li&gt;
+&lt;/ul&gt;
 
-match &quot;/patients/:id&quot; =&amp;gt; &quot;patients#show&quot;
+&lt;p&gt;この機能のおかげで、URL構造とアプリケーション構造を独立して設計することを可能にします。
+URL構造とアプリケーション構造の橋渡しの役目が &lt;code&gt;config/routes.rb&lt;/code&gt; です。&lt;/p&gt;
+
+&lt;p&gt;Railsではルーティングを &lt;code&gt;config/routes.rb&lt;/code&gt; に専用DSLで記述します。
+Rails2とRails3ではかなり書き方が違うので注意が必要です（後方互換性はある？）。このページでは Rails3 においてのDSLを解説しています。&lt;/p&gt;
+
+&lt;h2 id=&quot;section-2&quot;&gt;シンプルな例&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# config/routes.rb
+match &quot;/patients/:id&quot; =&amp;gt; &quot;patients#show&quot;, :as =&amp;gt; :patient
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;この一行で「&lt;code&gt;/patients/17&lt;/code&gt; に HTTP GET すると、PatientsController の show アクションが呼ぶ」という設定になる。&lt;/p&gt;
+&lt;p&gt;この一行の設定で「&lt;strong&gt;/patients/17&lt;/strong&gt; に HTTP GET すると、&lt;strong&gt;PatientsController の show アクションを id=17 のパラメータで実行する&lt;/strong&gt;」という設定になります。&lt;/p&gt;
 
-&lt;p&gt;さらに（resourcesなどで設定していれば）ビューではこのような記述ができる&lt;/p&gt;
+&lt;p&gt;そして名前付きルート (Named Route Helper) を使用して URL を生成することができます。&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;# @patient = Patient.find(17)
-&amp;lt;%= link_to &quot;Patient Record&quot;, patient_path(@patient) %&amp;gt;
+&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# on view..
+patient_path(17) # /patients/17
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;&lt;code&gt;patient_path(@patient)&lt;/code&gt; は &lt;code&gt;/patients/17&lt;/code&gt; を返す。これを&lt;strong&gt;named helper&lt;/strong&gt;と呼ぶらしい。&lt;/p&gt;
+&lt;p&gt;名前付きルートを使うことで、アプリケーション側ではURL構造を気にせず設計できるようになります。&lt;/p&gt;
 
-&lt;p&gt;Railsでは「パス」と「URL」を区別している。URLはスキーム、ドメイン名を含む文字列&lt;code&gt;http://example.com/hoge/moge/&lt;/code&gt;でパスは&lt;code&gt;/hoge/moge&lt;/code&gt;の部分。ふだんはパスを使って、必要な時だけURLを使うようにするといい。&lt;code&gt;patient_url(@patient)&lt;/code&gt;でURLを取得できる。&lt;/p&gt;
+&lt;p&gt;また、名前付きルートには path の他に url もあります。&lt;/p&gt;
 
-&lt;p&gt;コンソールから&lt;code&gt;rake routes&lt;/code&gt;を実行すると、ルーティングの設定を確認できる。これはroutes.rbを書き換えた後や、現在の構成を確認したい場合など、頻繁に使うことになるだろう。&lt;/p&gt;
+&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# on view..
+patient_url(17)  # http://localhost:3000/patients/17
+&lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;named helperを&lt;code&gt;rails console&lt;/code&gt;で試す場合は&lt;code&gt;app.users_path&lt;/code&gt;で呼び出すことができる。&lt;/p&gt;
+&lt;h2 id=&quot;section-3&quot;&gt;デバッグ&lt;/h2&gt;
 
-&lt;p&gt;Railsでのルーティングは&lt;code&gt;resources&lt;/code&gt;を上手く使うのがコツらしい。
-&lt;code&gt;resources&lt;/code&gt;を使うとリソース（って何なんだという話だけど）のCRUD（Create, Read, Update, Delete）を行うルーティングが一度に生成される。これを使うと一貫性があり、記述量を減らすことができる。詳しくは&lt;a href=&quot;http://ja.wikipedia.org/wiki/REST&quot;&gt;REST&lt;/a&gt;へ。&lt;/p&gt;
+&lt;p&gt;コンソールから &lt;code&gt;rake routes&lt;/code&gt; を実行すると、現在のルーティングの設定を確認できます。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ rake routes
+patient        /patients/:id(.:format)       patients#show
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;名前付きルートを &lt;code&gt;rails console&lt;/code&gt; で試す場合は &lt;code&gt;app.patient_path&lt;/code&gt; のようにすると呼び出すことができます。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ rails console
+[1] (main)&amp;gt; app.patient_path(17)
+=&amp;gt; &quot;/patients/17&quot;
+&lt;/code&gt;&lt;/pre&gt;
 
 &lt;h2 id=&quot;resource-routing&quot;&gt;Resource Routing&lt;/h2&gt;
 
-&lt;p&gt;基本の設定&lt;/p&gt;
+&lt;p&gt;match を使ってアクションを定義していくのは面倒ですよね。Webアプリケーションはほとんど&lt;strong&gt;CRUD&lt;/strong&gt;の構造なので、CRUDのアクションを自動で設定できれば楽になります。Railsでは &lt;code&gt;resources&lt;/code&gt; を使って７のアクション(index, new, create, show, edit, update, destroy) を一度に設定できます。&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;resources :photos
+&lt;p&gt;Railsのデフォルトはこの Resource Routing で、これをうまく使うことで一貫性がある構造になり、記述量も格段に減らすことができます。&lt;/p&gt;
+
+&lt;h3 id=&quot;section-4&quot;&gt;生成されるルート&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# config/routes.rb
+resources :photos
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;PhotosControllerに対して7つのルートを生成する。&lt;/p&gt;
+&lt;p&gt;この一行で７つのルートが生成されます。&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;HTTP Verb  Path             action    named_helper 
----------  -----            ------    ----------
-GET        /photos          index     photos_path 
-GET        /photos/new      new       new_photo_path
-POST       /photos          create    photos_path
-GET        /photos/:id      show      photo_path(:id)
-GET        /photos/:id/edit edit      edit_photo_path(:id)
-PUT        /photos/:id      update    photo_path(:id)
-DELETE     /photos/:id      destroy   photo_path(:id)
+&lt;pre&gt;&lt;code&gt;HTTP Verb       Path                    action       named_helper 
+---------       -----                   ------       ----------
+GET             /photos                 index        photos_path 
+GET             /photos/new             new          new_photo_path
+POST            /photos                 create       photos_path
+GET             /photos/:id             show         photo_path(:id)
+GET             /photos/:id/edit        edit         edit_photo_path(:id)
+PUT             /photos/:id             update       photo_path(:id)
+DELETE          /photos/:id             destroy      photo_path(:id)
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;Railsではこんな遷移を想定しているようです。&lt;/p&gt;
+&lt;p&gt;それぞれ、PhotosControllerの index, new, create, show, edit, update, destroy アクションに対応しています。&lt;/p&gt;
+
+&lt;p&gt;newとcreate、editとupdateは対になっており、フォームと実行を想定しています。
+Railsではこんな遷移を想定しています。&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;index (GET /photos)
   |
-  |-- (GET /photos/new)      --&amp;gt; new 
+  |--&amp;gt; (GET /photos/new)      --&amp;gt; new 
   |                               |
   |                               `-- (POST /photos) --&amp;gt; create
   |
@@ -1629,24 +1660,33 @@ DELETE     /photos/:id      destroy   photo_path(:id)
   `-- (DELETE /photos/:id)   --&amp;gt; destroy
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&quot;resources---&quot;&gt;resources - 基本&lt;/h3&gt;
+&lt;h3 id=&quot;section-5&quot;&gt;基本&lt;/h3&gt;
 
-&lt;pre&gt;&lt;code&gt;# PhotosControllerにひもづける
+&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# config/routes.rb
+# PhotosControllerにひもづける
 resources :photos
 
-# 複数の場合は一行でもOK
+# 複数のリソースを定義する場合は一行で書いてもOK
 resources :photos, :books, :users
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&quot;resource---id&quot;&gt;resource - idを伴わない場合&lt;/h3&gt;
+&lt;h3 id=&quot;id&quot;&gt;idを伴わない場合&lt;/h3&gt;
 
-&lt;p&gt;例えば、各ユーザーのプロフィールなど。
-コントローラは&lt;code&gt;ProfileController&lt;/code&gt;ではなく、&lt;code&gt;ProfilesController&lt;/code&gt;になるので注意（resourcesも同時使う場合に同じコントローラ使いたいだろうということらしい）。&lt;/p&gt;
+&lt;p&gt;デフォルトでは show, edit, update, destroy は id を含むようになっています。
+しかし各ユーザーのマイページのように、パラメータが不要なURLの場合もあります。&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;resource :profile
+&lt;p&gt;その場合は resource&lt;strong&gt;s&lt;/strong&gt; ではなく、resource にします。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# config/routes.rb
+resource :profile
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;&lt;code&gt;resources&lt;/code&gt;と異なるのは「index がない」「:id がない」の２点&lt;/p&gt;
+&lt;p&gt;:profile は複数形にしなくても、対応するコントローラは ProfilesController と複数形になるのに注意。
+これは resources と同時に使う場合に、同じコントローラになった方がいいだろうという優しさらしい。&lt;/p&gt;
+
+&lt;p&gt;resource&lt;strong&gt;s&lt;/strong&gt;と異なるのは「index がない」「:id がない」の２点。&lt;/p&gt;
+
+&lt;p&gt;生成されるのは以下の６つのルート。&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;GET        /profile/new      new       new_profile_path
 POST       /profile          create    profile_path
@@ -1656,85 +1696,79 @@ PUT        /profile          update    profile_path
 DELETE     /profile          destroy   profile_path
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&quot;namespace---path-and-controller-prefix&quot;&gt;namespace - path and controller prefix&lt;/h3&gt;
+&lt;h3 id=&quot;namespace---path-and-controller-prefix&quot;&gt;Namespace - path and controller prefix&lt;/h3&gt;
 
-&lt;p&gt;namespaceはpathとcontrollerに付けられるprefix&lt;/p&gt;
+&lt;p&gt;namespace は path と controller に付けられるプレフィックスです。&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;namespace :admin do
-  # Admin::PhotosController
+&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# config/routes.rb
+namespace :admin do
+  # コントローラは Admin::PhotosController です
   resources :photos
 end
+&lt;/code&gt;&lt;/pre&gt;
 
+&lt;p&gt;URLと Named helper はこうなります。&lt;/p&gt;
 
-# HTTP Verb  Path               action  named helper 
-# ---------  -----              ------  ----------
-# GET        /admin/photos      index   admin_photos_path 
+&lt;pre&gt;&lt;code&gt;# GET        /admin/photos      index   admin_photos_path 
 # GET        /admin/photos/new  new     new_admin_photo_path
-#   省略...
-# 
+# 省略...
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&quot;scope---controller-prefix&quot;&gt;scope - controller prefix&lt;/h3&gt;
+&lt;h3 id=&quot;scope---controller-prefix&quot;&gt;Scope - controller prefix&lt;/h3&gt;
 
-&lt;p&gt;controllerのみprefixを付ける。&lt;/p&gt;
+&lt;p&gt;Scope はコントローラのみプレフィックスを付けます。&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;scope :module =&amp;gt; &quot;admin&quot; do
-  # Admin::PhotosController
+&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# config/routes.rb
+scope :module =&amp;gt; &quot;admin&quot; do
+  # コントローラは Admin::PhotosController です
   resources :photos
 end
-&lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;または&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;# Admin::PhotosController
+# またはこのようにも記述できます
 resources :photos, :module =&amp;gt; &quot;admin&quot;
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;Path, named helperにはつかない。内部の構成をモジュール化したい場合に使える。&lt;/p&gt;
+&lt;p&gt;パス、Named helperにはつかない。コントローラの構成をモジュール化したい場合に使えます。&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;# HTTP Verb  Path         action  named helper 
-# ---------  -----        ------  ----------
-# GET        /photos      index   photos_path 
-# GET        /photos/new  new     new_photo_path
-#   省略...
-# 
+&lt;pre&gt;&lt;code&gt;# GET        /photos         index      admin_photos_path 
+# GET        /photos/new     new        new_admin_photo_path
+# 省略...
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&quot;scope---path-prefix&quot;&gt;scope - path prefix&lt;/h3&gt;
+&lt;h3 id=&quot;scope---path-prefix&quot;&gt;Scope - path prefix&lt;/h3&gt;
 
-&lt;p&gt;pathのみprefixを付ける場合&lt;/p&gt;
+&lt;p&gt;パスのみプレフィックスを付ける場合&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;scope &quot;/admin&quot; do    
+&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# config/routes.rb
+scope &quot;/admin&quot; do    
+  # コントローラは PhotosController です
   resources :photos
 end
-&lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;または&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;# :path は絶対パスで
+# またはこのようにも記述できます
+# :path は絶対パスで
 resources :photos, :path =&amp;gt; '/admin/photos'
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;コントローラーとnamed helperには影響しない。URLだけ変更したい場合に使う。&lt;/p&gt;
+&lt;p&gt;コントローラーとNamed helperには影響しない。URLだけ変更したい場合に使います。&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;# HTTP Verb  Path               action  named helper 
-# ---------  -----              ------  ----------
-# GET        /admin/photos      index   photos_path 
-# GET        /admin/photos/new  new     new_photo_path
-#   省略...
-# 
+&lt;pre&gt;&lt;code&gt;# GET        /admin/photos          index       photos_path 
+# GET        /admin/photos/new      new         new_photo_path
+# 省略...
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;&lt;code&gt;:path&lt;/code&gt;を使えば自由にパスを変更できる&lt;/p&gt;
+&lt;p&gt;さらに、&lt;code&gt;:path&lt;/code&gt; を使えば自由にパスを変更できます。&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;# photo_index   GET  /hoge  photo#index
-# :path は相対パスで
+&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# config/routes.rb
+# :path は相対パスにする
+# /hoge =&amp;gt; photo#index に対応
 resources :photos, :path =&amp;gt; 'hoge' 
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&quot;nested-resources---hasmany&quot;&gt;Nested Resources - has_manyな場合&lt;/h3&gt;
+&lt;h3 id=&quot;nested-resources---hasmany&quot;&gt;Nested Resources - has_manyな場合に&lt;/h3&gt;
 
-&lt;pre&gt;&lt;code&gt;resources :photos do
+&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# config/routes.rb
+resources :photos do
   resources :comments
 end 
 
@@ -1742,44 +1776,49 @@ end
 # photo_comment  GET /photos/:photo_id/comments/:id comments#show
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;ネストは何階層でも可能だけど、混乱をまねくため１階層以上にすべきではない。named helperも長くなる。&lt;/p&gt;
+&lt;p&gt;ネストは何階層でも可能だけど、混乱をまねくため１階層以上にすべきではない。Named helperも長くなる。&lt;/p&gt;
 
-&lt;h3 id=&quot;member-collection---&quot;&gt;member, collection - ルーティングを追加&lt;/h3&gt;
+&lt;h3 id=&quot;member-collection---&quot;&gt;member, collection - 追加のアクション&lt;/h3&gt;
 
-&lt;p&gt;基本の7ルート以外のルートを追加したい場合は&lt;code&gt;member&lt;/code&gt;か&lt;code&gt;collection&lt;/code&gt;を使う。memberは:id付きのルートで、collectionは:idなしのルート。&lt;/p&gt;
+&lt;p&gt;基本の7ルート以外のルートを追加したい場合は&lt;code&gt;member&lt;/code&gt;か&lt;code&gt;collection&lt;/code&gt;を使う。
+&lt;code&gt;member&lt;/code&gt;は :id 付きのルートで、&lt;code&gt;collection&lt;/code&gt;は:idなしのルート。&lt;/p&gt;
 
-&lt;p&gt;&lt;code&gt;GET /photos/:id/preview&lt;/code&gt; で preview アクションが呼ばれるようにするためにはこうする。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;GET /photos/:id/preview&lt;/code&gt; で preview アクションを呼ぶ設定。&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;resources :photos do
+&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# config/routes.rb
+resources :photos do
   member do
     get 'preview'
   end
+
   # または
-  # get 'preview', :on =&amp;gt; :member
+  get 'preview', :on =&amp;gt; :member
 end
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;&lt;code&gt;GET /photos/search&lt;/code&gt;で search アクションが呼ばれるようにするためにはこうする。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;GET /photos/search&lt;/code&gt;で search アクションを呼ぶ設定。&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;resources :photos do
+&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# config/routes.rb
+resources :photos do
   collection do
     get 'search'
   end
+
   # または
-  # get 'search', :on =&amp;gt; :collection
+  get 'search', :on =&amp;gt; :collection
 end
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&quot;membercollection--match-&quot;&gt;member,collection と match の合わせ技&lt;/h3&gt;
+&lt;h3 id=&quot;collection--match&quot;&gt;collection と match&lt;/h3&gt;
 
-&lt;p&gt;いちいち定義するのは面倒なので match を使います。&lt;/p&gt;
+&lt;p&gt;/photos/hoge, /photos/moge といちいちアクションを定義するのが面倒な場合は match を使います。&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;# TODO named helperも自動生成できないだろうか...
-# /hotels/:action hotels#(?-mix:[^0-9]+)
-
-resources :hotels do
+&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# config/routes.rb
+resources :photos do
+  # TODO Named helperも自動生成できないだろうか...
+  # /photos/:action photos#(?-mix:[^0-9]+)
   collection do
-    # 数字の場合は :id に流れるようにする
+    # 数字の場合は member アクションに流れるようにする
     match ':action', :action =&amp;gt; /[^0-9]+/
   end
 end
@@ -1787,11 +1826,14 @@ end
 
 &lt;h2 id=&quot;non-resourceful-routes&quot;&gt;Non-Resourceful Routes&lt;/h2&gt;
 
-&lt;h3 id=&quot;dynamic&quot;&gt;dynamic&lt;/h3&gt;
+&lt;p&gt;resources じゃないルート。&lt;/p&gt;
 
-&lt;p&gt;このようなルート設定で、&lt;/p&gt;
+&lt;h3 id=&quot;dynamic&quot;&gt;Dynamic&lt;/h3&gt;
 
-&lt;pre&gt;&lt;code&gt;match ':controller(/:action(/:id))'
+&lt;p&gt;この設定で、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# config/routes.rb
+match ':controller(/:action(/:id))'
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;&lt;code&gt;GET /photos/show/1/2&lt;/code&gt;すると、パラメータはこうなる。&lt;/p&gt;
@@ -1801,21 +1843,24 @@ end
 
 &lt;p&gt;パラメータは自由に追加できる&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;match ':controller/:action/:id/:user_id'
+&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# config/routes.rb
+match ':controller/:action/:id/:user_id'
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;namespace, :moduleと、matchの:controllerは同時には使えない。そういう場合はこうする。&lt;/p&gt;
+&lt;p&gt;namespaceの:moduleと、matchの:controllerは同時には使えない。そういう場合はこうする。&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;match ':controller(/:action(/:id))', :controller =&amp;gt; /admin\/[^\/]+/
+&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# config/routes.rb
+match ':controller(/:action(/:id))', :controller =&amp;gt; /admin\/[^\/]+/
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&quot;static&quot;&gt;static&lt;/h3&gt;
+&lt;h3 id=&quot;static&quot;&gt;Static&lt;/h3&gt;
 
 &lt;p&gt;URLに特定の文字列を含むような場合。&lt;/p&gt;
 
-&lt;p&gt;このような設定で、&lt;/p&gt;
+&lt;p&gt;この設定で、&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;match ':controller/:action/:id/with_user/:user_id'
+&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# config/routes.rb
+match ':controller/:action/:id/with_user/:user_id'
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;&lt;code&gt;GET /photos/show/1/with_user/2&lt;/code&gt; するとパラメータはこうなる&lt;/p&gt;
@@ -1825,9 +1870,10 @@ end
 
 &lt;h3 id=&quot;query-strings&quot;&gt;query strings&lt;/h3&gt;
 
-&lt;p&gt;このルーティングで、&lt;/p&gt;
+&lt;p&gt;この設定で&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;match ':controller/:action/:id'
+&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# config/routes.rb
+match ':controller/:action/:id'
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;&lt;code&gt;GET /photos/show/1?user_id=2&lt;/code&gt;すると&lt;/p&gt;
@@ -1835,55 +1881,60 @@ end
 &lt;pre&gt;&lt;code&gt;{ :controller =&amp;gt; “photos”, :action =&amp;gt; “show”, :id =&amp;gt; “1”, :user_id =&amp;gt; “2” }
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;&lt;code&gt;GET /photos/show/1?id=2&lt;/code&gt; この場合はどうなるか？&lt;code&gt;:id =&amp;gt; '1'&lt;/code&gt;になる。クエリ文字列よりも:idの方が優先されるようだ。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;GET /photos/show/1?id=2&lt;/code&gt; この場合はどうなるか？
+&lt;code&gt;:id =&amp;gt; '1'&lt;/code&gt;になる。クエリ文字列よりも :id の方が優先されるようです。&lt;/p&gt;
 
-&lt;h3 id=&quot;defaults&quot;&gt;defaults&lt;/h3&gt;
+&lt;h3 id=&quot;defaults&quot;&gt;Defaults&lt;/h3&gt;
 
-&lt;pre&gt;&lt;code&gt;# GET /photos/1
+&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# config/routes.rb
+# GET /photos/1
 # { :controller =&amp;gt; &quot;photos&quot;, :action =&amp;gt; &quot;show&quot;, :id =&amp;gt; &quot;1&quot;, :format =&amp;gt; &quot;jpg&quot;
 match 'photos/:id' =&amp;gt; 'photos#show', :defaults =&amp;gt; { :format =&amp;gt; 'jpg' }
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&quot;naming---match&quot;&gt;naming - matchでも名前を付ける&lt;/h3&gt;
+&lt;h3 id=&quot;naming---match&quot;&gt;Naming - matchでも名前を付ける&lt;/h3&gt;
 
-&lt;pre&gt;&lt;code&gt;# logout_path, logout_url
+&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# config/routes.rb
+# logout_path, logout_url
 match 'exit' =&amp;gt; 'sessions#destroy', :as =&amp;gt; :logout
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&quot;constraints-http-verb---http&quot;&gt;constraints (HTTP verb) - HTTPメソッドで制約する&lt;/h3&gt;
+&lt;h3 id=&quot;constraints-http-verb---http&quot;&gt;Constraints (HTTP verb) - HTTPメソッドで制約する&lt;/h3&gt;
 
 &lt;p&gt;&lt;code&gt;/photos/show&lt;/code&gt;かつGETメソッドに限定する&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;match 'photos/show' =&amp;gt; 'photos#show', :via =&amp;gt; :get
+&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# config/routes.rb
+match 'photos/show' =&amp;gt; 'photos#show', :via =&amp;gt; :get
 
-# 短縮形
+# 上記と下記は同じ。短縮形
 get 'photos/show'
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;複数のメソッドを付けられる&lt;/p&gt;
+&lt;p&gt;複数のメソッドを付けられます&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;match 'photos/show' =&amp;gt; 'photos#show', :via =&amp;gt; [:get, :post]
+&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# config/routes.rb
+match 'photos/show' =&amp;gt; 'photos#show', :via =&amp;gt; [:get, :post]
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&quot;constraints-parameter---&quot;&gt;constraints (parameter) - パラメータに制約する&lt;/h3&gt;
+&lt;h3 id=&quot;constraints-parameter---&quot;&gt;Constraints (parameter) - パラメータを制約する&lt;/h3&gt;
 
-&lt;p&gt;これは、&lt;/p&gt;
+&lt;p&gt;こうすると&lt;code&gt;/photos/A12345&lt;/code&gt;のようなパスにマッチする。
+&lt;code&gt;/photos/12&lt;/code&gt;にはマッチしない。&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;match 'photos/:id' =&amp;gt; 'photos#show', :constraints =&amp;gt; { :id =&amp;gt; /[A-Z]\d{5}/ }
-
-# これも同じ
+&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# config/routes.rb
+match 'photos/:id' =&amp;gt; 'photos#show', :constraints =&amp;gt; { :id =&amp;gt; /[A-Z]\d{5}/ }
+# これは同じ意味
 match 'photos/:id' =&amp;gt; 'photos#show', :id =&amp;gt; /[A-Z]\d{5}/ 
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;&lt;code&gt;/photos/A12345&lt;/code&gt;のようなパスにマッチする。&lt;/p&gt;
-
 &lt;p&gt;制約は正規表現を受け取るが、&lt;code&gt;^ $ \b \B&lt;/code&gt;は使えない。でも先頭に固定されているので使う必要がない。&lt;/p&gt;
 
-&lt;h3 id=&quot;constraints-request---&quot;&gt;constraints (request) - リクエストで制約をする&lt;/h3&gt;
+&lt;h3 id=&quot;constraints-request---&quot;&gt;Constraints (request) - リクエストで制約をする&lt;/h3&gt;
 
 &lt;p&gt;&lt;a href=&quot;http://api.rubyonrails.org/classes/ActionDispatch/Request.html&quot;&gt;ActionDispatch::Request&lt;/a&gt;オブジェクトのメソッドで制約がかけられる。&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;match &quot;photos&quot;, :constraints =&amp;gt; {:subdomain =&amp;gt; &quot;admin&quot;}
+&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# config/routes.rb
+match &quot;photos&quot;, :constraints =&amp;gt; {:subdomain =&amp;gt; &quot;admin&quot;}
 
 # ブロックを与えることもできる
 namespace &quot;admin&quot; do
@@ -1895,7 +1946,8 @@ end
 
 &lt;h3 id=&quot;advanced-constraints---&quot;&gt;Advanced Constraints - 制約クラス&lt;/h3&gt;
 
-&lt;pre&gt;&lt;code&gt;match &quot;*path&quot; =&amp;gt; &quot;blacklist#index&quot;, :constraints =&amp;gt; BlacklistConstraint.new
+&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# config/routes.rb
+match &quot;*path&quot; =&amp;gt; &quot;blacklist#index&quot;, :constraints =&amp;gt; BlacklistConstraint.new
 
 class BlacklistConstraint
   def matches?(request)
@@ -1906,9 +1958,8 @@ end
 
 &lt;h3 id=&quot;glob&quot;&gt;glob&lt;/h3&gt;
 
-&lt;p&gt;これは、&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;match 'photos/*other' =&amp;gt; 'photos#unknown'
+&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# config/routes.rb
+match 'photos/*other' =&amp;gt; 'photos#unknown'
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;こうなる。&lt;/p&gt;
@@ -1919,7 +1970,8 @@ end
 
 &lt;p&gt;これは、&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;match 'books/*section/:title' =&amp;gt; 'books#show'
+&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# config/routes.rb
+match 'books/*section/:title' =&amp;gt; 'books#show'
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;こうなる。&lt;/p&gt;
@@ -1932,7 +1984,8 @@ end
 
 &lt;p&gt;301 “Moved Permanently” redirectになります。&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;match &quot;/stories&quot; =&amp;gt; redirect(&quot;/posts&quot;)
+&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# config/routes.rb
+match &quot;/stories&quot; =&amp;gt; redirect(&quot;/posts&quot;)
 
 # 値を引き継ぐ場合
 match &quot;/stories/:name&quot; =&amp;gt; redirect(&quot;/posts/%{name}&quot;)
@@ -1946,12 +1999,14 @@ match &quot;/stories&quot; =&amp;gt; redirect {|p, req| &quot;/posts/#{req.subdo
 
 &lt;p&gt;TODO &lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;match &quot;/application.js&quot; =&amp;gt; Sprockets
+&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# config/routes.rb
+match &quot;/application.js&quot; =&amp;gt; Sprockets
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&quot;root&quot;&gt;root&lt;/h3&gt;
+&lt;h3 id=&quot;root&quot;&gt;トップページ - root&lt;/h3&gt;
 
-&lt;pre&gt;&lt;code&gt;# GET /   =&amp;gt; PagesController, 'main' action
+&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# config/routes.rb
+# GET /   =&amp;gt; PagesController, 'main' action
 root :to =&amp;gt; 'pages#main'
 &lt;/code&gt;&lt;/pre&gt;
 
@@ -1959,11 +2014,12 @@ root :to =&amp;gt; 'pages#main'
 
 &lt;p&gt;TODO&lt;/p&gt;
 
-&lt;h2 id=&quot;section-1&quot;&gt;こんなこともできました&lt;/h2&gt;
+&lt;h2 id=&quot;section-6&quot;&gt;設定例&lt;/h2&gt;
 
-&lt;h3 id=&quot;resourcesmatch&quot;&gt;resourcesでmatchを使う&lt;/h3&gt;
+&lt;h3 id=&quot;resource--static-&quot;&gt;Resource で Static な文字列を挟みたい時&lt;/h3&gt;
 
-&lt;pre&gt;&lt;code&gt;resources :users do
+&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# config/routes.rb
+resources :users do
   member do
     match 'category/:category', :action =&amp;gt; :show, :as =&amp;gt; :category
   end
@@ -1975,13 +2031,12 @@ root :to =&amp;gt; 'pages#main'
 end
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;$ rake routes&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;category_user        /users/:id/category/:category(.:format)             users#show
+&lt;pre&gt;&lt;code&gt;$ rake routes
+category_user        /users/:id/category/:category(.:format)             users#show
 category_user_images /users/:user_id/images/category/:category(.:format) images#index
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&quot;section-2&quot;&gt;参考&lt;/h2&gt;
+&lt;h2 id=&quot;section-7&quot;&gt;参考&lt;/h2&gt;
 
 &lt;ul&gt;
   &lt;li&gt;&lt;a href=&quot;http://d.hatena.ne.jp/willnet/20100424/1272119369&quot;&gt;http://d.hatena.ne.jp/willnet/20100424/1272119369&lt;/a&gt;&lt;/li&gt;
