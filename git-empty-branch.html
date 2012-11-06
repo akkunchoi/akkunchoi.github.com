@@ -9,7 +9,7 @@
     <link rel="stylesheet" type="text/css" media="screen" href="/stylesheets/rainbow-github.css">
     <link rel="stylesheet" type="text/css" media="screen" href="/stylesheets/stylesheet.css">
 
-    <title>Git 空ブランチ | akkunchoi@github</title>
+    <title>Git 空ブランチ (Orphan branch) | akkunchoi@github</title>
     <link rel="alternate" type="application/rss+xml" title="RSS Feed for mysite.com" href="/feed.xml" />
     <script type="text/javascript" src="/javascripts/rainbow-custom.min.js"></script>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
@@ -43,7 +43,7 @@ $(document).ready(function($){
 
       <article class="posts">
   <header>
-    <h1>Git 空ブランチ</h1>
+    <h1>Git 空ブランチ (Orphan branch)</h1>
     <ul class="tags">
       
       <li class="inline archive_list"><a class="tag_list_link" href="/tag/git">git</a></li>
@@ -55,27 +55,12 @@ $(document).ready(function($){
 
 <p>Gitではコミットやブランチを作成する場合、必ず親を指定する必要があります。今までの歴史を全て辿れるようにするためです。</p>
 
-<p>空ブランチを作成すると、今までの歴史とは全く別の新たな歴史を、同じリポジトリ内で開始することができます。親が存在しない、新たな歴史のコミットはどう使うのでしょうか。</p>
-
-<h2 id="section-1">空ブランチの用途</h2>
-
-<p><a href="http://www.kernel.org/pub/software/scm/git/docs/git-checkout.html">git-checkout</a> のヘルプには全履歴を見せずにツリーを公開したい場合や、公開すべきでないコードが履歴に含まれている場合に有効だそうです。</p>
-
-<p>Github pagesは、プロジェクトサイトの生成用として、空ブランチを使っています。</p>
-
-<p>自分はサーバーサイドによる制御ができないプロジェクトで、完成品を生成するために空ブランチを使いました。</p>
-
-<ul>
-  <li>github pagesのユーザーページ。Jekyllプラグインを使用するためにソースとは別に出力HTMLだけの空ブランチを作成。</li>
-  <li>HTML/CSS/JSのプロジェクト。公開用ブランチはディレクトリのルートが開発用ブランチとは違ったため、公開用の空ブランチを作成。</li>
-</ul>
-
-<p>空ブランチを作成しなくても、新たにリポジトリを作成するという手段もあります。
-ただ、リポジトリ作成よりも空ブランチ作成の方が手軽です。</p>
+<p>空ブランチを作成すると、今までの歴史とは全く別の新たな歴史を、同じリポジトリ内で開始することができます。</p>
 
 <h2 id="github-pages">作成方法１: Github pagesの場合</h2>
 
-<p>Github pages でプロジェクトサイトを作成する際にはプロジェクトのリポジトリ内で空ブランチを作成します。空ブランチを使う理由はわかりませんが、プロジェクト本体には影響させず、リポジトリ内に同梱させる方法としては良い方法だと思います。</p>
+<p>Github pages ではプロジェクトサイトを作成する際にはプロジェクトのリポジトリ内で空ブランチを作成します。
+空ブランチを使う理由はわかりませんが、プロジェクト本体には影響させず、リポジトリ内に同梱させるためにこの手法を採用したのだと思います。</p>
 
 <pre><code># HEADをnew_branchに切り替える。
 git symbolic-ref HEAD refs/heads/new_branch
@@ -93,8 +78,6 @@ git push -u origin new_branch
 
 <p><a href="http://d.hatena.ne.jp/kanonji/20110221/1298263044">各コマンドの意味はこちらを参考にしました</a>。</p>
 
-<p>他にも<a href="http://d.hatena.ne.jp/gnarl/20091110/1257846415">このような</a>方法があるそうです。</p>
-
 <h2 id="orphan">作成方法２: orphanオプション</h2>
 
 <p>Git 1.7.2 では checkout に orphan オプションがが追加されました。これで、空ブランチ（orphan branch）が簡単に作成できるようになります。</p>
@@ -105,6 +88,17 @@ git push -u origin new_branch
 <p>orphan とは孤児のことです。</p>
 
 <p><a href="http://irohiroki.com/2010/08/02/push-orphan-to-heroku">http://irohiroki.com/2010/08/02/push-orphan-to-heroku</a></p>
+
+<h2 id="section-1">空ブランチの用途</h2>
+
+<ul>
+  <li><a href="http://www.kernel.org/pub/software/scm/git/docs/git-checkout.html">git-checkout</a> によると、全履歴を見せずにツリーを公開したい場合や、公開すべきでないコードが履歴に含まれている場合に空ブランチが有効だと書いてあります。</li>
+  <li>github pagesのユーザーページ。Jekyllプラグインを使用するためにソースとは別に出力HTMLだけの空ブランチを作成（Octpress方式）。</li>
+  <li>サーバーサイドプログラミングができない HTML/CSS/JS だけで作られたプロジェクト。製品版では開発版とは別のディレクトリ構造にしなければならない場合など。</li>
+</ul>
+
+<p>空ブランチを作成しなくても新たにリポジトリを作成するという手段もあります。実質的には同じことです。
+どちらがより適切かどうかはプロジェクトによって判断する必要があると思います。</p>
 
 
   </div>
