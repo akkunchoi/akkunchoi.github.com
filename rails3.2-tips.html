@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Akkunchoi.github.com : " />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="/stylesheets/rainbow-github.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="/stylesheets/stylesheet.css">
+
+    <title>Rails 3.2 tips | akkunchoi@github</title>
+    <link rel="alternate" type="application/rss+xml" title="RSS Feed for mysite.com" href="/feed.xml" />
+    <script type="text/javascript" src="/javascripts/rainbow-custom.min.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <script type="text/javascript" src="/javascripts/highlight.js"></script>
+    <script type="text/javascript">
+
+$(document).ready(function($){
+    //$('pre > code').highlight({source: 1, zebra: 1, indent: 'space', list: 'ol'});
+});
+    </script>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/akkunchoi">View on GitHub</a>
+
+          <h1 id="project_title">
+            <a href="/">akkunchoi.github.com</a>
+          </h1>
+          <h2 id="project_tagline"></h2>
+
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+
+      <article class="posts">
+  <header>
+    <h1>Rails 3.2 tips</h1>
+    <ul class="tags">
+      
+      <li class="inline archive_list"><a class="tag_list_link" href="/tag/Rails">Rails</a></li>
+      
+    </ul>
+  </header>
+  <div class="posts-content">
+  <h2 id="assets">assetsのログを消したい</h2>
+
+<p>こういうのが大量にでるので消したい。</p>
+
+<pre><code>Started GET "/assets/jquery_ujs.js?body=1" for 127.0.0.1 at 2012-11-13 19:41:17 +0900
+Served asset /jquery_ujs.js - 304 Not Modified (0ms)
+</code></pre>
+
+<p>initializerを追加して無理やりなんとかする。</p>
+
+<pre><code data-language="ruby"># config/initializers/quiet_assets.rb
+Rails.application.assets.logger = Logger.new('/dev/null')
+Rails::Rack::Logger.class_eval do
+  def call_with_quiet_assets(env)
+    previous_level = Rails.logger.level
+    Rails.logger.level = Logger::ERROR if env['PATH_INFO'].index("/assets/") == 0
+    call_without_quiet_assets(env).tap do
+      Rails.logger.level = previous_level
+    end
+  end
+  alias_method_chain :call, :quiet_assets
+end
+</code></pre>
+
+<p><a href="http://blog.yabasoft.biz/archives/3905">http://blog.yabasoft.biz/archives/3905</a></p>
+
+<h2 id="warn--could-not-determine-content-length-of-response-body-set-content-length-of-the-response-or-set-responsechunked--true">WARN  Could not determine content-length of response body. Set content-length of the response or set Response#chunked = true</h2>
+
+<p>なぜかたくさん出る警告。これはWEBrickの問題らしい。</p>
+
+<p>ということで thin を入れた。</p>
+
+<pre><code># Gemfile
+gem 'thin'
+</code></pre>
+
+<p>WEBrickだと頻繁に落ちることがあったが、それも thin で解決した。</p>
+
+<h2 id="applicationcss-isnt-precompiled">application.css isn’t precompiled</h2>
+
+<p>Productionで出現したエラー。</p>
+
+<p>よくわかってないが、productionの設定を変更して解決した。asset pipelineの恩恵受けたい。</p>
+
+<pre><code># config/environments/production.rb
+config.assets.compile = true
+</code></pre>
+
+<p>変更後は再起動を忘れずに。</p>
+
+<pre><code>$ touch tmp/restart.txt
+</code></pre>
+
+
+  </div>
+  <footer> 
+  <p>Last updated at <time></time></p>
+  <!-- <p>Published at <time>2012-11-13</time></p> -->
+  </footer>
+</article>
+
+
+
+
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    <script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-31706657-3']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+
+  </body>
+</html>

@@ -5,8 +5,68 @@
         <link>http://akkunchoi.github.com</link>
         <atom:link href="http://akkunchoi.github.com/rss.xml" rel="self" type="application/rss+xml" />
         <description>This site is a information for development written by akkunchoi</description>
-        <pubDate>Tue, 13 Nov 2012 22:59:58 +0900</pubDate>
-        <lastBuildDate>Tue, 13 Nov 2012 22:59:58 +0900</lastBuildDate>
+        <pubDate>Tue, 13 Nov 2012 23:11:30 +0900</pubDate>
+        <lastBuildDate>Tue, 13 Nov 2012 23:11:30 +0900</lastBuildDate>
+        
+        <item>
+            <title>Rails 3.2 tips</title>
+            <description>&lt;h2 id=&quot;assets&quot;&gt;assetsのログを消したい&lt;/h2&gt;
+
+&lt;p&gt;こういうのが大量にでるので消したい。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Started GET &quot;/assets/jquery_ujs.js?body=1&quot; for 127.0.0.1 at 2012-11-13 19:41:17 +0900
+Served asset /jquery_ujs.js - 304 Not Modified (0ms)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;initializerを追加して無理やりなんとかする。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# config/initializers/quiet_assets.rb
+Rails.application.assets.logger = Logger.new('/dev/null')
+Rails::Rack::Logger.class_eval do
+  def call_with_quiet_assets(env)
+    previous_level = Rails.logger.level
+    Rails.logger.level = Logger::ERROR if env['PATH_INFO'].index(&quot;/assets/&quot;) == 0
+    call_without_quiet_assets(env).tap do
+      Rails.logger.level = previous_level
+    end
+  end
+  alias_method_chain :call, :quiet_assets
+end
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://blog.yabasoft.biz/archives/3905&quot;&gt;http://blog.yabasoft.biz/archives/3905&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;warn--could-not-determine-content-length-of-response-body-set-content-length-of-the-response-or-set-responsechunked--true&quot;&gt;WARN  Could not determine content-length of response body. Set content-length of the response or set Response#chunked = true&lt;/h2&gt;
+
+&lt;p&gt;なぜかたくさん出る警告。これはWEBrickの問題らしい。&lt;/p&gt;
+
+&lt;p&gt;ということで thin を入れた。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# Gemfile
+gem 'thin'
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;WEBrickだと頻繁に落ちることがあったが、それも thin で解決した。&lt;/p&gt;
+
+&lt;h2 id=&quot;applicationcss-isnt-precompiled&quot;&gt;application.css isn’t precompiled&lt;/h2&gt;
+
+&lt;p&gt;Productionで出現したエラー。&lt;/p&gt;
+
+&lt;p&gt;よくわかってないが、productionの設定を変更して解決した。asset pipelineの恩恵受けたい。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# config/environments/production.rb
+config.assets.compile = true
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;変更後は再起動を忘れずに。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ touch tmp/restart.txt
+&lt;/code&gt;&lt;/pre&gt;
+
+</description>
+            <published>2012-11-13 00:00:00 +0900</published>
+            <link>http://akkunchoi.github.com/rails3.2-tips.html</link>
+        </item>
         
         <item>
             <title>Coffeescript</title>
