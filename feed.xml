@@ -5,8 +5,104 @@
         <link>http://akkunchoi.github.com</link>
         <atom:link href="http://akkunchoi.github.com/rss.xml" rel="self" type="application/rss+xml" />
         <description>This site is a information for development written by akkunchoi</description>
-        <pubDate>Tue, 06 Nov 2012 23:22:43 +0900</pubDate>
-        <lastBuildDate>Tue, 06 Nov 2012 23:22:43 +0900</lastBuildDate>
+        <pubDate>Tue, 13 Nov 2012 22:59:58 +0900</pubDate>
+        <lastBuildDate>Tue, 13 Nov 2012 22:59:58 +0900</lastBuildDate>
+        
+        <item>
+            <title>Coffeescript</title>
+            <description>&lt;p&gt;JavaScripter が &lt;a href=&quot;http://coffeescript.org/&quot;&gt;CoffeeScript&lt;/a&gt; に移行する際の要点をまとめ。&lt;/p&gt;
+
+&lt;h2 id=&quot;section&quot;&gt;関数定義は -&amp;gt;&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;function&lt;/code&gt; と &lt;code&gt;{&lt;/code&gt; と &lt;code&gt;}&lt;/code&gt; は消します。代わりに &lt;code&gt;-&amp;gt;&lt;/code&gt; を入れます。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code data-language=&quot;javascript&quot;&gt; // javascript
+var square;
+square = function(x) {
+      return x * x;
+};
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code data-language=&quot;coffeescript&quot;&gt; # coffeescript
+square = (x) -&amp;gt; x * x
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;タイプ数減りますね。&lt;/p&gt;
+
+&lt;h2 id=&quot;section-1&quot;&gt;クラス定義&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code data-language=&quot;javascript&quot;&gt; // javascript
+var Animal;
+Animal = (function() {
+
+  function Animal(name) {
+    this.name = name;
+  }
+
+  Animal.prototype.move = function(meters) {
+    return alert(this.name + (&quot; moved &quot; + meters + &quot;m.&quot;));
+  };
+
+  return Animal;
+
+})();
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code data-language=&quot;coffeescript&quot;&gt; # coffeescript
+class Animal
+  constructor: (@name) -&amp;gt;
+
+  move: (meters) -&amp;gt;
+    alert @name + &quot; moved #{meters}m.&quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;クラスの定義方法を統一させることができるのは良いかも。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;@name&lt;/code&gt; は ruby の インスタンス変数のような感じです。
+しかし、&lt;code&gt;constructor: (@name) -&amp;gt;&lt;/code&gt; この一行で &lt;code&gt;this.name&lt;/code&gt; にセットされるのはなんだかキモいです。&lt;/p&gt;
+
+&lt;p&gt;継承もできます。&lt;/p&gt;
+
+&lt;h2 id=&quot;this-&quot;&gt;thisの束縛は =&amp;gt;&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code data-language=&quot;javascript&quot;&gt; // javascript
+var _this = this;
+$.each([1, 2, 3, 4, 5], function(k, v) {
+  _this.moge(v);
+});
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code data-language=&quot;coffeescript&quot;&gt; # coffeescript
+$.each [1,2,3,4,5], (k,v) =&amp;gt;
+  this.moge(v)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;もう &lt;code&gt;var self = this;&lt;/code&gt; なんて書かなくて良い！&lt;/p&gt;
+
+&lt;h2 id=&quot;section-2&quot;&gt;関数呼び出しは、引数がある場合は（）を省略可能&lt;/h2&gt;
+
+&lt;p&gt;Rubyのノリです。&lt;/p&gt;
+
+&lt;p&gt;ただし、引数がない関数の場合は &lt;code&gt;()&lt;/code&gt; が必要（プロパティ呼び出しと区別がつかないからだろう）。&lt;/p&gt;
+
+&lt;h2 id=&quot;return&quot;&gt;最後の式はreturnする&lt;/h2&gt;
+
+&lt;p&gt;Rubyのノリです。&lt;/p&gt;
+
+&lt;h2 id=&quot;section-3&quot;&gt;インデント重要&lt;/h2&gt;
+
+&lt;p&gt;Pythonのノリです。&lt;/p&gt;
+
+&lt;h2 id=&quot;section-4&quot;&gt;その他&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;セミコロンは不要。あってもエラーにはならない&lt;/li&gt;
+&lt;/ul&gt;
+
+</description>
+            <published>2012-11-13 00:00:00 +0900</published>
+            <link>http://akkunchoi.github.com/coffeescript.html</link>
+        </item>
         
         <item>
             <title>jQuery Deferred and $(document).ready()</title>

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Akkunchoi.github.com : " />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="/stylesheets/rainbow-github.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="/stylesheets/stylesheet.css">
+
+    <title>Coffeescript | akkunchoi@github</title>
+    <link rel="alternate" type="application/rss+xml" title="RSS Feed for mysite.com" href="/feed.xml" />
+    <script type="text/javascript" src="/javascripts/rainbow-custom.min.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <script type="text/javascript" src="/javascripts/highlight.js"></script>
+    <script type="text/javascript">
+
+$(document).ready(function($){
+    //$('pre > code').highlight({source: 1, zebra: 1, indent: 'space', list: 'ol'});
+});
+    </script>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/akkunchoi">View on GitHub</a>
+
+          <h1 id="project_title">
+            <a href="/">akkunchoi.github.com</a>
+          </h1>
+          <h2 id="project_tagline"></h2>
+
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+
+      <article class="posts">
+  <header>
+    <h1>Coffeescript</h1>
+    <ul class="tags">
+      
+      <li class="inline archive_list"><a class="tag_list_link" href="/tag/CoffeeScript,">CoffeeScript,</a></li>
+      
+      <li class="inline archive_list"><a class="tag_list_link" href="/tag/JavaScript">JavaScript</a></li>
+      
+    </ul>
+  </header>
+  <div class="posts-content">
+  <p>JavaScripter が <a href="http://coffeescript.org/">CoffeeScript</a> に移行する際の要点をまとめ。</p>
+
+<h2 id="section">関数定義は -&gt;</h2>
+
+<p><code>function</code> と <code>{</code> と <code>}</code> は消します。代わりに <code>-&gt;</code> を入れます。</p>
+
+<pre><code data-language="javascript"> // javascript
+var square;
+square = function(x) {
+      return x * x;
+};
+</code></pre>
+
+<pre><code data-language="coffeescript"> # coffeescript
+square = (x) -&gt; x * x
+</code></pre>
+
+<p>タイプ数減りますね。</p>
+
+<h2 id="section-1">クラス定義</h2>
+
+<pre><code data-language="javascript"> // javascript
+var Animal;
+Animal = (function() {
+
+  function Animal(name) {
+    this.name = name;
+  }
+
+  Animal.prototype.move = function(meters) {
+    return alert(this.name + (" moved " + meters + "m."));
+  };
+
+  return Animal;
+
+})();
+</code></pre>
+
+<pre><code data-language="coffeescript"> # coffeescript
+class Animal
+  constructor: (@name) -&gt;
+
+  move: (meters) -&gt;
+    alert @name + " moved #{meters}m."
+</code></pre>
+
+<p>クラスの定義方法を統一させることができるのは良いかも。</p>
+
+<p><code>@name</code> は ruby の インスタンス変数のような感じです。
+しかし、<code>constructor: (@name) -&gt;</code> この一行で <code>this.name</code> にセットされるのはなんだかキモいです。</p>
+
+<p>継承もできます。</p>
+
+<h2 id="this-">thisの束縛は =&gt;</h2>
+
+<pre><code data-language="javascript"> // javascript
+var _this = this;
+$.each([1, 2, 3, 4, 5], function(k, v) {
+  _this.moge(v);
+});
+</code></pre>
+
+<pre><code data-language="coffeescript"> # coffeescript
+$.each [1,2,3,4,5], (k,v) =&gt;
+  this.moge(v)
+</code></pre>
+
+<p>もう <code>var self = this;</code> なんて書かなくて良い！</p>
+
+<h2 id="section-2">関数呼び出しは、引数がある場合は（）を省略可能</h2>
+
+<p>Rubyのノリです。</p>
+
+<p>ただし、引数がない関数の場合は <code>()</code> が必要（プロパティ呼び出しと区別がつかないからだろう）。</p>
+
+<h2 id="return">最後の式はreturnする</h2>
+
+<p>Rubyのノリです。</p>
+
+<h2 id="section-3">インデント重要</h2>
+
+<p>Pythonのノリです。</p>
+
+<h2 id="section-4">その他</h2>
+
+<ul>
+  <li>セミコロンは不要。あってもエラーにはならない</li>
+</ul>
+
+
+  </div>
+  <footer> 
+  <p>Last updated at <time></time></p>
+  <!-- <p>Published at <time>2012-11-13</time></p> -->
+  </footer>
+</article>
+
+
+
+
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    <script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-31706657-3']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+
+  </body>
+</html>
