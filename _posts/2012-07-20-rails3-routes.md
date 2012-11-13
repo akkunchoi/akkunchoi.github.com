@@ -483,7 +483,14 @@ end
     category_user        /users/:id/category/:category(.:format)             users#show
     category_user_images /users/:user_id/images/category/:category(.:format) images#index
 
+### /about や /help のような静的ページのようなアクションを量産したい
 
+<pre><code data-language="ruby"># config/routes.rb
+match ':action', :controller => :pages_controller
+</code></pre>
+
+/about は PagesController#about に、
+/help は PagesController#help になります。
 
 ## 参考
 
