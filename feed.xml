@@ -5,8 +5,156 @@
         <link>http://akkunchoi.github.com</link>
         <atom:link href="http://akkunchoi.github.com/rss.xml" rel="self" type="application/rss+xml" />
         <description>This site is a information for development written by akkunchoi</description>
-        <pubDate>Tue, 13 Nov 2012 23:14:01 +0900</pubDate>
-        <lastBuildDate>Tue, 13 Nov 2012 23:14:01 +0900</lastBuildDate>
+        <pubDate>Tue, 20 Nov 2012 20:11:50 +0900</pubDate>
+        <lastBuildDate>Tue, 20 Nov 2012 20:11:50 +0900</lastBuildDate>
+        
+        <item>
+            <title>MacBook よく使うショートカット</title>
+            <description>&lt;h2 id=&quot;section&quot;&gt;起動(起動したらすぐに押し続ける)&lt;/h2&gt;
+
+&lt;table&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Option&lt;/td&gt;
+      &lt;td&gt;スタートアップマネージャーを起動して、起動ディスクを選択する&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Shift&lt;/td&gt;
+      &lt;td&gt;セーフモード&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;C&lt;/td&gt;
+      &lt;td&gt;CD,DVDから起動&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Command + S&lt;/td&gt;
+      &lt;td&gt;シングルユーザーモードで起動&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Eject or マウスボタン or トラックパッドボタン&lt;/td&gt;
+      &lt;td&gt;強制的にリムーバブルディスク（CD・DVD）を取り出す&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h2 id=&quot;section-1&quot;&gt;スリープ、再起動、ログアウト、電源&lt;/h2&gt;
+
+&lt;table&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Command + Option + Eject&lt;/td&gt;
+      &lt;td&gt;すぐにスリープ&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Command + Control + Eject&lt;/td&gt;
+      &lt;td&gt;アプリケーションを終了してから再起動&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Command + Control + Eject&lt;/td&gt;
+      &lt;td&gt;強制再起動&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Command + Option + Shift + Q&lt;/td&gt;
+      &lt;td&gt;ログアウト（確認なし）&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Command + Option + Shift + Esc (長押し)&lt;/td&gt;
+      &lt;td&gt;最前面のアプリケーションを強制終了&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Command + Option + Esc&lt;/td&gt;
+      &lt;td&gt;「強制終了」ダイアログを表示&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h2 id=&quot;section-2&quot;&gt;ウィンドウ&lt;/h2&gt;
+
+&lt;table&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Command + F1&lt;/td&gt;
+      &lt;td&gt;同じアプリの次のウィンドウ&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Ctrl + Command + [F9-F12]&lt;/td&gt;
+      &lt;td&gt;Spaces 切り替え&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Command + F5&lt;/td&gt;
+      &lt;td&gt;Voice over&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Command + Esc&lt;/td&gt;
+      &lt;td&gt;Front Row&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Command + H&lt;/td&gt;
+      &lt;td&gt;アクティブアプリケーションを隠す&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Command + ,&lt;/td&gt;
+      &lt;td&gt;アプリケーションの環境設定&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Control + F2&lt;/td&gt;
+      &lt;td&gt;メニューバーにフォーカス&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Control + F4&lt;/td&gt;
+      &lt;td&gt;次のウィンドウに移動&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Control + F6&lt;/td&gt;
+      &lt;td&gt;フローティングウィンドウに移動&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Control + F8&lt;/td&gt;
+      &lt;td&gt;メニューバーのメニューステータス（右上のやつ）へのフォーカス&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Command + ` (+ Shift)&lt;/td&gt;
+      &lt;td&gt;アプリケーション内の次（前）のウィンドウに移動&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Command + Option + T&lt;/td&gt;
+      &lt;td&gt;記号パレットの表示&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Command + Shift + ] (or [ )&lt;/td&gt;
+      &lt;td&gt;次（前）のタブに移動&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h2 id=&quot;section-3&quot;&gt;キャプチャ&lt;/h2&gt;
+
+&lt;table&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Command + Shift + 3&lt;/td&gt;
+      &lt;td&gt;全画面キャプチャ&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Command + Shift + 4&lt;/td&gt;
+      &lt;td&gt;矩形キャプチャ&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Command + Shift + 4 その後に Space&lt;/td&gt;
+      &lt;td&gt;ウィンドウキャプチャ&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;http://inforati.jp/apple/mac-tips-techniques/system-hints/how-to-start-up-reboot-shutdown-sleep-logout-with-mac-keyboard-shortcut.html&quot;&gt;http://inforati.jp/apple/mac-tips-techniques/system-hints/how-to-start-up-reboot-shutdown-sleep-logout-with-mac-keyboard-shortcut.html&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://d.hatena.ne.jp/goinger/20090101/1230808275&quot;&gt;http://d.hatena.ne.jp/goinger/20090101/1230808275&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+</description>
+            <published>2012-11-19 00:00:00 +0900</published>
+            <link>http://akkunchoi.github.com/macbook-shortcut.html</link>
+        </item>
         
         <item>
             <title>Rails 3.2 tips</title>
@@ -1696,6 +1844,7 @@ AppleScript習得したら色んなことができそうだ。&lt;/p&gt;
   &lt;li&gt;&lt;a href=&quot;#customized-resource&quot;&gt;Customized Resource&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#section-6&quot;&gt;設定例&lt;/a&gt;    &lt;ul&gt;
       &lt;li&gt;&lt;a href=&quot;#resource--static-&quot;&gt;Resource で Static な文字列を挟みたい時&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#about--help-&quot;&gt;/about や /help のような静的ページのようなアクションを量産したい&lt;/a&gt;&lt;/li&gt;
     &lt;/ul&gt;
   &lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#section-7&quot;&gt;参考&lt;/a&gt;&lt;/li&gt;
@@ -2185,6 +2334,15 @@ end
 category_user        /users/:id/category/:category(.:format)             users#show
 category_user_images /users/:user_id/images/category/:category(.:format) images#index
 &lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&quot;about--help-&quot;&gt;/about や /help のような静的ページのようなアクションを量産したい&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# config/routes.rb
+match ':action', :controller =&amp;gt; :pages_controller
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;/about は PagesController#about に、
+/help は PagesController#help になります。&lt;/p&gt;
 
 &lt;h2 id=&quot;section-7&quot;&gt;参考&lt;/h2&gt;
 
