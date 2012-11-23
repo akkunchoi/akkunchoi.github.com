@@ -5,12 +5,18 @@
         <link>http://akkunchoi.github.com</link>
         <atom:link href="http://akkunchoi.github.com/rss.xml" rel="self" type="application/rss+xml" />
         <description>This site is a information for development written by akkunchoi</description>
-        <pubDate>Tue, 20 Nov 2012 20:18:03 +0900</pubDate>
-        <lastBuildDate>Tue, 20 Nov 2012 20:18:03 +0900</lastBuildDate>
+        <pubDate>Fri, 23 Nov 2012 22:12:57 +0900</pubDate>
+        <lastBuildDate>Fri, 23 Nov 2012 22:12:57 +0900</lastBuildDate>
         
         <item>
-            <title>MacBook よく使うショートカット</title>
-            <description>&lt;h2 id=&quot;section&quot;&gt;起動(起動したらすぐに押し続ける)&lt;/h2&gt;
+            <title>MacOSX ショートカット</title>
+            <description>&lt;p&gt;ショートカットがなかなか覚えられない。使いたい・使いそうなものだけをピックアップ。&lt;/p&gt;
+
+&lt;p&gt;環境は MacBook Snow Leopard です。&lt;/p&gt;
+
+&lt;h2 id=&quot;section&quot;&gt;起動(起動したらすぐに押し続ける)&lt;/h2&gt;
+
+&lt;p&gt;セーフモードで起動するとキャッシュなどを削除するので月に一度は実行すると良いらしい。&lt;/p&gt;
 
 &lt;table&gt;
   &lt;tbody&gt;
@@ -38,6 +44,8 @@
 &lt;/table&gt;
 
 &lt;h2 id=&quot;section-1&quot;&gt;スリープ、再起動、ログアウト、電源&lt;/h2&gt;
+
+&lt;p&gt;強制再起動はどうすることもできなくなる時に使える。&lt;/p&gt;
 
 &lt;table&gt;
   &lt;tbody&gt;
@@ -129,6 +137,8 @@
 
 &lt;h2 id=&quot;section-3&quot;&gt;キャプチャ&lt;/h2&gt;
 
+&lt;p&gt;普段 &lt;a href=&quot;http://www.apple.com/downloads/dashboard/business/screenshotplus.html&quot;&gt;Screenshot Plus&lt;/a&gt; という Dashboard を使うので全く覚えられない。&lt;/p&gt;
+
 &lt;table&gt;
   &lt;tbody&gt;
     &lt;tr&gt;
@@ -145,6 +155,26 @@
     &lt;/tr&gt;
   &lt;/tbody&gt;
 &lt;/table&gt;
+
+&lt;h2 id=&quot;section-4&quot;&gt;任意のアプリケーションのショートカットキーを変更する&lt;/h2&gt;
+
+&lt;p&gt;iTerm の “Toggle Full Screen” が Command + Enter で起動してしまって誤操作が多いので、別のショートカットキーに変更します。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;./images/posts/mac-shortcut-menu-before.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;変更したいショートカットのメニュー名を確認しておきます。&lt;/p&gt;
+
+&lt;p&gt;システム環境設定 &amp;gt; キーボード &amp;gt; キーボードショートカット &amp;gt; アプリケーション で + を押して設定を追加します。&lt;/p&gt;
+
+&lt;p&gt;アプリケーションを指定、メニュー名を入力、書き換えたいショートカットキーを入力します。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;./images/posts/mac-shortcut-systempref.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;iTermのメニューバーを見ると、確かに変更されていますね。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;./images/posts/mac-shortcut-menu-after.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;section-5&quot;&gt;参考&lt;/h2&gt;
 
 &lt;ul&gt;
   &lt;li&gt;&lt;a href=&quot;http://inforati.jp/apple/mac-tips-techniques/system-hints/how-to-start-up-reboot-shutdown-sleep-logout-with-mac-keyboard-shortcut.html&quot;&gt;http://inforati.jp/apple/mac-tips-techniques/system-hints/how-to-start-up-reboot-shutdown-sleep-logout-with-mac-keyboard-shortcut.html&lt;/a&gt;&lt;/li&gt;
