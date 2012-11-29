@@ -5,8 +5,8 @@
         <link>http://akkunchoi.github.com</link>
         <atom:link href="http://akkunchoi.github.com/rss.xml" rel="self" type="application/rss+xml" />
         <description>This site is a information for development written by akkunchoi</description>
-        <pubDate>Fri, 23 Nov 2012 22:12:57 +0900</pubDate>
-        <lastBuildDate>Fri, 23 Nov 2012 22:12:57 +0900</lastBuildDate>
+        <pubDate>Thu, 29 Nov 2012 14:08:52 +0900</pubDate>
+        <lastBuildDate>Thu, 29 Nov 2012 14:08:52 +0900</lastBuildDate>
         
         <item>
             <title>MacOSX ショートカット</title>
@@ -2824,7 +2824,10 @@ NoMethodError: undefined method `[]' for nil:NilClass
       &lt;li&gt;&lt;a href=&quot;#commit---amend--reset---hard-head-&quot;&gt;commit –amend や reset –hard HEAD^^ などで消えたコミットを確認する&lt;/a&gt;&lt;/li&gt;
     &lt;/ul&gt;
   &lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#commit---&quot;&gt;commit - コミット&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#commit---&quot;&gt;commit - コミット&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#git&quot;&gt;実際に削除したファイルを、git上でも削除としてステージングする&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#branch---&quot;&gt;branch - ブランチ&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#merge---&quot;&gt;merge - マージ&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#tag---&quot;&gt;tag - タグ&lt;/a&gt;&lt;/li&gt;
@@ -2932,6 +2935,19 @@ $ git add -p hoge.txt # interactiveに部分的なステージングができる
 $ git checkout -- . # こうするとカレントディレクトリ以下の全更新が消えるよ
 $ git checkout -p hoge.txt # interactiveに操作する
 &lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&quot;git&quot;&gt;実際に削除したファイルを、git上でも削除としてステージングする&lt;/h3&gt;
+
+&lt;p&gt;Changes not staged for commit の状態がdeletedなファイルを削除してしまいたい。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;images/posts/git-changes-not-staged.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ git add -u . # -u or --update
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;すると Changes to be committed になる&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;images/posts/git-changes-to-be-committed.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;branch---&quot;&gt;branch - ブランチ&lt;/h2&gt;
 
@@ -3074,28 +3090,41 @@ $ git remote prune origin
 
 &lt;h2 id=&quot;submodule---&quot;&gt;submodule - サブモジュール&lt;/h2&gt;
 
-&lt;p&gt;http://progit.org/book/ja/ch6-6.html&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://progit.org/book/ja/ch6-6.html&quot;&gt;http://progit.org/book/ja/ch6-6.html&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;submoduleを追加する。&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;$ git submodule add git://github.com/chneukirchen/rack.git rack
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;submoduleのあるリポジトリをcloneした後、&lt;/p&gt;
+&lt;p&gt;初回のみinitを実行する。updateすると、自動的にcloneされる。&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;$ git submodule init
 $ git submodule update
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;サブモジュールの外部の変更を取り込むには毎回これをやる&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;git submodule init&lt;/code&gt;を実行すると、.gitmodules が作られる。&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;$ git merge origin/master
-$ git submodule update
-&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;サブモジュールの外部の変更を取り込むには、&lt;/p&gt;
 
-&lt;p&gt;サブモジュールはあるポイントしか見ない！！親プロジェクトはそのポイントを記録する&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;サブモジュール内でHEADを更新して、&lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;上流のリポジトリでサブモジュールの変更をコミットする&lt;/p&gt;
 
-&lt;p&gt;問題点。特定のバージョンをポイントしている（detached head）ので、git submodule updateで手元の変更が失われやすい&lt;/p&gt;
+    &lt;p&gt;$ cd rack
+  $ git pull
+  $ cd ..
+  $ git add rack
+  $ git commit -m “update submodule”&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
 
-&lt;p&gt;.gitmodulesを見ればわかる&lt;/p&gt;
+&lt;p&gt;上流のリポジトリはサブモジュールのあるコミットを記録する。サブモジュールの内容が更新されたら、手動で更新を反映させなければならない。ここがsvn:externalsと異なる。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;git submodule update&lt;/code&gt;は上流のリポジトリが保存したポイントで、サブモジュールを再現する（チェックアウトのようなイメージ）。&lt;/p&gt;
+
+&lt;p&gt;問題点。特定のバージョンをポイントしている（detached head）ので、git submodule updateで手元の変更が失われやすい。&lt;/p&gt;
 
 &lt;p&gt;サブモジュールを削除&lt;/p&gt;
 

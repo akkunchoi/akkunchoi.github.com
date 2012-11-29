@@ -58,7 +58,10 @@ $(document).ready(function($){
       <li><a href="#commit---amend--reset---hard-head-">commit –amend や reset –hard HEAD^^ などで消えたコミットを確認する</a></li>
     </ul>
   </li>
-  <li><a href="#commit---">commit - コミット</a></li>
+  <li><a href="#commit---">commit - コミット</a>    <ul>
+      <li><a href="#git">実際に削除したファイルを、git上でも削除としてステージングする</a></li>
+    </ul>
+  </li>
   <li><a href="#branch---">branch - ブランチ</a></li>
   <li><a href="#merge---">merge - マージ</a></li>
   <li><a href="#tag---">tag - タグ</a></li>
@@ -166,6 +169,19 @@ $ git add -p hoge.txt # interactiveに部分的なステージングができる
 $ git checkout -- . # こうするとカレントディレクトリ以下の全更新が消えるよ
 $ git checkout -p hoge.txt # interactiveに操作する
 </code></pre>
+
+<h3 id="git">実際に削除したファイルを、git上でも削除としてステージングする</h3>
+
+<p>Changes not staged for commit の状態がdeletedなファイルを削除してしまいたい。</p>
+
+<p><img src="images/posts/git-changes-not-staged.png" alt="" /></p>
+
+<pre><code>$ git add -u . # -u or --update
+</code></pre>
+
+<p>すると Changes to be committed になる</p>
+
+<p><img src="images/posts/git-changes-to-be-committed.png" alt="" /></p>
 
 <h2 id="branch---">branch - ブランチ</h2>
 
@@ -308,28 +324,41 @@ $ git remote prune origin
 
 <h2 id="submodule---">submodule - サブモジュール</h2>
 
-<p>http://progit.org/book/ja/ch6-6.html</p>
+<p><a href="http://progit.org/book/ja/ch6-6.html">http://progit.org/book/ja/ch6-6.html</a></p>
+
+<p>submoduleを追加する。</p>
 
 <pre><code>$ git submodule add git://github.com/chneukirchen/rack.git rack
 </code></pre>
 
-<p>submoduleのあるリポジトリをcloneした後、</p>
+<p>初回のみinitを実行する。updateすると、自動的にcloneされる。</p>
 
 <pre><code>$ git submodule init
 $ git submodule update
 </code></pre>
 
-<p>サブモジュールの外部の変更を取り込むには毎回これをやる</p>
+<p><code>git submodule init</code>を実行すると、.gitmodules が作られる。</p>
 
-<pre><code>$ git merge origin/master
-$ git submodule update
-</code></pre>
+<p>サブモジュールの外部の変更を取り込むには、</p>
 
-<p>サブモジュールはあるポイントしか見ない！！親プロジェクトはそのポイントを記録する</p>
+<ul>
+  <li>サブモジュール内でHEADを更新して、</li>
+  <li>
+    <p>上流のリポジトリでサブモジュールの変更をコミットする</p>
 
-<p>問題点。特定のバージョンをポイントしている（detached head）ので、git submodule updateで手元の変更が失われやすい</p>
+    <p>$ cd rack
+  $ git pull
+  $ cd ..
+  $ git add rack
+  $ git commit -m “update submodule”</p>
+  </li>
+</ul>
 
-<p>.gitmodulesを見ればわかる</p>
+<p>上流のリポジトリはサブモジュールのあるコミットを記録する。サブモジュールの内容が更新されたら、手動で更新を反映させなければならない。ここがsvn:externalsと異なる。</p>
+
+<p><code>git submodule update</code>は上流のリポジトリが保存したポイントで、サブモジュールを再現する（チェックアウトのようなイメージ）。</p>
+
+<p>問題点。特定のバージョンをポイントしている（detached head）ので、git submodule updateで手元の変更が失われやすい。</p>
 
 <p>サブモジュールを削除</p>
 
@@ -626,7 +655,7 @@ pick 0149644 moge
 
   </div>
   <footer> 
-  <p>Last updated at <time>2012-08-07 22:14:31 +0900</time></p>
+  <p>Last updated at <time>2012-11-27 14:36:58 +0900</time></p>
   <!-- <p>Published at <time>2012-06-01</time></p> -->
   </footer>
 </article>
