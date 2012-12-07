@@ -9,7 +9,7 @@
     <link rel="stylesheet" type="text/css" media="screen" href="/stylesheets/rainbow-github.css">
     <link rel="stylesheet" type="text/css" media="screen" href="/stylesheets/stylesheet.css">
 
-    <title>Composer - PHPのパッケージ管理システム | akkunchoi@github</title>
+    <title>Composer | akkunchoi@github</title>
     <link rel="alternate" type="application/rss+xml" title="RSS Feed for mysite.com" href="/feed.xml" />
     <script type="text/javascript" src="/javascripts/rainbow-custom.min.js"></script>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
@@ -42,7 +42,7 @@ $(document).ready(function($){
 
       <article class="posts">
   <header>
-    <h1>Composer - PHPのパッケージ管理システム</h1>
+    <h1>Composer</h1>
     <ul class="tags">
       
       <li class="inline archive_list"><a class="tag_list_link" href="/tag/php">php</a></li>
@@ -50,49 +50,364 @@ $(document).ready(function($){
     </ul>
   </header>
   <div class="posts-content">
-  <p><a href="">Composer</a>をダウンロードします。</p>
+  <ul id="markdown-toc">
+  <li><a href="#composer">Composerとは</a></li>
+  <li><a href="#section">とにかく始める</a></li>
+  <li><a href="#composer-1">プライベートなComposerリポジトリを作成する</a>    <ul>
+      <li><a href="#section-1">公開側</a></li>
+      <li><a href="#section-2">利用者側</a></li>
+    </ul>
+  </li>
+  <li><a href="#section-3">リリースバージョンについて</a></li>
+  <li><a href="#repositories">repositoriesについて</a></li>
+  <li><a href="#section-4">コマンド概要</a></li>
+  <li><a href="#composer-2">Composerを利用してオートロードを行う</a>    <ul>
+      <li><a href="#composerjson-">1. composer.json を用意します。</a></li>
+      <li><a href="#autoload">2. autoloadファイルを生成する</a></li>
+      <li><a href="#autoload-1">3. 使用するファイル内でautoloadを読み込む</a></li>
+    </ul>
+  </li>
+  <li><a href="#section-5">その他</a>    <ul>
+      <li><a href="#composerjson--1">composer.json 書くのが面倒</a></li>
+      <li><a href="#alias">Alias</a></li>
+      <li><a href="#ssl">インストールでSSLエラーが出る場合</a></li>
+      <li><a href="#composerphar">composer.pharをルートに配置せずに、ディレクトリに置く</a></li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="composer">Composerとは</h2>
+
+<p><a href="https://npmjs.org/">npm</a>, <a href="http://gembundler.com/">bundler</a>のPHP版。</p>
+
+<p>公式的にはパッケージ管理システムではなく、依存性管理システムだそうな <a href="http://getcomposer.org/doc/00-intro.md">intro</a> 。
+というのも、グローバルな場所にライブラリをインストールするのではなく、プロジェクト内に依存性解決した上でインストールするからだという。
+まあどちらでも良いと思います。</p>
+
+<p>個人的に、<a href="http://pear.php.net/manual/ja/installation.shared.php">PEARを使ってプロジェクト内にインストールしていた</a> ので
+Symfonyなど有名プロジェクトが採用するほど定着した依存管理システムが出てきたのは嬉しい限りです。</p>
+
+<p>自分の見解ですが、用語を整理しておきます。</p>
+
+<ul>
+  <li>パッケージ：プロジェクト単位のソースコード群</li>
+  <li>リポジトリ：パッケージの集合体。パッケージの配布場所。</li>
+  <li>Composerリポジトリ: リポジトリのうち、type=composer で指定可能なリポジトリ</li>
+</ul>
+
+<h2 id="section">とにかく始める</h2>
 
 <pre><code>$ curl -s https://getcomposer.org/installer | php
-$ curl -s https://getcomposer.org/installer | php -- --install-dir=bin
-</code></pre>
 
-<p>composer.json を用意します。</p>
+# composer.jsonを作成
 
-<p>例えば、<a href="">Slim</a>を使い、src ディレクトリに Acme パッケージを配置している場合はこうなります。</p>
-
-<pre><code>{
   "require": {
     "slim/slim": "2.*"
-  },
+  }
+
+$ php composer.phar install
+</code></pre>
+
+<p>アプリケーション側でautoloadを読み込むと、クラスが使用できる。</p>
+
+<pre><code>require 'vendor/autoload.php';
+
+$slim = new \Slim\Slim;
+</code></pre>
+
+<h2 id="composer-1">プライベートなComposerリポジトリを作成する</h2>
+
+<ul>
+  <li>公開側: 
+    <ul>
+      <li>公開サーバー上でライブラリ一覧を作成 =&gt; config.json</li>
+      <li>satisにより、パッケージ一覧を生成。パッケージ一覧をWebサーバーで公開。 =&gt; プライベートCompserリポジトリ</li>
+    </ul>
+  </li>
+  <li>利用側:
+    <ul>
+      <li>repositoriesでプライベートComposerリポジトリを指定</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="section-1">公開側</h3>
+
+<p>localhostで公開してみます。自分しか見れないので公開というのも変だな。</p>
+
+<pre><code>$ cd /Users/foobar/Sites # =&gt; http://localhost/ で見れるローカルファイルパス
+$ mkdir composer
+$ cd composer
+$ curl -s https://getcomposer.org/installer | php
+</code></pre>
+
+<p>パッケージ一覧を生成するツール satis をインストール。<code>-sdev</code>は<code>--stability=dev</code>の意味です。</p>
+
+<pre><code>$ php composer.phar create-project composer/satis -sdev
+</code></pre>
+
+<p>config.jsonを作成します。</p>
+
+<pre><code>{
+    "name": "My Repository",
+    "homepage": "http://localhost/composer/web/",
+    "repositories": [
+        { "type": "vcs", "url": "/Users/foobar/Sites/composer/hoge" }
+    ],
+    "require-all": true
+}
+</code></pre>
+
+<p>name, homepage にはこの Composerリポジトリ についての情報を記述します。repositoriesにはリポジトリを指定します。
+require_allは全パッケージ全バージョンを自動で取得してくれます。指定したい場合は下記のように記述します。</p>
+
+<pre><code>"require": {
+    "company/package3": "2.0.0"
+}
+</code></pre>
+
+<p>repositoriesにこのComposerリポジトリで公開したいリポジトリを列挙します。
+とりあえず今回は “Users/foobar/Sites/composer/hoge” にgitのプロジェクトを作成して、それを公開します。</p>
+
+<pre><code>$ mkdir hoge
+$ cd hoge
+$ git init
+$ cp ../composer.phar .
+$ php composer.phar init
+</code></pre>
+
+<p>init コマンドで composer.json が作成されます。内容を聞かれますがデフォルトのままで良いです。
+composer.jsonを含めてコミットします。</p>
+
+<p>config.jsonを更新したらsatisコマンドでパッケージ一覧を生成します。</p>
+
+<pre><code># web/ は出力先
+$ php satis/bin/satis build config.json web/ 
+</code></pre>
+
+<p>パッケージのリリースバージョンを更新する際にも build が必要です。</p>
+
+<p>web内に<code>index.html</code>と<code>packages.json</code>が生成されます。</p>
+
+<h3 id="section-2">利用者側</h3>
+
+<p>利用者側では <code>packages.json</code> があるパスを指定します。</p>
+
+<pre><code>{
+    "repositories": [
+        { "type": "composer", "url": "http://localhost/composer/web/" },
+    ],
+    "require": {
+        "foobar/hoge": "*",
+    }
+}
+</code></pre>
+
+<p>installすると、foobar/hoge がインストールされます。</p>
+
+<p>TODO 認証をかける場合..</p>
+
+<p><a href="http://getcomposer.org/doc/articles/handling-private-packages-with-satis.md">http://getcomposer.org/doc/articles/handling-private-packages-with-satis.md</a>
+<a href="http://ngyuki.hatenablog.com/entry/2012/11/06/210638">http://ngyuki.hatenablog.com/entry/2012/11/06/210638</a></p>
+
+<h2 id="section-3">リリースバージョンについて</h2>
+
+<p>ブランチは全て dev 扱いになる。バージョンっぽいブランチは<code>*-dev</code>で、その他は<code>dev-*</code>になる。</p>
+
+<p>例:</p>
+
+<ul>
+  <li>1.0 =&gt; 1.0.x-dev</li>
+  <li>v2.0.3 =&gt; 2.0.3-dev</li>
+  <li>master =&gt; dev-master</li>
+  <li>dev =&gt; dev-dev</li>
+</ul>
+
+<p>タグを使うといわゆる stable な指定が可能。</p>
+
+<p>注意点としてはcomposer.jsonでバージョンを記述することができるが、これはタグのバージョンと一致させないといけない。
+わざわざcomposer.jsonでバージョン記述しなくてもいいかもしれない。</p>
+
+<p>利用する側でのバージョンの指定は 2.* とか * とか</p>
+
+<h2 id="repositories">repositoriesについて</h2>
+
+<p>リポジトリのtype: git, pear, package, composer, vcsなど。それぞれオプションが異なる。</p>
+
+<p>vcsの場合、urlにはファイルパスやsshプロトコルやgithubのパスなど。composer.json を含んでいる必要がある。</p>
+
+<p>composer.jsonが存在しないような既存のライブラリなどは type=package にすると良い。例えばこんな感じ。</p>
+
+<pre><code>{
+    "type":"package",
+    "package": {
+        "name": "akkunchoi/php-aspectable",
+        "version": "dev-master",
+        "dist": {
+            "url": "https://github.com/akkunchoi/php-aspectable/zipball/master",
+            "type": "zip"
+        },
+        "source": {
+            "url": "https://github.com/akkunchoi/php-aspectable.git",
+            "type": "git",
+            "reference": "master"
+        }
+    }
+}
+</code></pre>
+
+<h2 id="section-4">コマンド概要</h2>
+
+<p><a href="http://getcomposer.org/doc/03-cli.md">http://getcomposer.org/doc/03-cli.md</a></p>
+
+<table>
+  <tbody>
+    <tr>
+      <td>init</td>
+      <td>composer.jsonを作成してくれる</td>
+    </tr>
+    <tr>
+      <td>install</td>
+      <td>インストールする。lockは更新しない</td>
+    </tr>
+    <tr>
+      <td>update</td>
+      <td>composer.lockを更新</td>
+    </tr>
+    <tr>
+      <td>require</td>
+      <td>composer.jsonにライブラリを追加する</td>
+    </tr>
+    <tr>
+      <td>search</td>
+      <td>パッケージの検索</td>
+    </tr>
+    <tr>
+      <td>show</td>
+      <td>パッケージの表示</td>
+    </tr>
+    <tr>
+      <td>depends</td>
+      <td>依存パッケージの表示</td>
+    </tr>
+    <tr>
+      <td>validate</td>
+      <td>composer.jsonの検証</td>
+    </tr>
+    <tr>
+      <td>status</td>
+      <td>状態を確認</td>
+    </tr>
+    <tr>
+      <td>create-project</td>
+      <td>外部ライブラリをするような感じ？</td>
+    </tr>
+    <tr>
+      <td>dump-autoload</td>
+      <td>オートロードファイルの再生成</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="composer-2">Composerを利用してオートロードを行う</h2>
+
+<h3 id="composerjson-">1. composer.json を用意します。</h3>
+
+<p>例えばこのような構成 (src ディレクトリに Acme パッケージを配置) の場合</p>
+
+<pre><code>/
+|-- src
+     |
+     `-- Acme
+          |
+          `-- Hoge.php
+</code></pre>
+
+<p>composer.json はこうなります。</p>
+
+<pre><code># composer.json
+{
   "autoload": {
     "psr-0": {"Acme": "src"}
   }
 }
 </code></pre>
 
-<p>インストールします。</p>
+<h3 id="autoload">2. autoloadファイルを生成する</h3>
 
-<pre><code>$ php composer.phar install
+<p><code>install</code>, <code>update</code> でもいいですが、autoload.phpを生成するだけなら、<code>dump-autoload</code>の方が早いです。</p>
+
+<pre><code>$ php composer.phar dump-autoload
 </code></pre>
 
-<p>パッケージは vendor ディレクトリにインストールされます。</p>
-
-<p>composer.jsonを書き換えた後はクラスマッピングを更新する必要があるので <code>php composer.phar update</code> を実行します。</p>
-
-<p>autoloadを読み込みます。</p>
+<h3 id="autoload-1">3. 使用するファイル内でautoloadを読み込む</h3>
 
 <pre><code>&lt;?php
 require 'vendor/autoload.php';
 </code></pre>
 
-<p>以上。</p>
+<h2 id="section-5">その他</h2>
 
-<p>オートローダーとしても使えるので便利です。</p>
+<h3 id="composerjson--1">composer.json 書くのが面倒</h3>
+
+<p>init で対話的に作成できる。</p>
+
+<pre><code>$ php composer.phar init
+</code></pre>
+
+<p>シンタックスエラーは validate でチェックできる。</p>
+
+<pre><code>$ php composer.phar validate
+</code></pre>
+
+<p>composer.jsonの文法チェックとrecommendな書き方を教えてくれる。</p>
+
+<p>json内にはコメントが書けない(?)のがちょっとつらい。</p>
+
+<h3 id="alias">Alias</h3>
+
+<p>例えば symfony/ClassLoader はこのように設定している。
+<a href="https://github.com/symfony/ClassLoader/blob/master/composer.json">https://github.com/symfony/ClassLoader/blob/master/composer.json</a></p>
+
+<pre><code>"extra": {
+    "branch-alias": {
+        "dev-master": "2.2-dev"
+    }
+}
+</code></pre>
+
+<p>利用者が “symfony/ClassLoader”: “2.2-dev” と指定することで、自動的に master ブランチのコードを取得させることができる。</p>
+
+<h3 id="ssl">インストールでSSLエラーが出る場合</h3>
+
+<blockquote>
+  <p>curl: (51) SSL: certificate subject name ‘dl.packagist.org’ does not match target host name ‘getcomposer.org’</p>
+</blockquote>
+
+<p>一応 https じゃなくても取得できる</p>
+
+<pre><code>$ curl -s http://getcomposer.org/installer | php
+</code></pre>
+
+<p>または –insecure オプションを付ける</p>
+
+<pre><code>$ curl -s http://getcomposer.org/installer | php
+</code></pre>
+
+<p>wgetでもOK</p>
+
+<pre><code>$ wget http://getcomposer.org/composer.phar
+</code></pre>
+
+<h3 id="composerphar">composer.pharをルートに配置せずに、ディレクトリに置く</h3>
+
+<pre><code>$ curl http://getcomposer.org/installer | php -- --install-dir=bin
+</code></pre>
 
 
   </div>
   <footer> 
-  <p>Last updated at <time>2012-10-10 11:50:46 +0900</time></p>
+  <p>Last updated at <time>2012-12-07 20:18:30 +0900</time></p>
   <!-- <p>Published at <time>2012-10-10</time></p> -->
   </footer>
 </article>

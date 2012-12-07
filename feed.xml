@@ -5,8 +5,8 @@
         <link>http://akkunchoi.github.com</link>
         <atom:link href="http://akkunchoi.github.com/rss.xml" rel="self" type="application/rss+xml" />
         <description>This site is a information for development written by akkunchoi</description>
-        <pubDate>Thu, 29 Nov 2012 14:08:52 +0900</pubDate>
-        <lastBuildDate>Thu, 29 Nov 2012 14:08:52 +0900</lastBuildDate>
+        <pubDate>Fri, 07 Dec 2012 20:28:00 +0900</pubDate>
+        <lastBuildDate>Fri, 07 Dec 2012 20:28:00 +0900</lastBuildDate>
         
         <item>
             <title>MacOSX ショートカット</title>
@@ -634,45 +634,360 @@ Evernoteは高機能すぎる、重い。&lt;/p&gt;
         </item>
         
         <item>
-            <title>Composer - PHPのパッケージ管理システム</title>
-            <description>&lt;p&gt;&lt;a href=&quot;&quot;&gt;Composer&lt;/a&gt;をダウンロードします。&lt;/p&gt;
+            <title>Composer</title>
+            <description>&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#composer&quot;&gt;Composerとは&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#section&quot;&gt;とにかく始める&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#composer-1&quot;&gt;プライベートなComposerリポジトリを作成する&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#section-1&quot;&gt;公開側&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#section-2&quot;&gt;利用者側&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#section-3&quot;&gt;リリースバージョンについて&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#repositories&quot;&gt;repositoriesについて&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#section-4&quot;&gt;コマンド概要&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#composer-2&quot;&gt;Composerを利用してオートロードを行う&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#composerjson-&quot;&gt;1. composer.json を用意します。&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#autoload&quot;&gt;2. autoloadファイルを生成する&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#autoload-1&quot;&gt;3. 使用するファイル内でautoloadを読み込む&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#section-5&quot;&gt;その他&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#composerjson--1&quot;&gt;composer.json 書くのが面倒&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#alias&quot;&gt;Alias&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#ssl&quot;&gt;インストールでSSLエラーが出る場合&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#composerphar&quot;&gt;composer.pharをルートに配置せずに、ディレクトリに置く&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;composer&quot;&gt;Composerとは&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://npmjs.org/&quot;&gt;npm&lt;/a&gt;, &lt;a href=&quot;http://gembundler.com/&quot;&gt;bundler&lt;/a&gt;のPHP版。&lt;/p&gt;
+
+&lt;p&gt;公式的にはパッケージ管理システムではなく、依存性管理システムだそうな &lt;a href=&quot;http://getcomposer.org/doc/00-intro.md&quot;&gt;intro&lt;/a&gt; 。
+というのも、グローバルな場所にライブラリをインストールするのではなく、プロジェクト内に依存性解決した上でインストールするからだという。
+まあどちらでも良いと思います。&lt;/p&gt;
+
+&lt;p&gt;個人的に、&lt;a href=&quot;http://pear.php.net/manual/ja/installation.shared.php&quot;&gt;PEARを使ってプロジェクト内にインストールしていた&lt;/a&gt; ので
+Symfonyなど有名プロジェクトが採用するほど定着した依存管理システムが出てきたのは嬉しい限りです。&lt;/p&gt;
+
+&lt;p&gt;自分の見解ですが、用語を整理しておきます。&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;パッケージ：プロジェクト単位のソースコード群&lt;/li&gt;
+  &lt;li&gt;リポジトリ：パッケージの集合体。パッケージの配布場所。&lt;/li&gt;
+  &lt;li&gt;Composerリポジトリ: リポジトリのうち、type=composer で指定可能なリポジトリ&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;section&quot;&gt;とにかく始める&lt;/h2&gt;
 
 &lt;pre&gt;&lt;code&gt;$ curl -s https://getcomposer.org/installer | php
-$ curl -s https://getcomposer.org/installer | php -- --install-dir=bin
-&lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;composer.json を用意します。&lt;/p&gt;
+# composer.jsonを作成
 
-&lt;p&gt;例えば、&lt;a href=&quot;&quot;&gt;Slim&lt;/a&gt;を使い、src ディレクトリに Acme パッケージを配置している場合はこうなります。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;{
   &quot;require&quot;: {
     &quot;slim/slim&quot;: &quot;2.*&quot;
-  },
+  }
+
+$ php composer.phar install
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;アプリケーション側でautoloadを読み込むと、クラスが使用できる。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;require 'vendor/autoload.php';
+
+$slim = new \Slim\Slim;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;composer-1&quot;&gt;プライベートなComposerリポジトリを作成する&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;公開側: 
+    &lt;ul&gt;
+      &lt;li&gt;公開サーバー上でライブラリ一覧を作成 =&amp;gt; config.json&lt;/li&gt;
+      &lt;li&gt;satisにより、パッケージ一覧を生成。パッケージ一覧をWebサーバーで公開。 =&amp;gt; プライベートCompserリポジトリ&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;利用側:
+    &lt;ul&gt;
+      &lt;li&gt;repositoriesでプライベートComposerリポジトリを指定&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;section-1&quot;&gt;公開側&lt;/h3&gt;
+
+&lt;p&gt;localhostで公開してみます。自分しか見れないので公開というのも変だな。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ cd /Users/foobar/Sites # =&amp;gt; http://localhost/ で見れるローカルファイルパス
+$ mkdir composer
+$ cd composer
+$ curl -s https://getcomposer.org/installer | php
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;パッケージ一覧を生成するツール satis をインストール。&lt;code&gt;-sdev&lt;/code&gt;は&lt;code&gt;--stability=dev&lt;/code&gt;の意味です。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ php composer.phar create-project composer/satis -sdev
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;config.jsonを作成します。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;{
+    &quot;name&quot;: &quot;My Repository&quot;,
+    &quot;homepage&quot;: &quot;http://localhost/composer/web/&quot;,
+    &quot;repositories&quot;: [
+        { &quot;type&quot;: &quot;vcs&quot;, &quot;url&quot;: &quot;/Users/foobar/Sites/composer/hoge&quot; }
+    ],
+    &quot;require-all&quot;: true
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;name, homepage にはこの Composerリポジトリ についての情報を記述します。repositoriesにはリポジトリを指定します。
+require_allは全パッケージ全バージョンを自動で取得してくれます。指定したい場合は下記のように記述します。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&quot;require&quot;: {
+    &quot;company/package3&quot;: &quot;2.0.0&quot;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;repositoriesにこのComposerリポジトリで公開したいリポジトリを列挙します。
+とりあえず今回は “Users/foobar/Sites/composer/hoge” にgitのプロジェクトを作成して、それを公開します。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ mkdir hoge
+$ cd hoge
+$ git init
+$ cp ../composer.phar .
+$ php composer.phar init
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;init コマンドで composer.json が作成されます。内容を聞かれますがデフォルトのままで良いです。
+composer.jsonを含めてコミットします。&lt;/p&gt;
+
+&lt;p&gt;config.jsonを更新したらsatisコマンドでパッケージ一覧を生成します。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# web/ は出力先
+$ php satis/bin/satis build config.json web/ 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;パッケージのリリースバージョンを更新する際にも build が必要です。&lt;/p&gt;
+
+&lt;p&gt;web内に&lt;code&gt;index.html&lt;/code&gt;と&lt;code&gt;packages.json&lt;/code&gt;が生成されます。&lt;/p&gt;
+
+&lt;h3 id=&quot;section-2&quot;&gt;利用者側&lt;/h3&gt;
+
+&lt;p&gt;利用者側では &lt;code&gt;packages.json&lt;/code&gt; があるパスを指定します。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;{
+    &quot;repositories&quot;: [
+        { &quot;type&quot;: &quot;composer&quot;, &quot;url&quot;: &quot;http://localhost/composer/web/&quot; },
+    ],
+    &quot;require&quot;: {
+        &quot;foobar/hoge&quot;: &quot;*&quot;,
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;installすると、foobar/hoge がインストールされます。&lt;/p&gt;
+
+&lt;p&gt;TODO 認証をかける場合..&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://getcomposer.org/doc/articles/handling-private-packages-with-satis.md&quot;&gt;http://getcomposer.org/doc/articles/handling-private-packages-with-satis.md&lt;/a&gt;
+&lt;a href=&quot;http://ngyuki.hatenablog.com/entry/2012/11/06/210638&quot;&gt;http://ngyuki.hatenablog.com/entry/2012/11/06/210638&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;section-3&quot;&gt;リリースバージョンについて&lt;/h2&gt;
+
+&lt;p&gt;ブランチは全て dev 扱いになる。バージョンっぽいブランチは&lt;code&gt;*-dev&lt;/code&gt;で、その他は&lt;code&gt;dev-*&lt;/code&gt;になる。&lt;/p&gt;
+
+&lt;p&gt;例:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;1.0 =&amp;gt; 1.0.x-dev&lt;/li&gt;
+  &lt;li&gt;v2.0.3 =&amp;gt; 2.0.3-dev&lt;/li&gt;
+  &lt;li&gt;master =&amp;gt; dev-master&lt;/li&gt;
+  &lt;li&gt;dev =&amp;gt; dev-dev&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;タグを使うといわゆる stable な指定が可能。&lt;/p&gt;
+
+&lt;p&gt;注意点としてはcomposer.jsonでバージョンを記述することができるが、これはタグのバージョンと一致させないといけない。
+わざわざcomposer.jsonでバージョン記述しなくてもいいかもしれない。&lt;/p&gt;
+
+&lt;p&gt;利用する側でのバージョンの指定は 2.* とか * とか&lt;/p&gt;
+
+&lt;h2 id=&quot;repositories&quot;&gt;repositoriesについて&lt;/h2&gt;
+
+&lt;p&gt;リポジトリのtype: git, pear, package, composer, vcsなど。それぞれオプションが異なる。&lt;/p&gt;
+
+&lt;p&gt;vcsの場合、urlにはファイルパスやsshプロトコルやgithubのパスなど。composer.json を含んでいる必要がある。&lt;/p&gt;
+
+&lt;p&gt;composer.jsonが存在しないような既存のライブラリなどは type=package にすると良い。例えばこんな感じ。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;{
+    &quot;type&quot;:&quot;package&quot;,
+    &quot;package&quot;: {
+        &quot;name&quot;: &quot;akkunchoi/php-aspectable&quot;,
+        &quot;version&quot;: &quot;dev-master&quot;,
+        &quot;dist&quot;: {
+            &quot;url&quot;: &quot;https://github.com/akkunchoi/php-aspectable/zipball/master&quot;,
+            &quot;type&quot;: &quot;zip&quot;
+        },
+        &quot;source&quot;: {
+            &quot;url&quot;: &quot;https://github.com/akkunchoi/php-aspectable.git&quot;,
+            &quot;type&quot;: &quot;git&quot;,
+            &quot;reference&quot;: &quot;master&quot;
+        }
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;section-4&quot;&gt;コマンド概要&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://getcomposer.org/doc/03-cli.md&quot;&gt;http://getcomposer.org/doc/03-cli.md&lt;/a&gt;&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;init&lt;/td&gt;
+      &lt;td&gt;composer.jsonを作成してくれる&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;install&lt;/td&gt;
+      &lt;td&gt;インストールする。lockは更新しない&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;update&lt;/td&gt;
+      &lt;td&gt;composer.lockを更新&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;require&lt;/td&gt;
+      &lt;td&gt;composer.jsonにライブラリを追加する&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;search&lt;/td&gt;
+      &lt;td&gt;パッケージの検索&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;show&lt;/td&gt;
+      &lt;td&gt;パッケージの表示&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;depends&lt;/td&gt;
+      &lt;td&gt;依存パッケージの表示&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;validate&lt;/td&gt;
+      &lt;td&gt;composer.jsonの検証&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;status&lt;/td&gt;
+      &lt;td&gt;状態を確認&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;create-project&lt;/td&gt;
+      &lt;td&gt;外部ライブラリをするような感じ？&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;dump-autoload&lt;/td&gt;
+      &lt;td&gt;オートロードファイルの再生成&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h2 id=&quot;composer-2&quot;&gt;Composerを利用してオートロードを行う&lt;/h2&gt;
+
+&lt;h3 id=&quot;composerjson-&quot;&gt;1. composer.json を用意します。&lt;/h3&gt;
+
+&lt;p&gt;例えばこのような構成 (src ディレクトリに Acme パッケージを配置) の場合&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;/
+|-- src
+     |
+     `-- Acme
+          |
+          `-- Hoge.php
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;composer.json はこうなります。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# composer.json
+{
   &quot;autoload&quot;: {
     &quot;psr-0&quot;: {&quot;Acme&quot;: &quot;src&quot;}
   }
 }
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;インストールします。&lt;/p&gt;
+&lt;h3 id=&quot;autoload&quot;&gt;2. autoloadファイルを生成する&lt;/h3&gt;
 
-&lt;pre&gt;&lt;code&gt;$ php composer.phar install
+&lt;p&gt;&lt;code&gt;install&lt;/code&gt;, &lt;code&gt;update&lt;/code&gt; でもいいですが、autoload.phpを生成するだけなら、&lt;code&gt;dump-autoload&lt;/code&gt;の方が早いです。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ php composer.phar dump-autoload
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;パッケージは vendor ディレクトリにインストールされます。&lt;/p&gt;
-
-&lt;p&gt;composer.jsonを書き換えた後はクラスマッピングを更新する必要があるので &lt;code&gt;php composer.phar update&lt;/code&gt; を実行します。&lt;/p&gt;
-
-&lt;p&gt;autoloadを読み込みます。&lt;/p&gt;
+&lt;h3 id=&quot;autoload-1&quot;&gt;3. 使用するファイル内でautoloadを読み込む&lt;/h3&gt;
 
 &lt;pre&gt;&lt;code&gt;&amp;lt;?php
 require 'vendor/autoload.php';
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;以上。&lt;/p&gt;
+&lt;h2 id=&quot;section-5&quot;&gt;その他&lt;/h2&gt;
 
-&lt;p&gt;オートローダーとしても使えるので便利です。&lt;/p&gt;
+&lt;h3 id=&quot;composerjson--1&quot;&gt;composer.json 書くのが面倒&lt;/h3&gt;
+
+&lt;p&gt;init で対話的に作成できる。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ php composer.phar init
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;シンタックスエラーは validate でチェックできる。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ php composer.phar validate
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;composer.jsonの文法チェックとrecommendな書き方を教えてくれる。&lt;/p&gt;
+
+&lt;p&gt;json内にはコメントが書けない(?)のがちょっとつらい。&lt;/p&gt;
+
+&lt;h3 id=&quot;alias&quot;&gt;Alias&lt;/h3&gt;
+
+&lt;p&gt;例えば symfony/ClassLoader はこのように設定している。
+&lt;a href=&quot;https://github.com/symfony/ClassLoader/blob/master/composer.json&quot;&gt;https://github.com/symfony/ClassLoader/blob/master/composer.json&lt;/a&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&quot;extra&quot;: {
+    &quot;branch-alias&quot;: {
+        &quot;dev-master&quot;: &quot;2.2-dev&quot;
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;利用者が “symfony/ClassLoader”: “2.2-dev” と指定することで、自動的に master ブランチのコードを取得させることができる。&lt;/p&gt;
+
+&lt;h3 id=&quot;ssl&quot;&gt;インストールでSSLエラーが出る場合&lt;/h3&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;curl: (51) SSL: certificate subject name ‘dl.packagist.org’ does not match target host name ‘getcomposer.org’&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;一応 https じゃなくても取得できる&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ curl -s http://getcomposer.org/installer | php
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;または –insecure オプションを付ける&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ curl -s http://getcomposer.org/installer | php
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;wgetでもOK&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ wget http://getcomposer.org/composer.phar
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&quot;composerphar&quot;&gt;composer.pharをルートに配置せずに、ディレクトリに置く&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;$ curl http://getcomposer.org/installer | php -- --install-dir=bin
+&lt;/code&gt;&lt;/pre&gt;
 
 </description>
             <published>2012-10-10 00:00:00 +0900</published>
