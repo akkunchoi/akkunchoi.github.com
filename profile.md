@@ -7,5 +7,5 @@ title: Profile
 
 - [@akkun_choi](http://twitter.com/akkun_choi/)
 - ソフトウェアエンジニア
-- PHP, Ruby, Java, JavaScript, Linux, MacOSX
+- PHP, Ruby, JavaScript, MacOSX, Linux
 

@@ -5,13 +5,21 @@ title: Index
 
 - [Profile](/profile.html)
 
-## Recent Published
+## おすすめ
+
+わりと気合入れて書きました
+
+- [rails3-routes](/rails3-routes.html)
+- [Gitリファレンス](/git-ref.html)
+- [Composer](/composer.html)
+
+## 最新
 
 {% for post in site.posts limit:5 %}
 - [{{ post.title }}]({{ post.url }}){% endfor %}
 
 
-## Tags
+## タグ
 
 <ul>
 {% for tag in site.tags limit: 10 %} 
