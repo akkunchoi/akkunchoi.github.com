@@ -1,7 +1,7 @@
 ---
 layout: posts
 title: wi-fiから位置情報を得る（ruby版、住所変換）
-tags: ruby geo wi-fi
+tags: ruby wi-fi
 ---
 
 

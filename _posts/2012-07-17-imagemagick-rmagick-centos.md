@@ -1,7 +1,7 @@
 ---
 layout: posts
 title: CentOS に ImageMagick, RMagick のインストール
-tags: CentOS ImageMagick RMagick
+tags: CentOS ImageMagick
 ---
 
 CentOS に ImageMagick と RMagick をインストールしました。CentOS 標準 yum の ImageMagick は古過ぎるそうなので、RPM,ソースからコンパイルの順でインストールしてみました。

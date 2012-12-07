@@ -1,7 +1,7 @@
 ---
 layout: posts
 title: Coffeescript
-tags: coffeescript js
+tags: coffeescript javascript
 ---
 
 JavaScripter が [CoffeeScript] に移行する際の要点をまとめ。
