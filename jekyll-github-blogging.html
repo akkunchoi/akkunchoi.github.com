@@ -9,6 +9,8 @@
     <link rel="stylesheet" type="text/css" media="screen" href="/stylesheets/rainbow-github.css">
     <link rel="stylesheet" type="text/css" media="screen" href="/stylesheets/stylesheet.css">
 
+    <link rel="canonical" href="http://akkunchoi.github.com/jekyll-github-blogging.html" />
+
     <title>Jekyll + github pages を使って git + markdown でサイト構築 | akkunchoi@github</title>
     <link rel="alternate" type="application/rss+xml" title="RSS Feed for mysite.com" href="/feed.xml" />
     <script type="text/javascript" src="/javascripts/rainbow-custom.min.js"></script>
@@ -56,7 +58,7 @@ $(document).ready(function($){
     </ul>
   </header>
   <div class="posts-content">
-  <p><a href="http://pages.github.com/">github pages</a>と<a href="https://github.com/mojombo/jekyll/">Jekyll</a>を使ってサイト構築してみました。</p>
+  <p><a href="http://pages.github.com/">github pages</a>と<a href="https://github.com/mojombo/jekyll/">Jekyll</a>を使って個人サイト構築してみました。今ご覧のこのページがまさにそうです。</p>
 
 <h2 id="section">はじめに</h2>
 
@@ -69,9 +71,9 @@ $(document).ready(function($){
 <p>まずは github pages のユーザーページをセットアップ。</p>
 
 <ol>
-  <li>github <a href="https://github.com/new">Create a New Repo</a> へ。</li>
+  <li>Github の <a href="https://github.com/new">Create a New Repo</a> へ。</li>
   <li>
-    <p>Repository name に “[username].github.com” と入力。[username]は自分のIDです。</p>
+    <p>Repository name に <code>[username].github.com</code> と入力。[username]は自分のIDです。</p>
 
     <p><span style="color: grey">
   “username = 自分のユーザID” でない場合はドメインのルートにならず、パスを切るようです。
@@ -94,16 +96,23 @@ $(document).ready(function($){
   <li>
     <p>リポジトリページの Admin から GitHub Pages 内の Automatic Page Generator で適当にテーマ選択。</p>
 
-    <div style="color: grey">
+    <p><span style="color: grey">
    自分のユーザIDをドメインにした場合（ID: akkunchoiならakkunchoi.github.com）はGeneratorのデータが自動的にmasterにマージされたが、そうでない場合は gh-pages ブランチに作成された。
-
    また、README から HTML 作成ができるので、ペライチでいいなら Jekyll 使わなくてもいい。
- </div>
+ </span></p>
   </li>
-  <li>以上で github pages のセットアップ完了。</li>
+  <li>
+    <p>以上で github pages のセットアップ完了。</p>
+  </li>
+  <li>masterにpushすることで、自動的にデプロイされます。成功した場合は <em>Page Build Successful</em> というGithubからの通知が来ます。</li>
 </ol>
 
-<h2 id="jekyll-">Jekyll のインストール</h2>
+<h2 id="jekyll-">Jekyll を使う</h2>
+
+<h3 id="jekyll--1">Jekyll のインストール</h3>
+
+<p>HTMLを全て自分の手で書き換えるだけなら、以上でOKです。
+markdownでHTML作成するためにJekyllを使用します。</p>
 
 <p>インストールはgemから。</p>
 
@@ -112,7 +121,7 @@ $(document).ready(function($){
 
 <p>最初rvmで動作させていたのを忘れて、<code>sudo gem install jekyll</code>してしまった。すると、違う場所に保存されたり、root権限になってたりでややこしいことになったが、uninstall して、<code>sudo</code> せずに install で問題なくインストールできた。</p>
 
-<h2 id="jekyll--1">Jekyll 用にファイルを配置する</h2>
+<h3 id="jekyll--2">Jekyll 用にファイルを配置する</h3>
 
 <p>最低限必要なファイルは次の通り。</p>
 
@@ -129,12 +138,12 @@ server: true
 markdown: kramdown
 </code></pre>
 
-<p>当サイトの場合、default.html には Auto Generator で生成されたHTMLを元に作成しました。コンテンツ部分を <code>｛｛ content ｝｝</code> に置き換えるだけです。</p>
+<p>当サイトの場合、default.html には Auto Generator で生成されたHTMLを元に作成しました。コンテンツ部分を <code>｛｛ content ｝｝</code> に置き換えるだけです。（全角ブラケットを半角に…）</p>
 
 <p>この作業には <a href="http://radiumsoftware.tumblr.com/post/10518849682">Radium Software</a>さんの
 <a href="https://github.com/unity-yb/unity-yb.github.com">リポジトリ</a>を参考にしました。</p>
 
-<h2 id="section-1">ページを作成してみる</h2>
+<h3 id="section-1">ページを作成してみる</h3>
 
 <p>index.md を作成します。</p>
 
@@ -156,15 +165,28 @@ layout: posts
 
 <p><a href="http://localhost:4000">http://localhost:4000</a> で表示できればOKです。</p>
 
-<h2 id="section-2">公開</h2>
+<h3 id="section-2">公開</h3>
 
-<p><code>push</code> するだけでOK。 github pagesが内部でJekyllを動作させて、生成してくれます。http://[username].github.com/ で表示されていれば完了。</p>
+<p><code>push</code> するだけでOK。 Github pagesが内部でJekyllを動作させて、生成してくれます。http://[username].github.com/ で表示されていれば完了。</p>
 
-<p>ただ、動的な出力を行うプラグインを入れていたり、使用できない処理を入れると失敗すことがある。</p>
+<p>ただ、動的な出力を行うプラグインを入れていたり、使用できない処理を入れると失敗すことがあります（Page build failure）。</p>
 
-<p>Octpressは、静的HTMLをローカルで生成してアップロードしているそうだ。動的な出力を行うプラグインを動作させるためにはこの方法にするか、自分でホスティングするしかなさそう。</p>
+<p>Octpressは、静的HTMLをローカルで生成してアップロードしている。動的な出力を行うプラグインを動作させるためにはこの方法にするか、自分でホスティングするしかなさそう。</p>
 
-<h2 id="section-3">他わかったこと</h2>
+<h2 id="gh-pagesjekyll">gh-pagesでもJekyllプラグインを使う</h2>
+
+<p>gh-pagesで Jekyll プラグインを使うことはできません。でもプラグインを自分のローカル環境で動作させて、生成されたHTMLファイルをアップロードすることは可能です。</p>
+
+<ul>
+  <li>srcブランチにmarkdownファイルなどのソースを配置</li>
+  <li><a href="https://github.com/akkunchoi/akkunchoi.github.com/blob/src/deploy">deploy シェルスクリプト</a> を作成。jekyllが生成した _sites を master にコピー</li>
+  <li>masterには生成後のHTMLのみ配置</li>
+  <li>masterには .nojekyll ファイルを置いて、gh-pages側で Jekyll が動作しないようにしておく。</li>
+</ul>
+
+<p>詳しくは <a href="https://github.com/akkunchoi/akkunchoi.github.com">当サイトのリポジトリ</a> を見てもらえれば良いかと思います。</p>
+
+<h2 id="section-3">他わかったこと、メモ</h2>
 
 <ul>
   <li>_config.ymlに設定した変数はテンプレート内では site.hoge で取得できる。</li>
@@ -176,7 +198,7 @@ layout: posts
 
   </div>
   <footer> 
-  <p>Last updated at <time>2012-08-07 22:14:31 +0900</time></p>
+  <p>Last updated at <time>2012-12-12 09:54:16 +0900</time></p>
   <!-- <p>Published at <time>2012-07-04</time></p> -->
   </footer>
 </article>

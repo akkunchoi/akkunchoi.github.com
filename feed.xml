@@ -5,8 +5,8 @@
         <link>http://akkunchoi.github.com</link>
         <atom:link href="http://akkunchoi.github.com/rss.xml" rel="self" type="application/rss+xml" />
         <description>This site is a information for development written by akkunchoi</description>
-        <pubDate>Fri, 07 Dec 2012 20:32:57 +0900</pubDate>
-        <lastBuildDate>Fri, 07 Dec 2012 20:32:57 +0900</lastBuildDate>
+        <pubDate>Wed, 12 Dec 2012 09:54:47 +0900</pubDate>
+        <lastBuildDate>Wed, 12 Dec 2012 09:54:47 +0900</lastBuildDate>
         
         <item>
             <title>MacOSX ショートカット</title>
@@ -770,7 +770,12 @@ composer.jsonを含めてコミットします。&lt;/p&gt;
 $ php satis/bin/satis build config.json web/ 
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;パッケージのリリースバージョンを更新する際にも build が必要です。&lt;/p&gt;
+&lt;p&gt;また、以下の場合にもbuildが必要です。（自動化した方がいいと思います）&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;パッケージの composer.json を変更する&lt;/li&gt;
+  &lt;li&gt;リリースバージョンを更新する&lt;/li&gt;
+&lt;/ul&gt;
 
 &lt;p&gt;web内に&lt;code&gt;index.html&lt;/code&gt;と&lt;code&gt;packages.json&lt;/code&gt;が生成されます。&lt;/p&gt;
 
@@ -2963,7 +2968,7 @@ Defaults secure_path = &quot;/sbin:/bin:/usr/local/share/rbenv/shims:usr/local/b
         
         <item>
             <title>Jekyll + github pages を使って git + markdown でサイト構築</title>
-            <description>&lt;p&gt;&lt;a href=&quot;http://pages.github.com/&quot;&gt;github pages&lt;/a&gt;と&lt;a href=&quot;https://github.com/mojombo/jekyll/&quot;&gt;Jekyll&lt;/a&gt;を使ってサイト構築してみました。&lt;/p&gt;
+            <description>&lt;p&gt;&lt;a href=&quot;http://pages.github.com/&quot;&gt;github pages&lt;/a&gt;と&lt;a href=&quot;https://github.com/mojombo/jekyll/&quot;&gt;Jekyll&lt;/a&gt;を使って個人サイト構築してみました。今ご覧のこのページがまさにそうです。&lt;/p&gt;
 
 &lt;h2 id=&quot;section&quot;&gt;はじめに&lt;/h2&gt;
 
@@ -2976,9 +2981,9 @@ Defaults secure_path = &quot;/sbin:/bin:/usr/local/share/rbenv/shims:usr/local/b
 &lt;p&gt;まずは github pages のユーザーページをセットアップ。&lt;/p&gt;
 
 &lt;ol&gt;
-  &lt;li&gt;github &lt;a href=&quot;https://github.com/new&quot;&gt;Create a New Repo&lt;/a&gt; へ。&lt;/li&gt;
+  &lt;li&gt;Github の &lt;a href=&quot;https://github.com/new&quot;&gt;Create a New Repo&lt;/a&gt; へ。&lt;/li&gt;
   &lt;li&gt;
-    &lt;p&gt;Repository name に “[username].github.com” と入力。[username]は自分のIDです。&lt;/p&gt;
+    &lt;p&gt;Repository name に &lt;code&gt;[username].github.com&lt;/code&gt; と入力。[username]は自分のIDです。&lt;/p&gt;
 
     &lt;p&gt;&lt;span style=&quot;color: grey&quot;&gt;
   “username = 自分のユーザID” でない場合はドメインのルートにならず、パスを切るようです。
@@ -3001,16 +3006,23 @@ Defaults secure_path = &quot;/sbin:/bin:/usr/local/share/rbenv/shims:usr/local/b
   &lt;li&gt;
     &lt;p&gt;リポジトリページの Admin から GitHub Pages 内の Automatic Page Generator で適当にテーマ選択。&lt;/p&gt;
 
-    &lt;div style=&quot;color: grey&quot;&gt;
+    &lt;p&gt;&lt;span style=&quot;color: grey&quot;&gt;
    自分のユーザIDをドメインにした場合（ID: akkunchoiならakkunchoi.github.com）はGeneratorのデータが自動的にmasterにマージされたが、そうでない場合は gh-pages ブランチに作成された。
-
    また、README から HTML 作成ができるので、ペライチでいいなら Jekyll 使わなくてもいい。
- &lt;/div&gt;
+ &lt;/span&gt;&lt;/p&gt;
   &lt;/li&gt;
-  &lt;li&gt;以上で github pages のセットアップ完了。&lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;以上で github pages のセットアップ完了。&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;masterにpushすることで、自動的にデプロイされます。成功した場合は &lt;em&gt;Page Build Successful&lt;/em&gt; というGithubからの通知が来ます。&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h2 id=&quot;jekyll-&quot;&gt;Jekyll のインストール&lt;/h2&gt;
+&lt;h2 id=&quot;jekyll-&quot;&gt;Jekyll を使う&lt;/h2&gt;
+
+&lt;h3 id=&quot;jekyll--1&quot;&gt;Jekyll のインストール&lt;/h3&gt;
+
+&lt;p&gt;HTMLを全て自分の手で書き換えるだけなら、以上でOKです。
+markdownでHTML作成するためにJekyllを使用します。&lt;/p&gt;
 
 &lt;p&gt;インストールはgemから。&lt;/p&gt;
 
@@ -3019,7 +3031,7 @@ Defaults secure_path = &quot;/sbin:/bin:/usr/local/share/rbenv/shims:usr/local/b
 
 &lt;p&gt;最初rvmで動作させていたのを忘れて、&lt;code&gt;sudo gem install jekyll&lt;/code&gt;してしまった。すると、違う場所に保存されたり、root権限になってたりでややこしいことになったが、uninstall して、&lt;code&gt;sudo&lt;/code&gt; せずに install で問題なくインストールできた。&lt;/p&gt;
 
-&lt;h2 id=&quot;jekyll--1&quot;&gt;Jekyll 用にファイルを配置する&lt;/h2&gt;
+&lt;h3 id=&quot;jekyll--2&quot;&gt;Jekyll 用にファイルを配置する&lt;/h3&gt;
 
 &lt;p&gt;最低限必要なファイルは次の通り。&lt;/p&gt;
 
@@ -3036,12 +3048,12 @@ server: true
 markdown: kramdown
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;当サイトの場合、default.html には Auto Generator で生成されたHTMLを元に作成しました。コンテンツ部分を &lt;code&gt;｛｛ content ｝｝&lt;/code&gt; に置き換えるだけです。&lt;/p&gt;
+&lt;p&gt;当サイトの場合、default.html には Auto Generator で生成されたHTMLを元に作成しました。コンテンツ部分を &lt;code&gt;｛｛ content ｝｝&lt;/code&gt; に置き換えるだけです。（全角ブラケットを半角に…）&lt;/p&gt;
 
 &lt;p&gt;この作業には &lt;a href=&quot;http://radiumsoftware.tumblr.com/post/10518849682&quot;&gt;Radium Software&lt;/a&gt;さんの
 &lt;a href=&quot;https://github.com/unity-yb/unity-yb.github.com&quot;&gt;リポジトリ&lt;/a&gt;を参考にしました。&lt;/p&gt;
 
-&lt;h2 id=&quot;section-1&quot;&gt;ページを作成してみる&lt;/h2&gt;
+&lt;h3 id=&quot;section-1&quot;&gt;ページを作成してみる&lt;/h3&gt;
 
 &lt;p&gt;index.md を作成します。&lt;/p&gt;
 
@@ -3063,15 +3075,28 @@ layout: posts
 
 &lt;p&gt;&lt;a href=&quot;http://localhost:4000&quot;&gt;http://localhost:4000&lt;/a&gt; で表示できればOKです。&lt;/p&gt;
 
-&lt;h2 id=&quot;section-2&quot;&gt;公開&lt;/h2&gt;
+&lt;h3 id=&quot;section-2&quot;&gt;公開&lt;/h3&gt;
 
-&lt;p&gt;&lt;code&gt;push&lt;/code&gt; するだけでOK。 github pagesが内部でJekyllを動作させて、生成してくれます。http://[username].github.com/ で表示されていれば完了。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;push&lt;/code&gt; するだけでOK。 Github pagesが内部でJekyllを動作させて、生成してくれます。http://[username].github.com/ で表示されていれば完了。&lt;/p&gt;
 
-&lt;p&gt;ただ、動的な出力を行うプラグインを入れていたり、使用できない処理を入れると失敗すことがある。&lt;/p&gt;
+&lt;p&gt;ただ、動的な出力を行うプラグインを入れていたり、使用できない処理を入れると失敗すことがあります（Page build failure）。&lt;/p&gt;
 
-&lt;p&gt;Octpressは、静的HTMLをローカルで生成してアップロードしているそうだ。動的な出力を行うプラグインを動作させるためにはこの方法にするか、自分でホスティングするしかなさそう。&lt;/p&gt;
+&lt;p&gt;Octpressは、静的HTMLをローカルで生成してアップロードしている。動的な出力を行うプラグインを動作させるためにはこの方法にするか、自分でホスティングするしかなさそう。&lt;/p&gt;
 
-&lt;h2 id=&quot;section-3&quot;&gt;他わかったこと&lt;/h2&gt;
+&lt;h2 id=&quot;gh-pagesjekyll&quot;&gt;gh-pagesでもJekyllプラグインを使う&lt;/h2&gt;
+
+&lt;p&gt;gh-pagesで Jekyll プラグインを使うことはできません。でもプラグインを自分のローカル環境で動作させて、生成されたHTMLファイルをアップロードすることは可能です。&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;srcブランチにmarkdownファイルなどのソースを配置&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/akkunchoi/akkunchoi.github.com/blob/src/deploy&quot;&gt;deploy シェルスクリプト&lt;/a&gt; を作成。jekyllが生成した _sites を master にコピー&lt;/li&gt;
+  &lt;li&gt;masterには生成後のHTMLのみ配置&lt;/li&gt;
+  &lt;li&gt;masterには .nojekyll ファイルを置いて、gh-pages側で Jekyll が動作しないようにしておく。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;詳しくは &lt;a href=&quot;https://github.com/akkunchoi/akkunchoi.github.com&quot;&gt;当サイトのリポジトリ&lt;/a&gt; を見てもらえれば良いかと思います。&lt;/p&gt;
+
+&lt;h2 id=&quot;section-3&quot;&gt;他わかったこと、メモ&lt;/h2&gt;
 
 &lt;ul&gt;
   &lt;li&gt;_config.ymlに設定した変数はテンプレート内では site.hoge で取得できる。&lt;/li&gt;
