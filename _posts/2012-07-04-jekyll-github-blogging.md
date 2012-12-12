@@ -4,7 +4,7 @@ title: Jekyll + github pages を使って git + markdown でサイト構築
 tags: ruby jekyll github markdown
 ---
 
-[github pages]と[Jekyll]を使ってサイト構築してみました。
+[github pages]と[Jekyll]を使って個人サイト構築してみました。今ご覧のこのページがまさにそうです。
 
 ## はじめに
 
@@ -16,8 +16,8 @@ git + markdown でのサイト管理が便利そうなので、ホスティン�
 
 まずは github pages のユーザーページをセットアップ。
 
-1. github [Create a New Repo](https://github.com/new) へ。
-2. Repository name に "[username].github.com" と入力。[username]は自分のIDです。
+1. Github の [Create a New Repo](https://github.com/new) へ。
+2. Repository name に `[username].github.com` と入力。[username]は自分のIDです。
 
     <span style="color: grey">
      "username = 自分のユーザID" でない場合はドメインのルートにならず、パスを切るようです。
@@ -35,19 +35,24 @@ git + markdown でのサイト管理が便利そうなので、ホスティン�
         git remote add origin git@github.com:username/username.github.com
         git push -u origin master
 
-
 4. リポジトリページの Admin から GitHub Pages 内の Automatic Page Generator で適当にテーマ選択。
 
-    <div style="color: grey">
+    <span style="color: grey">
       自分のユーザIDをドメインにした場合（ID: akkunchoiならakkunchoi.github.com）はGeneratorのデータが自動的にmasterにマージされたが、そうでない場合は gh-pages ブランチに作成された。
-
       また、README から HTML 作成ができるので、ペライチでいいなら Jekyll 使わなくてもいい。
-    </div>
+    </span>
+
 
 5. 以上で github pages のセットアップ完了。
 
+6. masterにpushすることで、自動的にデプロイされます。成功した場合は *Page Build Successful* というGithubからの通知が来ます。
 
-## Jekyll のインストール
+## Jekyll を使う
+
+### Jekyll のインストール
+
+HTMLを全て自分の手で書き換えるだけなら、以上でOKです。
+markdownでHTML作成するためにJekyllを使用します。
 
 インストールはgemから。
 
@@ -55,7 +60,7 @@ git + markdown でのサイト管理が便利そうなので、ホスティン�
 
 最初rvmで動作させていたのを忘れて、`sudo gem install jekyll`してしまった。すると、違う場所に保存されたり、root権限になってたりでややこしいことになったが、uninstall して、`sudo` せずに install で問題なくインストールできた。
 
-## Jekyll 用にファイルを配置する
+### Jekyll 用にファイルを配置する
 
 最低限必要なファイルは次の通り。
 
@@ -71,13 +76,13 @@ _config.yml の内容はこんな感じで。[設定オプション一欄](https
     server: true
     markdown: kramdown
 
-当サイトの場合、default.html には Auto Generator で生成されたHTMLを元に作成しました。コンテンツ部分を `｛｛ content ｝｝` に置き換えるだけです。
+当サイトの場合、default.html には Auto Generator で生成されたHTMLを元に作成しました。コンテンツ部分を `｛｛ content ｝｝` に置き換えるだけです。（全角ブラケットを半角に...）
 
 この作業には [Radium Software](http://radiumsoftware.tumblr.com/post/10518849682)さんの
 [リポジトリ](https://github.com/unity-yb/unity-yb.github.com)を参考にしました。
 
 
-## ページを作成してみる
+### ページを作成してみる
 
 index.md を作成します。
 
@@ -98,15 +103,26 @@ jekyllを起動
 
 <http://localhost:4000> で表示できればOKです。
 
-## 公開
+### 公開
 
-`push` するだけでOK。 github pagesが内部でJekyllを動作させて、生成してくれます。http://[username].github.com/ で表示されていれば完了。
+`push` するだけでOK。 Github pagesが内部でJekyllを動作させて、生成してくれます。http://[username].github.com/ で表示されていれば完了。
 
-ただ、動的な出力を行うプラグインを入れていたり、使用できない処理を入れると失敗すことがある。
+ただ、動的な出力を行うプラグインを入れていたり、使用できない処理を入れると失敗すことがあります（Page build failure）。
 
-Octpressは、静的HTMLをローカルで生成してアップロードしているそうだ。動的な出力を行うプラグインを動作させるためにはこの方法にするか、自分でホスティングするしかなさそう。
+Octpressは、静的HTMLをローカルで生成してアップロードしている。動的な出力を行うプラグインを動作させるためにはこの方法にするか、自分でホスティングするしかなさそう。
 
-## 他わかったこと
+## gh-pagesでもJekyllプラグインを使う
+
+gh-pagesで Jekyll プラグインを使うことはできません。でもプラグインを自分のローカル環境で動作させて、生成されたHTMLファイルをアップロードすることは可能です。
+
+- srcブランチにmarkdownファイルなどのソースを配置
+- [deploy シェルスクリプト](https://github.com/akkunchoi/akkunchoi.github.com/blob/src/deploy) を作成。jekyllが生成した _sites を master にコピー
+- masterには生成後のHTMLのみ配置
+- masterには .nojekyll ファイルを置いて、gh-pages側で Jekyll が動作しないようにしておく。
+
+詳しくは [当サイトのリポジトリ](https://github.com/akkunchoi/akkunchoi.github.com) を見てもらえれば良いかと思います。
+
+## 他わかったこと、メモ
 
 - _config.ymlに設定した変数はテンプレート内では site.hoge で取得できる。
 - layout: nil でレイアウトなし出力できる。
