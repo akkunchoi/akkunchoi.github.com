@@ -5,8 +5,8 @@
         <link>http://akkunchoi.github.com</link>
         <atom:link href="http://akkunchoi.github.com/rss.xml" rel="self" type="application/rss+xml" />
         <description>This site is a information for development written by akkunchoi</description>
-        <pubDate>Wed, 12 Dec 2012 10:11:52 +0900</pubDate>
-        <lastBuildDate>Wed, 12 Dec 2012 10:11:52 +0900</lastBuildDate>
+        <pubDate>Fri, 11 Jan 2013 17:14:37 +0900</pubDate>
+        <lastBuildDate>Fri, 11 Jan 2013 17:14:37 +0900</lastBuildDate>
         
         <item>
             <title>MacOSX ショートカット</title>
@@ -638,20 +638,21 @@ Evernoteは高機能すぎる、重い。&lt;/p&gt;
             <description>&lt;ul id=&quot;markdown-toc&quot;&gt;
   &lt;li&gt;&lt;a href=&quot;#composer&quot;&gt;Composerとは&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#section&quot;&gt;とにかく始める&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#composer-1&quot;&gt;プライベートなComposerリポジトリを作成する&lt;/a&gt;    &lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;#composer-1&quot;&gt;Composerを利用してオートロードを行う&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#composerjson-&quot;&gt;1. composer.json を用意&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#autoload&quot;&gt;2. autoloadファイルを生成&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#autoload-1&quot;&gt;3. autoloadを読み込む&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#git-composer-&quot;&gt;Gitリポジトリを Composer を利用して取得する&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#composer-2&quot;&gt;プライベートなComposerリポジトリを作成する&lt;/a&gt;    &lt;ul&gt;
       &lt;li&gt;&lt;a href=&quot;#section-1&quot;&gt;公開側&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#section-2&quot;&gt;利用者側&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#section-2&quot;&gt;利用側&lt;/a&gt;&lt;/li&gt;
     &lt;/ul&gt;
   &lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#section-3&quot;&gt;リリースバージョンについて&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#repositories&quot;&gt;repositoriesについて&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#section-4&quot;&gt;コマンド概要&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#composer-2&quot;&gt;Composerを利用してオートロードを行う&lt;/a&gt;    &lt;ul&gt;
-      &lt;li&gt;&lt;a href=&quot;#composerjson-&quot;&gt;1. composer.json を用意します。&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#autoload&quot;&gt;2. autoloadファイルを生成する&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#autoload-1&quot;&gt;3. 使用するファイル内でautoloadを読み込む&lt;/a&gt;&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#section-5&quot;&gt;その他&lt;/a&gt;    &lt;ul&gt;
       &lt;li&gt;&lt;a href=&quot;#composerjson--1&quot;&gt;composer.json 書くのが面倒&lt;/a&gt;&lt;/li&gt;
       &lt;li&gt;&lt;a href=&quot;#alias&quot;&gt;Alias&lt;/a&gt;&lt;/li&gt;
@@ -700,7 +701,76 @@ $ php composer.phar install
 $slim = new \Slim\Slim;
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&quot;composer-1&quot;&gt;プライベートなComposerリポジトリを作成する&lt;/h2&gt;
+&lt;h2 id=&quot;composer-1&quot;&gt;Composerを利用してオートロードを行う&lt;/h2&gt;
+
+&lt;h3 id=&quot;composerjson-&quot;&gt;1. composer.json を用意&lt;/h3&gt;
+
+&lt;p&gt;例えばこのような構成 (src ディレクトリに Acme パッケージを配置) の場合&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;/
+|-- src
+     |
+     `-- Acme
+          |
+          `-- Hoge.php
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;composer.json はこうなります。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# composer.json
+{
+  &quot;autoload&quot;: {
+    &quot;psr-0&quot;: {&quot;Acme&quot;: &quot;src&quot;}
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ベンダープレフィックス（例いうとAcme）を指定する必要があります。ベンダープレフィックスがないパッケージはどうするんでしょうかね。&lt;/p&gt;
+
+&lt;h3 id=&quot;autoload&quot;&gt;2. autoloadファイルを生成&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;install&lt;/code&gt;, &lt;code&gt;update&lt;/code&gt; でもいいですが、autoload.phpを生成するだけなら、&lt;code&gt;dump-autoload&lt;/code&gt;の方が早いです。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ php composer.phar dump-autoload
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&quot;autoload-1&quot;&gt;3. autoloadを読み込む&lt;/h3&gt;
+
+&lt;p&gt;アプリケーション側で require すると自動でクラスが読み込まれるようになります（spl_autoload_registerに登録される）。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;lt;?php
+require 'vendor/autoload.php';
+
+$obj = new \Acme\Hoge();
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;git-composer-&quot;&gt;Gitリポジトリを Composer を利用して取得する&lt;/h2&gt;
+
+&lt;p&gt;Composerに対応するためには依存する側のパッケージが&lt;code&gt;composer.json&lt;/code&gt;を含んでいる必要があります。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// ライブラリ側のcomposer.json
+{
+  &quot;name&quot;: &quot;akkunchoi/library&quot;,
+  &quot;description&quot;: &quot;composer library&quot;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;パッケージを利用する側では、Gitリポジトリのパスを指定します。&lt;code&gt;repositories&lt;/code&gt; という項目で指定されたパッケージが “require” で使えるようになります。&lt;a href=&quot;https://packagist.org/&quot;&gt;Packagist&lt;/a&gt; に登録されているパッケージは何も宣言しなくても”require” で指定できます。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// ライブラリを利用する側のcomposer.json
+{
+  &quot;name&quot;: &quot;akkunchoi/sample&quot;,
+  &quot;description&quot;: &quot;composer sample&quot;,
+  &quot;repositories&quot;: [
+    { &quot;type&quot;: &quot;vcs&quot;, &quot;url&quot;: &quot;user@localhost:~/sample.git&quot; }
+  ],
+  &quot;require&quot;: {
+    &quot;akkunchoi/library&quot;: &quot;1.2.x&quot;
+  },
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;composer-2&quot;&gt;プライベートなComposerリポジトリを作成する&lt;/h2&gt;
 
 &lt;ul&gt;
   &lt;li&gt;公開側: 
@@ -779,9 +849,9 @@ $ php satis/bin/satis build config.json web/
 
 &lt;p&gt;web内に&lt;code&gt;index.html&lt;/code&gt;と&lt;code&gt;packages.json&lt;/code&gt;が生成されます。&lt;/p&gt;
 
-&lt;h3 id=&quot;section-2&quot;&gt;利用者側&lt;/h3&gt;
+&lt;h3 id=&quot;section-2&quot;&gt;利用側&lt;/h3&gt;
 
-&lt;p&gt;利用者側では &lt;code&gt;packages.json&lt;/code&gt; があるパスを指定します。&lt;/p&gt;
+&lt;p&gt;利用側では &lt;code&gt;packages.json&lt;/code&gt; があるパスを指定します。&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;{
     &quot;repositories&quot;: [
@@ -795,7 +865,7 @@ $ php satis/bin/satis build config.json web/
 
 &lt;p&gt;installすると、foobar/hoge がインストールされます。&lt;/p&gt;
 
-&lt;p&gt;TODO 認証をかける場合..&lt;/p&gt;
+&lt;p&gt;認証をかける場合..&lt;/p&gt;
 
 &lt;p&gt;&lt;a href=&quot;http://getcomposer.org/doc/articles/handling-private-packages-with-satis.md&quot;&gt;http://getcomposer.org/doc/articles/handling-private-packages-with-satis.md&lt;/a&gt;
 &lt;a href=&quot;http://ngyuki.hatenablog.com/entry/2012/11/06/210638&quot;&gt;http://ngyuki.hatenablog.com/entry/2012/11/06/210638&lt;/a&gt;&lt;/p&gt;
@@ -898,43 +968,6 @@ $ php satis/bin/satis build config.json web/
     &lt;/tr&gt;
   &lt;/tbody&gt;
 &lt;/table&gt;
-
-&lt;h2 id=&quot;composer-2&quot;&gt;Composerを利用してオートロードを行う&lt;/h2&gt;
-
-&lt;h3 id=&quot;composerjson-&quot;&gt;1. composer.json を用意します。&lt;/h3&gt;
-
-&lt;p&gt;例えばこのような構成 (src ディレクトリに Acme パッケージを配置) の場合&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;/
-|-- src
-     |
-     `-- Acme
-          |
-          `-- Hoge.php
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;composer.json はこうなります。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;# composer.json
-{
-  &quot;autoload&quot;: {
-    &quot;psr-0&quot;: {&quot;Acme&quot;: &quot;src&quot;}
-  }
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&quot;autoload&quot;&gt;2. autoloadファイルを生成する&lt;/h3&gt;
-
-&lt;p&gt;&lt;code&gt;install&lt;/code&gt;, &lt;code&gt;update&lt;/code&gt; でもいいですが、autoload.phpを生成するだけなら、&lt;code&gt;dump-autoload&lt;/code&gt;の方が早いです。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;$ php composer.phar dump-autoload
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&quot;autoload-1&quot;&gt;3. 使用するファイル内でautoloadを読み込む&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code&gt;&amp;lt;?php
-require 'vendor/autoload.php';
-&lt;/code&gt;&lt;/pre&gt;
 
 &lt;h2 id=&quot;section-5&quot;&gt;その他&lt;/h2&gt;
 
@@ -2856,10 +2889,9 @@ $ sudo yum install ImageMagick ImageMagick-devel
 &lt;/ul&gt;
 
 &lt;h1 id=&quot;macosx&quot;&gt;MacOSX&lt;/h1&gt;
-&lt;p&gt;rvmからよりシンプルな構成であるrbenv+ruby-buildに乗り換えたのでメモ。&lt;/p&gt;
 
-&lt;p&gt;方針gemはroot権限でbundlerのみ持たせて
-一般ユーザーが各自bundle installする&lt;/p&gt;
+&lt;p&gt;rvmからよりシンプルな構成である rbenv + ruby-build 構成に乗り換えたのでメモ。
+方針として、sudoが不必要な領域にgemを格納するようにする。&lt;/p&gt;
 
 &lt;p&gt;まずは rvm を削除。&lt;/p&gt;
 
@@ -2884,7 +2916,7 @@ $ rbenv rehash
 &lt;p&gt;CentOSにもrubyを入れる機会があったので、rbenvで入れてみる。&lt;/p&gt;
 
 &lt;p&gt;&lt;code&gt;/usr/local&lt;/code&gt;にroot権限でインストールし、ユーザー共通にする。
-gemはbundlerやpassengerのみ入れる。その他はアプリケーションごとにbundleで個別インストールさせる。このようにしておけば、グローバルな場所にgemライブラリをインストールする時にroot権限が必要になるのでわかりやすい。&lt;/p&gt;
+gemはbundlerやpassengerのみ入れる。その他はアプリケーションごとに&lt;code&gt;bundle --path=...&lt;/code&gt;で個別インストールさせる。このようにしておけば、グローバルな場所にgemライブラリをインストールする時にroot権限が必要になるのでわかりやすい。&lt;/p&gt;
 
 &lt;p&gt;まずは必要なライブラリをインストール&lt;/p&gt;
 

@@ -53,20 +53,21 @@ $(document).ready(function($){
   <ul id="markdown-toc">
   <li><a href="#composer">Composerとは</a></li>
   <li><a href="#section">とにかく始める</a></li>
-  <li><a href="#composer-1">プライベートなComposerリポジトリを作成する</a>    <ul>
+  <li><a href="#composer-1">Composerを利用してオートロードを行う</a>    <ul>
+      <li><a href="#composerjson-">1. composer.json を用意</a></li>
+      <li><a href="#autoload">2. autoloadファイルを生成</a></li>
+      <li><a href="#autoload-1">3. autoloadを読み込む</a></li>
+    </ul>
+  </li>
+  <li><a href="#git-composer-">Gitリポジトリを Composer を利用して取得する</a></li>
+  <li><a href="#composer-2">プライベートなComposerリポジトリを作成する</a>    <ul>
       <li><a href="#section-1">公開側</a></li>
-      <li><a href="#section-2">利用者側</a></li>
+      <li><a href="#section-2">利用側</a></li>
     </ul>
   </li>
   <li><a href="#section-3">リリースバージョンについて</a></li>
   <li><a href="#repositories">repositoriesについて</a></li>
   <li><a href="#section-4">コマンド概要</a></li>
-  <li><a href="#composer-2">Composerを利用してオートロードを行う</a>    <ul>
-      <li><a href="#composerjson-">1. composer.json を用意します。</a></li>
-      <li><a href="#autoload">2. autoloadファイルを生成する</a></li>
-      <li><a href="#autoload-1">3. 使用するファイル内でautoloadを読み込む</a></li>
-    </ul>
-  </li>
   <li><a href="#section-5">その他</a>    <ul>
       <li><a href="#composerjson--1">composer.json 書くのが面倒</a></li>
       <li><a href="#alias">Alias</a></li>
@@ -115,7 +116,76 @@ $ php composer.phar install
 $slim = new \Slim\Slim;
 </code></pre>
 
-<h2 id="composer-1">プライベートなComposerリポジトリを作成する</h2>
+<h2 id="composer-1">Composerを利用してオートロードを行う</h2>
+
+<h3 id="composerjson-">1. composer.json を用意</h3>
+
+<p>例えばこのような構成 (src ディレクトリに Acme パッケージを配置) の場合</p>
+
+<pre><code>/
+|-- src
+     |
+     `-- Acme
+          |
+          `-- Hoge.php
+</code></pre>
+
+<p>composer.json はこうなります。</p>
+
+<pre><code># composer.json
+{
+  "autoload": {
+    "psr-0": {"Acme": "src"}
+  }
+}
+</code></pre>
+
+<p>ベンダープレフィックス（例いうとAcme）を指定する必要があります。ベンダープレフィックスがないパッケージはどうするんでしょうかね。</p>
+
+<h3 id="autoload">2. autoloadファイルを生成</h3>
+
+<p><code>install</code>, <code>update</code> でもいいですが、autoload.phpを生成するだけなら、<code>dump-autoload</code>の方が早いです。</p>
+
+<pre><code>$ php composer.phar dump-autoload
+</code></pre>
+
+<h3 id="autoload-1">3. autoloadを読み込む</h3>
+
+<p>アプリケーション側で require すると自動でクラスが読み込まれるようになります（spl_autoload_registerに登録される）。</p>
+
+<pre><code>&lt;?php
+require 'vendor/autoload.php';
+
+$obj = new \Acme\Hoge();
+</code></pre>
+
+<h2 id="git-composer-">Gitリポジトリを Composer を利用して取得する</h2>
+
+<p>Composerに対応するためには依存する側のパッケージが<code>composer.json</code>を含んでいる必要があります。</p>
+
+<pre><code>// ライブラリ側のcomposer.json
+{
+  "name": "akkunchoi/library",
+  "description": "composer library"
+}
+</code></pre>
+
+<p>パッケージを利用する側では、Gitリポジトリのパスを指定します。<code>repositories</code> という項目で指定されたパッケージが “require” で使えるようになります。<a href="https://packagist.org/">Packagist</a> に登録されているパッケージは何も宣言しなくても”require” で指定できます。</p>
+
+<pre><code>// ライブラリを利用する側のcomposer.json
+{
+  "name": "akkunchoi/sample",
+  "description": "composer sample",
+  "repositories": [
+    { "type": "vcs", "url": "user@localhost:~/sample.git" }
+  ],
+  "require": {
+    "akkunchoi/library": "1.2.x"
+  },
+}
+</code></pre>
+
+<h2 id="composer-2">プライベートなComposerリポジトリを作成する</h2>
 
 <ul>
   <li>公開側: 
@@ -194,9 +264,9 @@ $ php satis/bin/satis build config.json web/
 
 <p>web内に<code>index.html</code>と<code>packages.json</code>が生成されます。</p>
 
-<h3 id="section-2">利用者側</h3>
+<h3 id="section-2">利用側</h3>
 
-<p>利用者側では <code>packages.json</code> があるパスを指定します。</p>
+<p>利用側では <code>packages.json</code> があるパスを指定します。</p>
 
 <pre><code>{
     "repositories": [
@@ -210,7 +280,7 @@ $ php satis/bin/satis build config.json web/
 
 <p>installすると、foobar/hoge がインストールされます。</p>
 
-<p>TODO 認証をかける場合..</p>
+<p>認証をかける場合..</p>
 
 <p><a href="http://getcomposer.org/doc/articles/handling-private-packages-with-satis.md">http://getcomposer.org/doc/articles/handling-private-packages-with-satis.md</a>
 <a href="http://ngyuki.hatenablog.com/entry/2012/11/06/210638">http://ngyuki.hatenablog.com/entry/2012/11/06/210638</a></p>
@@ -314,43 +384,6 @@ $ php satis/bin/satis build config.json web/
   </tbody>
 </table>
 
-<h2 id="composer-2">Composerを利用してオートロードを行う</h2>
-
-<h3 id="composerjson-">1. composer.json を用意します。</h3>
-
-<p>例えばこのような構成 (src ディレクトリに Acme パッケージを配置) の場合</p>
-
-<pre><code>/
-|-- src
-     |
-     `-- Acme
-          |
-          `-- Hoge.php
-</code></pre>
-
-<p>composer.json はこうなります。</p>
-
-<pre><code># composer.json
-{
-  "autoload": {
-    "psr-0": {"Acme": "src"}
-  }
-}
-</code></pre>
-
-<h3 id="autoload">2. autoloadファイルを生成する</h3>
-
-<p><code>install</code>, <code>update</code> でもいいですが、autoload.phpを生成するだけなら、<code>dump-autoload</code>の方が早いです。</p>
-
-<pre><code>$ php composer.phar dump-autoload
-</code></pre>
-
-<h3 id="autoload-1">3. 使用するファイル内でautoloadを読み込む</h3>
-
-<pre><code>&lt;?php
-require 'vendor/autoload.php';
-</code></pre>
-
 <h2 id="section-5">その他</h2>
 
 <h3 id="composerjson--1">composer.json 書くのが面倒</h3>
@@ -412,7 +445,7 @@ require 'vendor/autoload.php';
 
   </div>
   <footer> 
-  <p>Last updated at <time>2012-12-10 14:26:47 +0900</time></p>
+  <p>Last updated at <time>2013-01-11 17:06:47 +0900</time></p>
   <!-- <p>Published at <time>2012-10-10</time></p> -->
   </footer>
 </article>

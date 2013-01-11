@@ -56,10 +56,9 @@ $(document).ready(function($){
 </ul>
 
 <h1 id="macosx">MacOSX</h1>
-<p>rvmからよりシンプルな構成であるrbenv+ruby-buildに乗り換えたのでメモ。</p>
 
-<p>方針gemはroot権限でbundlerのみ持たせて
-一般ユーザーが各自bundle installする</p>
+<p>rvmからよりシンプルな構成である rbenv + ruby-build 構成に乗り換えたのでメモ。
+方針として、sudoが不必要な領域にgemを格納するようにする。</p>
 
 <p>まずは rvm を削除。</p>
 
@@ -84,7 +83,7 @@ $ rbenv rehash
 <p>CentOSにもrubyを入れる機会があったので、rbenvで入れてみる。</p>
 
 <p><code>/usr/local</code>にroot権限でインストールし、ユーザー共通にする。
-gemはbundlerやpassengerのみ入れる。その他はアプリケーションごとにbundleで個別インストールさせる。このようにしておけば、グローバルな場所にgemライブラリをインストールする時にroot権限が必要になるのでわかりやすい。</p>
+gemはbundlerやpassengerのみ入れる。その他はアプリケーションごとに<code>bundle --path=...</code>で個別インストールさせる。このようにしておけば、グローバルな場所にgemライブラリをインストールする時にroot権限が必要になるのでわかりやすい。</p>
 
 <p>まずは必要なライブラリをインストール</p>
 
