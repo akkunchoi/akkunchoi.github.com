@@ -8,10 +8,9 @@ tags: ruby
 {:toc}
 
 # MacOSX 
-rvmからよりシンプルな構成であるrbenv+ruby-buildに乗り換えたのでメモ。
 
-方針gemはroot権限でbundlerのみ持たせて
-一般ユーザーが各自bundle installする
+rvmからよりシンプルな構成である rbenv + ruby-build 構成に乗り換えたのでメモ。
+方針として、sudoが不必要な領域にgemを格納するようにする。
 
 まずは rvm を削除。
 
@@ -34,7 +33,7 @@ MacPortsでも下記CentOSの方法を使ってインストールできるかと
 CentOSにもrubyを入れる機会があったので、rbenvで入れてみる。
 
 `/usr/local`にroot権限でインストールし、ユーザー共通にする。
-gemはbundlerやpassengerのみ入れる。その他はアプリケーションごとにbundleで個別インストールさせる。このようにしておけば、グローバルな場所にgemライブラリをインストールする時にroot権限が必要になるのでわかりやすい。
+gemはbundlerやpassengerのみ入れる。その他はアプリケーションごとに`bundle --path=...`で個別インストールさせる。このようにしておけば、グローバルな場所にgemライブラリをインストールする時にroot権限が必要になるのでわかりやすい。
 
 まずは必要なライブラリをインストール
 
