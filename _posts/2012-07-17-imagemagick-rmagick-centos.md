@@ -6,6 +6,8 @@ tags: CentOS ImageMagick
 
 CentOS に ImageMagick と RMagick をインストールしました。CentOS 標準 yum の ImageMagick は古過ぎるそうなので、RPM,ソースからコンパイルの順でインストールしてみました。
 
+ちなみに、CentOS6 だったら、yum からそこそこ新しい ImageMagick を入れることができます。
+
 ## RPM から ImageMagickをインストールするが失敗
 
 まずは ImageMagick 公式が公開している RPM から入れてみる。
@@ -118,7 +120,7 @@ shared objectが読み込めない。
 
 
 
-## 最後に
+## CentOS6 の場合
 
 CentOS6.3 だったので yum から ImageMagick 入れられました。めでたしめでたし。
 
