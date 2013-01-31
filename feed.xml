@@ -5,8 +5,8 @@
         <link>http://akkunchoi.github.com</link>
         <atom:link href="http://akkunchoi.github.com/rss.xml" rel="self" type="application/rss+xml" />
         <description>This site is a information for development written by akkunchoi</description>
-        <pubDate>Thu, 31 Jan 2013 20:56:31 +0900</pubDate>
-        <lastBuildDate>Thu, 31 Jan 2013 20:56:31 +0900</lastBuildDate>
+        <pubDate>Thu, 31 Jan 2013 21:19:06 +0900</pubDate>
+        <lastBuildDate>Thu, 31 Jan 2013 21:19:06 +0900</lastBuildDate>
         
         <item>
             <title>Ruby メタプログラミング (1)</title>
@@ -224,6 +224,118 @@ end
 </description>
             <published>2013-01-31 00:00:00 +0900</published>
             <link>http://akkunchoi.github.com/ruby-metaprogramming1.html</link>
+        </item>
+        
+        <item>
+            <title>capistrano</title>
+            <description>&lt;p&gt;暫定まとめ。&lt;/p&gt;
+
+&lt;h2 id=&quot;rails-&quot;&gt;Rails のデプロイ&lt;/h2&gt;
+
+&lt;p&gt;RAILS_ENVを忘れたり、assets:precompileを忘れたりして無駄に時間を使ってしまうことが多いので、capistranoを使うようにしました。
+大げさかなと思ってあまり積極的ではなかったですが、セットアップも簡単で、1コマンドで本番リリースできるので導入して良かったです。&lt;/p&gt;
+
+&lt;p&gt;以下導入手順です。&lt;/p&gt;
+
+&lt;p&gt;まずはGemに追加し、インストールする。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# Gemfile
+group :development do
+  gem 'capistrano'
+  gem 'capistrano-ext'
+  gem 'capistrano_colors'
+end      
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;初期化を実行。Capfileが作成される。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ bundle exec capify .
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Capfileを編集する。&lt;/p&gt;
+&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# Capfile
+# assets pipelineを使う場合はコメントを外す
+load 'deploy/assets'
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;よく config.assets.precompile にファイルを追加するのを忘れて泣く。。&lt;/p&gt;
+
+&lt;p&gt;config/deploy.rbを作成する。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# config/deploy.rb
+require &quot;bundler/capistrano&quot;
+
+set :application, &quot;sample&quot;
+set :repository,  &quot;myuser@example.com:sample.git&quot;
+set :scm, :git
+set :branch, :master
+
+set :git_enable_submodules, 1
+
+role :web, &quot;example.com&quot;                          # Your HTTP server, Apache/etc
+role :app, &quot;example.com&quot;                          # This may be the same as your `Web` server
+role :db,  &quot;example.com&quot;, :primary =&amp;gt; true # This is where Rails migrations will run
+
+set :user, 'myuser'
+set :use_sudo, false
+
+set :rails_env, 'production'
+set :deploy_to, &quot;/var/www/#{application}&quot;
+
+def restart_file
+  File.join(current_path, 'tmp', 'restart.txt')
+end
+
+namespace :deploy do
+  task :restart, :roles =&amp;gt; :app do
+    run &quot;touch #{restart_file}&quot;
+  end
+end
+
+after &quot;deploy:update_code&quot;, :role =&amp;gt; [:app] do
+  run &quot;cp #{release_path}/config/database.yml.sample #{release_path}/config/database.yml&quot;
+end
+
+# if you want to clean up old releases on each deploy uncomment this:
+after &quot;deploy:restart&quot;, &quot;deploy:cleanup&quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;初期化してディレクトリを作成する。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ cap deploy:setup
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;deploy:cold すると、db:migrate が実行される。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ cap deploy:cold
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;普段のデプロイはこっちでいい。coldとの違いはよくわかっていない。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ cap deploy
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;データベースファイルの設定が違う場合はどうなるんだろう？？&lt;/p&gt;
+
+&lt;p&gt;デプロイ先のディレクトリはこんな感じになります。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;/
+|-- current/  =&amp;gt; 特定のreleaseにシンボリックリンク
+|-- releases/
+|     |-- 20130130160241/
+|     |-- 20130123040226/
+|     `-- ....
+`--shared/
+      |-- assets
+      |-- bundle
+      |-- log
+      |-- pids
+      `-- system
+&lt;/code&gt;&lt;/pre&gt;
+
+</description>
+            <published>2013-01-31 00:00:00 +0900</published>
+            <link>http://akkunchoi.github.com/capistrano.html</link>
         </item>
         
         <item>
