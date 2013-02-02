@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Akkunchoi.github.com : " />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="/stylesheets/rainbow-github.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="/stylesheets/stylesheet.css">
+
+    <title>capistrano | akkunchoi@github</title>
+    <link rel="alternate" type="application/rss+xml" title="RSS Feed for mysite.com" href="/feed.xml" />
+    <script type="text/javascript" src="/javascripts/rainbow-custom.min.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <script type="text/javascript">
+
+$(document).ready(function($){
+    //$('pre > code').highlight({source: 1, zebra: 1, indent: 'space', list: 'ol'});
+});
+    </script>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/akkunchoi">View on GitHub</a>
+
+          <h1 id="project_title">
+            <a href="/">akkunchoi.github.com</a>
+          </h1>
+          <h2 id="project_tagline"></h2>
+
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+
+      <article class="posts">
+  <header>
+    <h1>capistrano</h1>
+    <ul class="tags">
+      
+      <li class="inline archive_list"><a class="tag_list_link" href="/tag/ruby">ruby</a></li>
+      
+      <li class="inline archive_list"><a class="tag_list_link" href="/tag/dev">dev</a></li>
+      
+    </ul>
+  </header>
+  <div class="posts-content">
+  <p>暫定まとめ。</p>
+
+<h2 id="rails-">Rails のデプロイ</h2>
+
+<p>RAILS_ENVを忘れたり、assets:precompileを忘れたりして無駄に時間を使ってしまうことが多いので、capistranoを使うようにしました。
+大げさかなと思ってあまり積極的ではなかったですが、セットアップも簡単で、1コマンドで本番リリースできるので導入して良かったです。</p>
+
+<p>以下導入手順です。</p>
+
+<p>まずはGemに追加し、インストールする。</p>
+
+<pre><code data-language="ruby"># Gemfile
+group :development do
+  gem 'capistrano'
+  gem 'capistrano-ext'
+  gem 'capistrano_colors'
+end      
+</code></pre>
+
+<p>初期化を実行。Capfileが作成される。</p>
+
+<pre><code>$ bundle exec capify .
+</code></pre>
+
+<p>Capfileを編集する。</p>
+<pre><code data-language="ruby"># Capfile
+# assets pipelineを使う場合はコメントを外す
+load 'deploy/assets'
+</code></pre>
+
+<p>よく config.assets.precompile にファイルを追加するのを忘れて泣く。。</p>
+
+<p>config/deploy.rbを作成する。</p>
+
+<pre><code data-language="ruby"># config/deploy.rb
+require "bundler/capistrano"
+
+set :application, "sample"
+set :repository,  "myuser@example.com:sample.git"
+set :scm, :git
+set :branch, :master
+
+set :git_enable_submodules, 1
+
+role :web, "example.com"                          # Your HTTP server, Apache/etc
+role :app, "example.com"                          # This may be the same as your `Web` server
+role :db,  "example.com", :primary =&gt; true # This is where Rails migrations will run
+
+set :user, 'myuser'
+set :use_sudo, false
+
+set :rails_env, 'production'
+set :deploy_to, "/var/www/#{application}"
+
+def restart_file
+  File.join(current_path, 'tmp', 'restart.txt')
+end
+
+namespace :deploy do
+  task :restart, :roles =&gt; :app do
+    run "touch #{restart_file}"
+  end
+end
+
+after "deploy:update_code", :role =&gt; [:app] do
+  run "cp #{release_path}/config/database.yml.sample #{release_path}/config/database.yml"
+end
+
+# if you want to clean up old releases on each deploy uncomment this:
+after "deploy:restart", "deploy:cleanup"
+</code></pre>
+
+<p>初期化してディレクトリを作成する。</p>
+
+<pre><code>$ cap deploy:setup
+</code></pre>
+
+<p>deploy:cold すると、db:migrate が実行される。</p>
+
+<pre><code>$ cap deploy:cold
+</code></pre>
+
+<p>普段のデプロイはこっちでいい。coldとの違いはよくわかっていない。</p>
+
+<pre><code>$ cap deploy
+</code></pre>
+
+<p>データベースファイルの設定が違う場合はどうなるんだろう？？</p>
+
+<p>デプロイ先のディレクトリはこんな感じになります。</p>
+
+<pre><code>/
+|-- current/  =&gt; 特定のreleaseにシンボリックリンク
+|-- releases/
+|     |-- 20130130160241/
+|     |-- 20130123040226/
+|     `-- ....
+`--shared/
+      |-- assets
+      |-- bundle
+      |-- log
+      |-- pids
+      `-- system
+</code></pre>
+
+
+  </div>
+  <footer> 
+  <p>Last updated at <time>2013-01-31 21:19:12 +0900</time></p>
+  <!-- <p>Published at <time>2013-01-31</time></p> -->
+  </footer>
+</article>
+
+
+
+
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    <script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-36469923-5']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+
+  </body>
+</html>

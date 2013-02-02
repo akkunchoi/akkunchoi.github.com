@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Akkunchoi.github.com : " />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="/stylesheets/rainbow-github.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="/stylesheets/stylesheet.css">
+
+    <title>Ruby メタプログラミング (1) | akkunchoi@github</title>
+    <link rel="alternate" type="application/rss+xml" title="RSS Feed for mysite.com" href="/feed.xml" />
+    <script type="text/javascript" src="/javascripts/rainbow-custom.min.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <script type="text/javascript">
+
+$(document).ready(function($){
+    //$('pre > code').highlight({source: 1, zebra: 1, indent: 'space', list: 'ol'});
+});
+    </script>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/akkunchoi">View on GitHub</a>
+
+          <h1 id="project_title">
+            <a href="/">akkunchoi.github.com</a>
+          </h1>
+          <h2 id="project_tagline"></h2>
+
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+
+      <article class="posts">
+  <header>
+    <h1>Ruby メタプログラミング (1)</h1>
+    <ul class="tags">
+      
+      <li class="inline archive_list"><a class="tag_list_link" href="/tag/ruby">ruby</a></li>
+      
+    </ul>
+  </header>
+  <div class="posts-content">
+  <p>書籍メタプログラミングRubyを参考に、メタプログラミングの方法を簡単にまとめます。</p>
+
+<p><a href="http://www.amazon.co.jp/gp/product/4048687158/ref=as_li_ss_il?ie=UTF8&amp;camp=247&amp;creative=7399&amp;creativeASIN=4048687158&amp;linkCode=as2&amp;tag=ac0689-22"><img border="0" src="http://ws.assoc-amazon.jp/widgets/q?_encoding=UTF8&amp;ASIN=4048687158&amp;Format=_SL110_&amp;ID=AsinImage&amp;MarketPlace=JP&amp;ServiceVersion=20070822&amp;WS=1&amp;tag=ac0689-22" /></a><img src="http://www.assoc-amazon.jp/e/ir?t=ac0689-22&amp;l=as2&amp;o=9&amp;a=4048687158" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" /></p>
+
+<h2 id="section">オープンクラス</h2>
+
+<p>既存のクラスを拡張することができる。</p>
+
+<pre><code data-language="ruby"># Stringクラスを拡張する
+class String
+  def to_alnum
+    gsub /[^\w\s]/, ''
+  end
+end
+</code></pre>
+
+<p>ただし、それが<strong>できる</strong>とはいえ、やる<strong>べき</strong>かどうかはまた別。</p>
+
+<ul>
+  <li>やるべきかどうかの基準
+    <ul>
+      <li>（Stringの例の場合）すべての文字列が持っていても問題ない汎用的な機能だろうか？</li>
+      <li>特定のドメインに特化したメソッドを追加しようとしてないだろうか？</li>
+    </ul>
+  </li>
+  <li>他の方法には…
+    <ul>
+      <li>別の AlphanumericString クラスを定義する</li>
+      <li>特異メソッドを使って、特定の String インスタンスにだけメソッドを追加する。</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="section-1">クラス定義</h3>
+
+<p>クラス定義とその他のコードに違いはない。</p>
+
+<pre><code data-language="ruby"># クラスCを3回定義している？
+3.times do
+  class C
+    puts "Hello"
+  end
+end
+# Hello
+# Hello
+# Hello
+</code></pre>
+
+<p>クラスが存在していない時は、クラスを定義する。メソッドがあればメソッドも定義する。
+クラスが存在している時は、既存のクラスを<strong>再オープン</strong>して、メソッドを追加する。</p>
+
+<p>class キーワードはクラス宣言というより、スコープ演算子のようなもの。</p>
+
+<p>既存のクラスを再オープンして、いつでもその場で修正できる。この技術を<strong>オープンクラス</strong>と呼ぶ。</p>
+
+<h3 id="section-2">オープンクラスの問題点</h3>
+
+<p>すでに用意されているメソッドを簡単に書き換えられる。
+そのため、知らぬ間に依存している機能の動作を変更してバグにつながる可能性がある。</p>
+
+<p>クラスへの安易なパッチを蔑称して<strong>モンキーパッチ</strong>と呼ぶ。</p>
+
+<p>モンキーパッチは「意図せずに起きる」のと「意図的に適用」する場合がある。
+便利だが危険がつきまとう。独自のメソッドを定義する前に、クラスに既存のメソッドがないかを注意深く確認すること。</p>
+
+<h2 id="section-3">クラス</h2>
+
+<h3 id="section-4">インスタンス変数とインスタンスメソッド</h3>
+
+<p>インスタンス変数はハッシュのキー・バリューのようなもの。セットして初めて存在する。
+インスタンス変数はオブジェクトに、インスタンスメソッドはクラスに住んでいる。</p>
+
+<pre><code data-language="ruby"># 
+class MyClass
+  def my_method
+    @v = 1
+  end
+end
+obj = MyClass.new
+obj.instance_variables # [@v]
+obj.methods            # ["my_method"]
+</code></pre>
+
+<h3 id="section-5">クラスはオブジェクト</h3>
+
+<p>クラスは Class クラスのインスタンス。</p>
+
+<pre><code data-language="ruby"># classメソッド
+"hello".class # =&gt; String
+String.class  # =&gt; Class
+Class.class   # =&gt; Class
+</code></pre>
+
+<pre><code data-language="ruby"># Classに定義されているインスタンスメソッド
+inherited = false
+Class.instance_methods(inherited) # =&gt; [:superclass, :allocate, :new]
+</code></pre>
+
+<p>Classはnew, allocate, superclassを追加したモジュールに過ぎない。</p>
+
+<pre><code data-language="ruby"># Stringのクラス階層
+String.superclass     # =&gt; Object
+Object.superclass     # =&gt; BasicObject
+BasicObjct.superclass # =&gt; nil
+</code></pre>
+
+<pre><code data-language="ruby"># Classのクラス階層
+Class.superclass      # =&gt; Module
+Module.superclass     # =&gt; Object
+Object.superclass     # =&gt; BasicObject
+BasicObjct.superclass # =&gt; nil
+</code></pre>
+
+<p>クラス階層とインスタンスの関係をまとめてみる。</p>
+
+<pre><code>Class &lt;--(class)-- Object
+                    |
+                    |--&gt; String   &lt;--(class)-- "Hello"
+                    |
+                    |--&gt; MyClass  &lt;--(class)-- myObj
+                    |
+                    `--&gt; Module
+                         |
+                         `--&gt; Class
+</code></pre>
+
+<h2 id="section-6">定数</h2>
+
+<p>大文字で始まる参照は、クラス名やモジュール名も含めて、すべて定数になる。
+定数はモジュールで階層化することができる。名前が同じでもパスが違えば違う定数になる。この階層構造はファイルシステムと似ている。</p>
+
+<pre><code data-language="ruby"># 定数
+module A
+  B = 'external'
+  class C
+    B = 'internal'
+  end
+end
+
+A::B    # =&gt; 'external'
+A::C::B # =&gt; 'internal'
+</code></pre>
+
+<pre><code data-language="ruby"># 定数のパス
+module A
+  B = 'external'
+  class C
+    B = 'internal'
+    # コロン2つで始めれば、絶対パスで指定できる
+    ::A::B # =&gt; 'external'
+  end
+  # 内部に書けば相対パスで指定できる
+  C::B  # =&gt; 'internal'
+end
+</code></pre>
+
+<pre><code data-language="ruby"># 定数の一覧
+A.constants         # =&gt; [:B, :C]
+Module.constants    # =&gt; [:Object, :Module, ...]
+</code></pre>
+
+<p>定数は警告が出るけど上書きできる。</p>
+
+<pre><code data-language="ruby"># 定数の上書き
+module M
+end
+module N
+end
+M = N # warning: already initialized constant M
+M     # =&gt; N
+</code></pre>
+
+<h3 id="load">load</h3>
+
+<pre><code data-language="ruby"># load
+load('foo.rb')        # foo.rbで定義された定数が読み込まれる
+load('foo.rb', true)  # 無名モジュールを作成して、foo.rbを取り込むので汚染しない
+</code></pre>
+
+<p>load はコードを実行するために使う。
+require はライブラリを読み込むために使う。</p>
+
+<h2 id="section-7">その他クラスに関して</h2>
+
+<p>Rubyのクラスは慣習としてキャメルケースを使う。</p>
+
+<ul>
+  <li>NG =&gt; TEXT</li>
+  <li>OK =&gt; Text</li>
+</ul>
+
+<p>先にmoduleが定義されてあればclassは定義できない。クラスだったらオープンクラスで上書きできたけど</p>
+
+<pre><code data-language="ruby"># TypeError
+module Text
+end
+class Text # Text is not a class
+end
+</code></pre>
+
+<p>例えばActionMailerをロードしたら Text モジュールが定義されてしまう。
+これを避けるには、自分のネームスペースを作る。</p>
+
+<pre><code data-language="ruby"># 
+module Bookworm
+  class Text
+    # ...
+  end
+end
+</code></pre>
+
+
+  </div>
+  <footer> 
+  <p>Last updated at <time>2013-01-31 20:56:38 +0900</time></p>
+  <!-- <p>Published at <time>2013-01-31</time></p> -->
+  </footer>
+</article>
+
+
+
+
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    <script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-36469923-5']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+
+  </body>
+</html>
