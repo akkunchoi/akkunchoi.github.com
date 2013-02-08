@@ -1,6 +1,6 @@
 ---
 layout: posts
-title: rails3-active-record-query-interface
+title: Rails3 Active Record Query Interface
 tags: rails
 ---
 
@@ -344,25 +344,168 @@ end
 
 ## Join
 
-Stringで 
+whereと同様、Strngで与えると、SQLがそのまま記述できる。
+
+<pre><code data-language="ruby"># joins(string)
 Client.joins('LEFT OUTER JOIN addresses ON addresses.client_id = clients.id')
+# sql:
+# SELECT clients.* FROM clients LEFT OUTER JOIN addresses ON addresses.client_id = clients.id
+</code></rep>
 
-Array/Hashで
+[associations](http://guides.rubyonrails.org/association_basics.html) を定義していれば、もっと簡単に書くことができるようになる。
 
+<pre><code data-language="ruby"># joins(symbol)
+#
+# Category (1) <----> (N) Post (1) <----> (N) Comment (1) <----> (1) Guest
+#                              (1) <----> (N) Tag
+#   
+class Category < ActiveRecord::Base
+  has_many :posts
+end
+class Post < ActiveRecord::Base
+  belongs_to :category
+  has_many :comments
+  has_many :tags
+end
+class Comment < ActiveRecord::Base
+  belongs_to :post
+  has_one :guest
+end
+class Guest < ActiveRecord::Base
+  belongs_to :comment
+end
+class Tag < ActiveRecord::Base
+  belongs_to :post
+end
 
+# 1テーブルをjoin
+# 投稿があるすべてのカテゴリーを返す
 Category.joins(:posts)
+# sql:
+# SELECT categories.* FROM categories
+    INNER JOIN posts ON posts.category_id = categories.id
+
+# 複数テーブルをjoin
+# カテゴリーが設定されていて、１つ以上のコメントがある、全ての投稿を返す
+Post.joins(:category, :comments)
+
+# sql:
+# SELECT posts.* FROM posts
+#   INNER JOIN categories ON posts.category_id = categories.id
+#   INNER JOIN comments ON comments.post_id = posts.id
+</code></pre>
+
+もっと深い場合
+
+<pre><code data-language="ruby"># joins(hash)
+
+# Guestによるコメントを持つ投稿を全て返す
+Post.joins(:comments => :guest)
+# sql:
+# SELECT posts.* FROM posts
+#    INNER JOIN comments ON comments.post_id = posts.id
+#    INNER JOIN guests ON guests.comment_id = comments.id
+
+# GuestによるコメントがありTagを１つ以上持つ投稿があるカテゴリを返す
+Category.joins(:posts => [{:comments => :guest}, :tags])
+# sql:
+# SELECT categories.* FROM categories
+#   INNER JOIN posts ON posts.category_id = categories.id
+#   INNER JOIN comments ON comments.post_id = posts.id
+#   INNER JOIN guests ON guests.comment_id = comments.id
+#   INNER JOIN tags ON tags.post_id = posts.id
+</code></pre>
+
+もちろんjoinしたテーブルはwhereで条件を追加できる。
+
+<pre><code data-language="ruby"># join-where
+Client.joins(:orders).where(:orders => {:created_at => time_range})
+</code></pre>
 
 ## Eager loading
 
+アソシエーションを使ってレコードを複数取得すると、*N + 1 クエリー問題*が発生する。N件のデータを取得するのに、N+1の問い合わせが必要になる。
+
+<pre><code data-language="ruby"># normal
+clients = Client.limit(10) # 1回目: clientsテーブルを読む
+ 
+clients.each do |client|
+  puts client.address.postcode # 10回繰り返し: addressesテーブルを読む
+end
+
+# 合計11回のクエリー
+</code></pre>
+
+`includes`を使えば、一度にレコードを取りに行ってくれる。
+
+<pre><code data-language="ruby"># includes
 Client.includes(:address).limit(10)
 
+clients = Client.includes(:address).limit(10)
+ 
+clients.each do |client|
+  puts client.address.postcode
+end
+
+# sql:
+# SELECT * FROM clients LIMIT 10
+#
+# SELECT addresses.* FROM addresses
+#   WHERE (addresses.client_id IN (1,2,3,4,5,6,7,8,9,10))
+# 
+# 2クエリーに減った！
+</code></pre>
+
+使い方は`joins`と似ている。
+
+<pre><code data-language="ruby"># includes nested association
+Category.includes(:posts => [{:comments => :guest}, :tags]).find(1)
+</code></pre>
+
+`joins`はの場合はINNER JOIN。
+`includes`で`where`を追加すると、LEFT OUTER JOINになる。
+[Specifying Conditions on Eager Loaded Associations](http://guides.rubyonrails.org/active_record_querying.html#specifying-conditions-on-eager-loaded-associations)
 
 ## Scope
 
+<pre><code data-language="ruby"># scope
 class Post < ActiveRecord::Base
   scope :published, where(:published => true)
+
+  # チェーンできる
+  scope :published_and_commented, published.and(self.arel_table[:comments_count].gt(0))
+  
+  # 時間を扱う場合は現在日時を束縛しないように、lambdaにしないといけない
+  scope :last_week, lambda { where("created_at < ?", Time.zone.now ) }
+
+  # lambdaにする場合は、引数を受け取ることができる
+  scope :1_week_before, lambda { |time| where("created_at < ?", time) }
 end
 
+Post.published
+Post.published_and_commented
+Post.last_week
+Post.1_week_before(Time.zone.now) 
+
+# 引数を受け取るならクラスメソッドにした方が良いらしい
+class Post < ActiveRecord::Base
+  def self.1_week_before(time)
+    where("created_at < ?", time)
+  end
+end
+</code></pre>
+
+
+`default_scope`は強制的に全てのクエリにスコープが付けられる。論理削除に便利。
+
+<pre><code data-language="ruby"># default_scope
+class Client < ActiveRecord::Base
+  default_scope where("removed_at IS NULL")
+end
+
+# スコープを一時的に外したい場合は unscoped
+Client.unscoped.all
+</code></pre>
 
 ## Dynamic finder
 
