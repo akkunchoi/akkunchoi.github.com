@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Akkunchoi.github.com : " />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="/stylesheets/rainbow-github.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="/stylesheets/stylesheet.css">
+
+    <title>PHP5.3.xの問題あるバージョン | akkunchoi@github</title>
+    <link rel="alternate" type="application/rss+xml" title="RSS Feed for mysite.com" href="/feed.xml" />
+    <script type="text/javascript" src="/javascripts/rainbow-custom.min.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <script type="text/javascript">
+
+$(document).ready(function($){
+    //$('pre > code').highlight({source: 1, zebra: 1, indent: 'space', list: 'ol'});
+});
+    </script>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/akkunchoi">View on GitHub</a>
+
+          <h1 id="project_title">
+            <a href="/">akkunchoi.github.com</a>
+          </h1>
+          <h2 id="project_tagline"></h2>
+
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+
+      <article class="posts">
+  <header>
+    <h1>PHP5.3.xの問題あるバージョン</h1>
+    <ul class="tags">
+      
+      <li class="inline archive_list"><a class="tag_list_link" href="/tag/php">php</a></li>
+      
+    </ul>
+  </header>
+  <div class="posts-content">
+  <h2 id="section">5.3.3以前</h2>
+
+<p>今まで正常に動作していたPHPのアプリケーションが、突然<strong>ランダムにページが表示されたり、エラーになったりする</strong>という現象に遭遇しました。</p>
+
+<p>ソースコードを追っていくと</p>
+
+<pre><code data-language="php"># 
+// こんな感じのクラス
+class Obj{ 
+  function call(){
+    $this-&gt;hogehoge(); // 何故か Call to a member function 'hogehoge' on a non-object
+  }
+  function hogehoge(){
+  }
+} 
+
+// 確かにインスタンス化している
+$obj = new Obj;
+$obj-&gt;call();
+</code></pre>
+
+<p>上記のような感じで、ありえない話ですが何故か<code>$this</code>が non-object になっていました。</p>
+
+<p>色々調べたところ、Symfony2のREADMEに同じような問題が書いてありました。</p>
+
+<blockquote>
+  <p>before PHP 5.3.4, if you get “Notice: Trying to get property of non-object”, 
+you’ve hit a known PHP bug (see <a href="https://bugs.php.net/bug.php?id=52083">https://bugs.php.net/bug.php?id=52083</a> and <a href="https://bugs.php.net/bug.php?id=50027">https://bugs.php.net/bug.php?id=50027</a>);</p>
+</blockquote>
+
+<p>gc関連のバグのようで、5.3.4で修正されているようです。Apacheを再起動すると現象が発生しなくなる、という報告もありました。</p>
+
+<p>自分で管理しているサーバーではなかったためサーバー管理者に伝えた所、
+apacheにHUPを送信することで現象は発生しなくなりました。</p>
+
+<p>CentOS6はデフォルトのPHPが5.3.3なのが辛いですが、このバージョンのPHPを使うのは避けた方が良さそうです。</p>
+
+<h2 id="section-1">5.3.7以前</h2>
+
+<blockquote>
+  <p>before PHP 5.3.8, if you get an error involving annotations, you’ve hit a known PHP bug (see <a href="https://bugs.php.net/bug.php?id=55156">https://bugs.php.net/bug.php?id=55156</a>).</p>
+</blockquote>
+
+<p>Symfony2のアノテーションがおかしい場合はPHPのバグみたいです。</p>
+
+<p>また、5.3.7には<a href="http://it.slashdot.jp/story/11/08/24/0758215/PHP-5.3.7%E3%81%AB%E9%87%8D%E5%A4%A7%E3%81%AA%E3%83%90%E3%82%B0%E3%80%81strncat%E3%81%AE%E7%BD%A0%E3%81%AB%E3%81%AF%E3%81%BE%E3%82%8B">重大なバグ</a>があります。</p>
+
+<h2 id="section-2">5.3.16</h2>
+
+<blockquote>
+  <p>PHP 5.3.16 has a major bug in the Reflection subsystem and is not suitable to run Symfony2 (<a href="https://bugs.php.net/bug.php?id=62715">https://bugs.php.net/bug.php?id=62715</a>)</p>
+</blockquote>
+
+<p>5.3.16はリフレクションがおかしいのでSymfony2では使えないみたいです。</p>
+
+
+  </div>
+  <footer> 
+  <p>Last updated at <time>2013-03-02 17:45:16 +0900</time></p>
+  <!-- <p>Published at <time>2013-03-02</time></p> -->
+  </footer>
+</article>
+
+
+
+
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    <script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-36469923-5']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+
+  </body>
+</html>
