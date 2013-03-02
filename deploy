@@ -8,6 +8,7 @@ fi
 rm -rf _deploy/*
 cp -r _site/* _deploy
 cd _deploy
+git add .
 git add -u .
 git commit -m "update"
 git push
