@@ -5,8 +5,8 @@
         <link>http://akkunchoi.github.com</link>
         <atom:link href="http://akkunchoi.github.com/rss.xml" rel="self" type="application/rss+xml" />
         <description>This site is a information for development written by akkunchoi</description>
-        <pubDate>Sat, 02 Mar 2013 17:46:46 +0900</pubDate>
-        <lastBuildDate>Sat, 02 Mar 2013 17:46:46 +0900</lastBuildDate>
+        <pubDate>Sun, 03 Mar 2013 09:14:06 +0900</pubDate>
+        <lastBuildDate>Sun, 03 Mar 2013 09:14:06 +0900</lastBuildDate>
         
         <item>
             <title>PHP5.3.xの問題あるバージョン</title>
@@ -71,14 +71,75 @@ apacheにHUPを送信することで現象は発生しなくなりました。&l
         </item>
         
         <item>
-            <title>Rails3 Active Record Query Interface</title>
-            <description>&lt;p&gt;&lt;a href=&quot;http://guides.rubyonrails.org/active_record_querying.html&quot;&gt;ActiveRecordのクエリーインタフェースの解説&lt;/a&gt; のまとめ。&lt;/p&gt;
+            <title>Rails3 AREL - Active Record Query Interface</title>
+            <description>&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#section&quot;&gt;準備&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#section-1&quot;&gt;データの取得&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
 
-&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;#
+&lt;p&gt;&lt;a href=&quot;http://guides.rubyonrails.org/active_record_querying.html&quot;&gt;ActiveRecordのクエリーインタフェースの解説&lt;/a&gt; のまとめ。実際にコードを書いて確認していきます。&lt;/p&gt;
+
+&lt;h2 id=&quot;section&quot;&gt;準備&lt;/h2&gt;
+
+&lt;p&gt;bundlerでインストールします。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# Gemfile
+source 'https://rubygems.org'
+      
+gem &quot;activerecord&quot;, &quot;~&amp;gt; 3.2.12&quot;                             
+gem 'sqlite3'
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;active_recordを単体で使えるようにセットアップします。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# main.rb
+require 'rubygems'
+require 'bundler/setup'
+
+require &quot;active_record&quot;                                     
+
+# database connection
+ActiveRecord::Base.establish_connection(                    
+  adapter:  &quot;sqlite3&quot;,
+  database: &quot;:memory:&quot;                                      
+)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;例で使用するマイグレーションとモデルを作成します。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# main.rb
+# migration
+class Init &amp;lt; ActiveRecord::Migration                        
+  def self.up                                               
+    create_table(:clients){|t|                              
+      t.string :name                                        
+      t.integer :orders_count                               
+      t.timestamps                                          
+    }
+    create_table(:orders){|t|
+      t.integer :price
+      t.datetime :ordered_date 
+      t.timestamps
+    }                                                       
+    create_table(:addresses){|t|
+      t.references :clients
+      t.string :address
+    }
+  end
+  def self.down
+    drop_table :clients
+    drop_table :orders
+    drop_table :addresses
+  end
+end
+
+# run migrate
+Init.migrate(:up)
+
+# models
 class Client &amp;lt; ActiveRecord::Base
   has_one :address
   has_many :orders
-  has_and_belongs_to_many :roles
 end
 class Address &amp;lt; ActiveRecord::Base
   belongs_to :client
@@ -86,110 +147,131 @@ end
 class Order &amp;lt; ActiveRecord::Base
   belongs_to :client, :counter_cache =&amp;gt; true
 end
-class Role &amp;lt; ActiveRecord::Base
-  has_and_belongs_to_many :clients
-end
+
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&quot;section&quot;&gt;オブジェクトの取得&lt;/h2&gt;
+&lt;p&gt;準備が整いました。データを入れてみます。&lt;/p&gt;
 
-&lt;p&gt;情報取得するには以下の finder method が利用できます。これを呼び出すことで、SQLを書かずにクエリーを実行することができます。戻り値は ActiveRecord::Relation インスタンスです。&lt;/p&gt;
+&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# main.rb
+Client.create({:name =&amp;gt; &quot;Alice&quot;})
+Client.create({:name =&amp;gt; &quot;Bob&quot;})
+Client.create({:name =&amp;gt; &quot;Carol&quot;})
+&lt;/code&gt;&lt;/pre&gt;
 
-&lt;ul&gt;
-  &lt;li&gt;where&lt;/li&gt;
-  &lt;li&gt;select&lt;/li&gt;
-  &lt;li&gt;group&lt;/li&gt;
-  &lt;li&gt;order&lt;/li&gt;
-  &lt;li&gt;reorder&lt;/li&gt;
-  &lt;li&gt;reverse_order&lt;/li&gt;
-  &lt;li&gt;limit&lt;/li&gt;
-  &lt;li&gt;offset&lt;/li&gt;
-  &lt;li&gt;joins&lt;/li&gt;
-  &lt;li&gt;includes&lt;/li&gt;
-  &lt;li&gt;lock&lt;/li&gt;
-  &lt;li&gt;readonly&lt;/li&gt;
-  &lt;li&gt;from&lt;/li&gt;
-  &lt;li&gt;having&lt;/li&gt;
-&lt;/ul&gt;
+&lt;!--
 
-&lt;p&gt;find メソッドというのもあります。&lt;code&gt;Model.find(options)&lt;/code&gt; を実行すると、次のような動作になります。&lt;/p&gt;
+## オブジェクトの取得
 
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;ol&gt;
-      &lt;li&gt;オプションをSQLクエリに変換する&lt;/li&gt;
-    &lt;/ol&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;ol&gt;
-      &lt;li&gt;SQLクエリを実行し、結果をデータベースから取り出す&lt;/li&gt;
-    &lt;/ol&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;ol&gt;
-      &lt;li&gt;結果を行ごとに適切なモデルクラスで、インスタンス化&lt;/li&gt;
-    &lt;/ol&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;ol&gt;
-      &lt;li&gt;指定されていれば、after_find コールバックを実行する&lt;/li&gt;
-    &lt;/ol&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
+情報取得するには以下の finder method が利用できます。これを呼び出すことで、SQLを書かずにクエリーを実行することができます。戻り値は ActiveRecord::Relation インスタンスです。
 
-&lt;h3 id=&quot;section-1&quot;&gt;オブジェクトを１つだけ取得する（主キー）&lt;/h3&gt;
+- where
+- select
+- group
+- order
+- reorder
+- reverse_order
+- limit
+- offset
+- joins
+- includes
+- lock
+- readonly
+- from
+- having
+
+find メソッドというのもあります。`Model.find(options)` を実行すると、次のような動作になります。
+
+- 1. オプションをSQLクエリに変換する
+- 2. SQLクエリを実行し、結果をデータベースから取り出す
+- 3. 結果を行ごとに適切なモデルクラスで、インスタンス化
+- 4. 指定されていれば、after_find コールバックを実行する
+
+--&gt;
+
+&lt;h2 id=&quot;section-1&quot;&gt;データの取得&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# find, first, last
+
+# idで検索します
+puts Client.find(1).name
+# =&amp;gt; SELECT &quot;clients&quot;.* FROM &quot;clients&quot; WHERE &quot;clients&quot;.&quot;id&quot; = ? LIMIT 1  [[&quot;id&quot;, 1]]
+# &quot;Alice&quot;
+
+puts Client.first.name
+# =&amp;gt; SELECT &quot;clients&quot;.* FROM &quot;clients&quot; LIMIT 1
+# &quot;Alice&quot;
+
+puts Client.last.name
+# =&amp;gt; SELECT &quot;clients&quot;.* FROM &quot;clients&quot; ORDER BY &quot;clients&quot;.&quot;id&quot; DESC LIMIT 1 
+# &quot;Carol&quot;
+
+# 配列にして複数を一度に取得できます
+puts Client.find([1,2])
+# =&amp;gt; SELECT &quot;clients&quot;.* FROM &quot;clients&quot; WHERE &quot;clients&quot;.&quot;id&quot; IN (1, 2)
+# [#&amp;lt;Client id: 1, name: &quot;Alice&quot;&amp;gt;, #&amp;lt;Client id: 2, name: &quot;Bob&quot;&amp;gt;]
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;!--
+## 取得
+
+### find - オブジェクトを１つだけ取得する
 
 &lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# id = 10 の オブジェクトを取得
 client = Client.find(10)
-# =&amp;gt; #&amp;lt;Client id: 10, first_name: &quot;たかし&quot;&amp;gt;
+# =&gt; #&lt;Client id: 10, first_name: &quot;たかし&quot;&gt;
 # 
 # sql: SELECT * FROM clients WHERE (clients.id = 10) LIMIT 1
 # 
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;もし、データが見つからなかった場合は &lt;code&gt;ActiveRecord::RecordNotFound&lt;/code&gt; 例外が発生します。&lt;/p&gt;
+もし、データが見つからなかった場合は `ActiveRecord::RecordNotFound` 例外が発生します。
 
-&lt;h3 id=&quot;first&quot;&gt;オブジェクトを１つだけ取得する（first）&lt;/h3&gt;
+
+### first - 最初のオブジェクトを取得する
 
 &lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# first 
 client = Client.first
-# =&amp;gt; #&amp;lt;Client id: 1, ... &amp;gt;
+# =&gt; #&lt;Client id: 1, ... &gt;
 # 
 # sql: SELECT * FROM clients LIMIT 1
 # 
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;もし、データが見つからなければ、&lt;code&gt;nil&lt;/code&gt; を返します。&lt;code&gt;Model.first!&lt;/code&gt; だと、例外が発生します。&lt;/p&gt;
+もし、データが見つからなければ、`nil` を返します。`Model.first!` だと、例外が発生します。
 
-&lt;h3 id=&quot;last&quot;&gt;オブジェクトを１つだけ取得する（last）&lt;/h3&gt;
+
+### オブジェクトを１つだけ取得する（last）
 
 &lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# last
 client = Client.last
-# =&amp;gt; #&amp;lt;Client id: 221, ... &amp;gt;
+# =&gt; #&lt;Client id: 221, ... &gt;
 # 
 # sql: SELECT * FROM clients ORDER BY clients.id DESC LIMIT 1
 # 
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;もし、データが見つからなければ、&lt;code&gt;nil&lt;/code&gt; を返します。&lt;code&gt;Model.last!&lt;/code&gt;だと、例外が発生します。&lt;/p&gt;
+もし、データが見つからなければ、`nil` を返します。`Model.last!`だと、例外が発生します。
 
-&lt;h3 id=&quot;section-2&quot;&gt;オブジェクトを複数取得する（主キー）&lt;/h3&gt;
 
-&lt;p&gt;&lt;code&gt;find&lt;/code&gt; メソッドでidの配列を渡すと、そのオブジェクトを配列で返します。&lt;/p&gt;
+### オブジェクトを複数取得する（主キー）
+
+`find` メソッドでidの配列を渡すと、そのオブジェクトを配列で返します。
 
 &lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# find multiple
 client = Client.find([1, 10]) # または Client.find(1, 10)
-# =&amp;gt; [#&amp;lt;Client id: 1, ... &amp;gt;, #&amp;lt;Client id: 10, ... &amp;gt;]
+# =&gt; [#&lt;Client id: 1, ... &gt;, #&lt;Client id: 10, ... &gt;]
 # 
 # sql: SELECT * FROM clients WHERE (clients.id IN (1,10)) 
 # 
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;ひとつも見つからなかった場合に、&lt;code&gt;ActiveRecord::RecordNotFound&lt;/code&gt;例外が発生します。&lt;/p&gt;
+ひとつも見つからなかった場合に、`ActiveRecord::RecordNotFound`例外が発生します。
 
-&lt;h3 id=&quot;all&quot;&gt;テーブル内の全件を取得する（all）&lt;/h3&gt;
 
-&lt;p&gt;テーブル内のレコード全件を処理したい場合は&lt;code&gt;all&lt;/code&gt;メソッドを使います。&lt;/p&gt;
+### テーブル内の全件を取得する（all）
+
+テーブル内のレコード全件を処理したい場合は`all`メソッドを使います。
 
 &lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# all
 User.all.each do |user|
@@ -197,13 +279,13 @@ User.all.each do |user|
 end
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;ただ、&lt;code&gt;all'&lt;/code&gt;はテーブルの全データを取得して、インスタンス化し、メモリ内に保持するので、何千件もあるとすぐメモリ不足になります。
-この問題を解決するために、&lt;code&gt;find_each&lt;/code&gt;と&lt;code&gt;find_in_batches&lt;/code&gt;という２通りの方法が用意されています。&lt;/p&gt;
+ただ、`all'`はテーブルの全データを取得して、インスタンス化し、メモリ内に保持するので、何千件もあるとすぐメモリ不足になります。
+この問題を解決するために、`find_each`と`find_in_batches`という２通りの方法が用意されています。
 
-&lt;h3 id=&quot;findeach&quot;&gt;テーブル内の全件を取得する（find_each）&lt;/h3&gt;
+### テーブル内の全件を取得する（find_each）
 
-&lt;p&gt;全件をいくつかのブロックに分けて処理していくので、効率的に全件処理できます。。デフォルトでは1000件ごとです。
-findの標準的なオプション（:order, :limitを除く）が使用できます。&lt;/p&gt;
+全件をいくつかのブロックに分けて処理していくので、効率的に全件処理できます。。デフォルトでは1000件ごとです。
+findの標準的なオプション（:order, :limitを除く）が使用できます。
 
 &lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# find_each
 User.find_each do |user|
@@ -211,28 +293,29 @@ User.find_each do |user|
 end
 
 # :start, :batch_size オプションが追加で使用できる
-User.find_each(:start =&amp;gt; 2000, :batch_size =&amp;gt; 5000) do |user|
+User.find_each(:start =&gt; 2000, :batch_size =&gt; 5000) do |user|
   NewsLetter.weekly_deliver(user)
 end
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;:startはバッチを再開する場合や、並列してワーカーを実行する場合などに利用できます。&lt;/p&gt;
+:startはバッチを再開する場合や、並列してワーカーを実行する場合などに利用できます。
 
-&lt;h3 id=&quot;findinbatches&quot;&gt;テーブル内の全件を取得する（find_in_batches）&lt;/h3&gt;
+### テーブル内の全件を取得する（find_in_batches）
 
-&lt;p&gt;find_eachと似ているけど、こちらは配列で取得します。&lt;/p&gt;
+find_eachと似ているけど、こちらは配列で取得します。
 
 &lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# find_in_batches
-Invoice.find_in_batches(:include =&amp;gt; :invoice_lines) do |invoices|
+Invoice.find_in_batches(:include =&gt; :invoice_lines) do |invoices|
   export.add_invoices(invoices)
 end
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&quot;where&quot;&gt;Where&lt;/h2&gt;
 
-&lt;p&gt;SQLのWhere文を構築します。String, Array, Hash のどれかを引数に入れて使います。&lt;/p&gt;
+## Where
 
-&lt;p&gt;Stringの場合、SQLを直接書くようなイメージです。エスケープなどはされません。ユーザー入力値をそのまま入れないようにしましょう。&lt;/p&gt;
+SQLのWhere文を構築します。String, Array, Hash のどれかを引数に入れて使います。
+
+Stringの場合、SQLを直接書くようなイメージです。エスケープなどはされません。ユーザー入力値をそのまま入れないようにしましょう。
 
 &lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# where(string)
 Client.where(&quot;orders_count = '2'&quot;)
@@ -241,54 +324,55 @@ Client.where(&quot;orders_count = '2'&quot;)
 Client.where(&quot;first_name LIKE '%#{params[:first_name]}%'&quot;)
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;Arrayにすると、プレースホルダーが使えます。’?’ にエスケープされた第二引数の値が置き換わるので安全です。
-&lt;a href=&quot;http://guides.rubyonrails.org/security.html#sql-injection&quot;&gt;詳細&lt;/a&gt;。&lt;/p&gt;
+Arrayにすると、プレースホルダーが使えます。'?' にエスケープされた第二引数の値が置き換わるので安全です。
+[詳細](http://guides.rubyonrails.org/security.html#sql-injection)。
 
 &lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# where(array, ...)
 Client.where(&quot;orders_count = ?&quot;, params[:orders])
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;プレースホルダーはハッシュにもできます。&lt;/p&gt;
+プレースホルダーはハッシュにもできます。
 
 &lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# where(array, hash)
-Client.where(&quot;created_at &amp;gt;= :start_date AND created_at &amp;lt;= :end_date&quot;,
-  {:start_date =&amp;gt; params[:start_date], :end_date =&amp;gt; params[:end_date]})
+Client.where(&quot;created_at &gt;= :start_date AND created_at &lt;= :end_date&quot;,
+  {:start_date =&gt; params[:start_date], :end_date =&gt; params[:end_date]})
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;Hashにするとさらに読みやすくなります。&lt;/p&gt;
+
+Hashにするとさらに読みやすくなります。
 
 &lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# where(hash)
-Client.where(:orders_count =&amp;gt; 2)
+Client.where(:orders_count =&gt; 2)
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;範囲指定もできます。&lt;/p&gt;
+範囲指定もできます。
 
-&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# where(key =&amp;gt; range)
-Client.where(:created_at =&amp;gt; (Time.now.midnight - 1.day)..Time.now.midnight)
+&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# where(key =&gt; range)
+Client.where(:created_at =&gt; (Time.now.midnight - 1.day)..Time.now.midnight)
 # sql: 
 # SELECT * FROM clients WHERE (clients.created_at BETWEEN '2008-12-21 00:00:00' AND '2008-12-22 00:00:00')
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;Subset条件（IN構文）を使うには、値を配列にします&lt;/p&gt;
+Subset条件（IN構文）を使うには、値を配列にします
 
-&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# where(key =&amp;gt; array)
-Client.where(:orders_count =&amp;gt; [1,3,5])
+&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# where(key =&gt; array)
+Client.where(:orders_count =&gt; [1,3,5])
 # sql:
 # SELECT * FROM clients WHERE (clients.orders_count IN (1,3,5))
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&quot;order&quot;&gt;Order&lt;/h2&gt;
+## Order
 
-&lt;p&gt;ORDER BY です。&lt;/p&gt;
+ORDER BY です。
 
 &lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# order by
 Client.order(&quot;created_at&quot;)
 Client.order(&quot;orders_count ASC, created_at DESC&quot;)
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&quot;select&quot;&gt;Select&lt;/h2&gt;
+## Select
 
-&lt;p&gt;特定のカラムだけ取得する。selectを使うと Readonly になります。&lt;/p&gt;
+特定のカラムだけ取得する。selectを使うと Readonly になります。
 
 &lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# select
 Client.select(&quot;viewable_by, locked&quot;)
@@ -296,9 +380,9 @@ Client.select(&quot;viewable_by, locked&quot;)
 # SELECT viewable_by, locked FROM clients
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;selectとした列以外を取得しようとすると、ActiveRecord::MissingAttributeError になります。&lt;/p&gt;
+selectとした列以外を取得しようとすると、ActiveRecord::MissingAttributeError になります。
 
-&lt;p&gt;&lt;code&gt;SELECT DISTINCT&lt;/code&gt; 相当は &lt;code&gt;uniq()&lt;/code&gt; です。&lt;/p&gt;
+`SELECT DISTINCT` 相当は `uniq()` です。
 
 &lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# select distinct
 Client.select(:name).uniq
@@ -310,41 +394,42 @@ q = uniq(false) # uniq解除
 
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&quot;limit-offset&quot;&gt;Limit, Offset&lt;/h2&gt;
+
+## Limit, Offset
 
 &lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# limit, offset
 Client.limit(5)
 Client.offset(30)
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&quot;group&quot;&gt;Group&lt;/h2&gt;
+## Group
 
 &lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# group by
 Client.group(&quot;date(created_at)&quot;)
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&quot;having&quot;&gt;Having&lt;/h2&gt;
+
+## Having
 
 &lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# having
 Order.select(&quot;date(created_at) as ordered_date, sum(price) as total_price&quot;)
   .group(&quot;date(created_at)&quot;)
-  .having(&quot;sum(price) &amp;gt; ?&quot;, 100)
+  .having(&quot;sum(price) &gt; ?&quot;, 100)
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&quot;overriding&quot;&gt;上書き - Overriding&lt;/h2&gt;
+## 上書き - Overriding
 
-&lt;p&gt;構築したクエリから一部を除外したり、特定の条件だけにするメソッドが用意されてます。&lt;/p&gt;
+構築したクエリから一部を除外したり、特定の条件だけにするメソッドが用意されてます。
 
-&lt;ul&gt;
-  &lt;li&gt;except(): 指定クエリを除外（:order, :whereなど）&lt;/li&gt;
-  &lt;li&gt;only(): 指定クエリだけにする（:order, :whereなど）&lt;/li&gt;
-  &lt;li&gt;reorder(): default scope で指定した order を上書きします&lt;/li&gt;
-  &lt;li&gt;reverse_order(): 逆順にします&lt;/li&gt;
-&lt;/ul&gt;
+- except(): 指定クエリを除外（:order, :whereなど）
+- only(): 指定クエリだけにする（:order, :whereなど）
+- reorder(): default scope で指定した order を上書きします
+- reverse_order(): 逆順にします
 
-&lt;h2 id=&quot;readonly&quot;&gt;読み込み専用 - Readonly&lt;/h2&gt;
 
-&lt;p&gt;Readonlyなオブジェクトを更新しようとすると、例外が発生します。&lt;/p&gt;
+## 読み込み専用 - Readonly
+
+Readonlyなオブジェクトを更新しようとすると、例外が発生します。
 
 &lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# readonly
 client = Client.readonly.first
@@ -352,14 +437,14 @@ client.visits += 1
 client.save # raise ActiveRecord::ReadOnlyRecord
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&quot;locking&quot;&gt;ロック - Locking&lt;/h2&gt;
+## ロック - Locking
 
-&lt;h3 id=&quot;section-3&quot;&gt;楽観的ロック&lt;/h3&gt;
+### 楽観的ロック
 
-&lt;p&gt;integer型の&lt;code&gt;lock_version&lt;/code&gt;という名前のカラムが存在すると、Railsが自動的に楽観的ロックを行なってくれます。
-更新する度に&lt;code&gt;lock_version&lt;/code&gt;の値をインクリメントしていき、競合を検知する仕組みです。&lt;/p&gt;
+integer型の`lock_version`という名前のカラムが存在すると、Railsが自動的に楽観的ロックを行なってくれます。
+更新する度に`lock_version`の値をインクリメントしていき、競合を検知する仕組みです。
 
-&lt;p&gt;更新が競合した場合、&lt;code&gt;ActiveRecord::StaleObjectError&lt;/code&gt;が発生します。&lt;/p&gt;
+更新が競合した場合、`ActiveRecord::StaleObjectError`が発生します。
 
 &lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# lock_version
 c1 = Client.find(1)
@@ -372,22 +457,23 @@ c2.name = &quot;should fail&quot;
 c2.save # Raises an ActiveRecord::StaleObjectError
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;&lt;code&gt;ActiveRecord::Base.lock_optimistically = false&lt;/code&gt; でこの機能を無効にできます。&lt;/p&gt;
+`ActiveRecord::Base.lock_optimistically = false` でこの機能を無効にできます。
 
-&lt;p&gt;&lt;code&gt;set_locking_column&lt;/code&gt; でlock_versionというカラム名を変更できます。&lt;/p&gt;
+`set_locking_column` でlock_versionというカラム名を変更できます。
 
 &lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# set_locking_column
-class Client &amp;lt; ActiveRecord::Base
+class Client &lt; ActiveRecord::Base
   set_locking_column :lock_client_column
 end
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&quot;section-4&quot;&gt;悲観的ロック&lt;/h3&gt;
 
-&lt;p&gt;悲観的ロックはデータベースシステムの機能を利用します。&lt;/p&gt;
+### 悲観的ロック
 
-&lt;p&gt;リレーションを構築する時に&lt;code&gt;lock&lt;/code&gt;を使うと、選択行の排他的ロックを獲得します。
-&lt;code&gt;lock&lt;/code&gt;を使ったリレーションはデッドロックを避けるために、通常&lt;code&gt;transaction&lt;/code&gt;ブロックで囲みます。&lt;/p&gt;
+悲観的ロックはデータベースシステムの機能を利用します。
+
+リレーションを構築する時に`lock`を使うと、選択行の排他的ロックを獲得します。
+`lock`を使ったリレーションはデッドロックを避けるために、通常`transaction`ブロックで囲みます。
 
 &lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# transaction
 Item.transaction do
@@ -401,7 +487,8 @@ end
 # SQL (0.8ms)   COMMIT
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;共有ロックなどロックタイプを変更したい場合は引数にタイプを与えてやります。&lt;/p&gt;
+
+共有ロックなどロックタイプを変更したい場合は引数にタイプを与えてやります。
 
 &lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# lock in share mode
 Item.transaction do
@@ -410,7 +497,7 @@ Item.transaction do
 end
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;すでにインスタンスを取得しているなら、&lt;code&gt;with_lock&lt;/code&gt;でトランザクションを開始できます。&lt;/p&gt;
+すでにインスタンスを取得しているなら、`with_lock`でトランザクションを開始できます。
 
 &lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# with_lock
 item = Item.first
@@ -420,39 +507,37 @@ item.with_lock do
 end
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&quot;join&quot;&gt;Join&lt;/h2&gt;
+## Join
 
-&lt;p&gt;whereと同様、Strngで与えると、SQLがそのまま記述できる。&lt;/p&gt;
+whereと同様、Strngで与えると、SQLがそのまま記述できる。
 
 &lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# joins(string)
 Client.joins('LEFT OUTER JOIN addresses ON addresses.client_id = clients.id')
 # sql:
 # SELECT clients.* FROM clients LEFT OUTER JOIN addresses ON addresses.client_id = clients.id
-&lt;/code&gt;
+&lt;/code&gt;&lt;/rep&gt;
 
 [associations](http://guides.rubyonrails.org/association_basics.html) を定義していれば、もっと簡単に書くことができるようになる。
 
 &lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# joins(symbol)
 #
-# Category (1) &amp;lt;----&amp;gt; (N) Post (1) &amp;lt;----&amp;gt; (N) Comment (1) &amp;lt;----&amp;gt; (1) Guest
-#                              (1) &amp;lt;----&amp;gt; (N) Tag
 #   
-class Category &amp;lt; ActiveRecord::Base
+class Category &lt; ActiveRecord::Base
   has_many :posts
 end
-class Post &amp;lt; ActiveRecord::Base
+class Post &lt; ActiveRecord::Base
   belongs_to :category
   has_many :comments
   has_many :tags
 end
-class Comment &amp;lt; ActiveRecord::Base
+class Comment &lt; ActiveRecord::Base
   belongs_to :post
   has_one :guest
 end
-class Guest &amp;lt; ActiveRecord::Base
+class Guest &lt; ActiveRecord::Base
   belongs_to :comment
 end
-class Tag &amp;lt; ActiveRecord::Base
+class Tag &lt; ActiveRecord::Base
   belongs_to :post
 end
 
@@ -478,14 +563,14 @@ Post.joins(:category, :comments)
 &lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# joins(hash)
 
 # Guestによるコメントを持つ投稿を全て返す
-Post.joins(:comments =&amp;gt; :guest)
+Post.joins(:comments =&gt; :guest)
 # sql:
 # SELECT posts.* FROM posts
 #    INNER JOIN comments ON comments.post_id = posts.id
 #    INNER JOIN guests ON guests.comment_id = comments.id
 
 # GuestによるコメントがありTagを１つ以上持つ投稿があるカテゴリを返す
-Category.joins(:posts =&amp;gt; [{:comments =&amp;gt; :guest}, :tags])
+Category.joins(:posts =&gt; [{:comments =&gt; :guest}, :tags])
 # sql:
 # SELECT categories.* FROM categories
 #   INNER JOIN posts ON posts.category_id = categories.id
@@ -497,7 +582,7 @@ Category.joins(:posts =&amp;gt; [{:comments =&amp;gt; :guest}, :tags])
 もちろんjoinしたテーブルはwhereで条件を追加できる。
 
 &lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# join-where
-Client.joins(:orders).where(:orders =&amp;gt; {:created_at =&amp;gt; time_range})
+Client.joins(:orders).where(:orders =&gt; {:created_at =&gt; time_range})
 &lt;/code&gt;&lt;/pre&gt;
 
 ## Eager loading
@@ -537,7 +622,7 @@ end
 使い方は`joins`と似ている。
 
 &lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# includes nested association
-Category.includes(:posts =&amp;gt; [{:comments =&amp;gt; :guest}, :tags]).find(1)
+Category.includes(:posts =&gt; [{:comments =&gt; :guest}, :tags]).find(1)
 &lt;/code&gt;&lt;/pre&gt;
 
 `joins`はの場合はINNER JOIN。
@@ -547,17 +632,17 @@ Category.includes(:posts =&amp;gt; [{:comments =&amp;gt; :guest}, :tags]).find(1
 ## Scope
 
 &lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# scope
-class Post &amp;lt; ActiveRecord::Base
-  scope :published, where(:published =&amp;gt; true)
+class Post &lt; ActiveRecord::Base
+  scope :published, where(:published =&gt; true)
 
   # チェーンできる
   scope :published_and_commented, published.and(self.arel_table[:comments_count].gt(0))
   
   # 時間を扱う場合は現在日時を束縛しないように、lambdaにしないといけない
-  scope :last_week, lambda { where(&quot;created_at &amp;lt; ?&quot;, Time.zone.now ) }
+  scope :last_week, lambda { where(&quot;created_at &lt; ?&quot;, Time.zone.now ) }
 
   # lambdaにする場合は、引数を受け取ることができる
-  scope :1_week_before, lambda { |time| where(&quot;created_at &amp;lt; ?&quot;, time) }
+  scope :1_week_before, lambda { |time| where(&quot;created_at &lt; ?&quot;, time) }
 end
 
 Post.published
@@ -566,9 +651,9 @@ Post.last_week
 Post.1_week_before(Time.zone.now) 
 
 # 引数を受け取るならクラスメソッドにした方が良いらしい
-class Post &amp;lt; ActiveRecord::Base
+class Post &lt; ActiveRecord::Base
   def self.1_week_before(time)
-    where(&quot;created_at &amp;lt; ?&quot;, time)
+    where(&quot;created_at &lt; ?&quot;, time)
   end
 end
 &lt;/code&gt;&lt;/pre&gt;
@@ -577,7 +662,7 @@ end
 `default_scope`は強制的に全てのクエリにスコープが付けられる。論理削除に便利。
 
 &lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# default_scope
-class Client &amp;lt; ActiveRecord::Base
+class Client &lt; ActiveRecord::Base
   default_scope where(&quot;removed_at IS NULL&quot;)
 end
 
@@ -600,9 +685,8 @@ rails4でdeprecated
 
 ## Running EXPLAIN
 
+--&gt;
 
-
-&lt;/pre&gt;
 </description>
             <published>2013-02-03 00:00:00 +0900</published>
             <link>http://akkunchoi.github.com/rails3-active-record-query-interface.html</link>
