@@ -1,16 +1,75 @@
 ---
 layout: posts
-title: Rails3 Active Record Query Interface
+title: Rails3 AREL - Active Record Query Interface
 tags: rails
 ---
 
-[ActiveRecordのクエリーインタフェースの解説](http://guides.rubyonrails.org/active_record_querying.html) のまとめ。
+* Toc
+{:toc}
 
-<pre><code data-language="ruby">#
+[ActiveRecordのクエリーインタフェースの解説](http://guides.rubyonrails.org/active_record_querying.html) のまとめ。実際にコードを書いて確認していきます。
+
+## 準備
+
+bundlerでインストールします。
+
+<pre><code data-language="ruby"># Gemfile
+source 'https://rubygems.org'
+      
+gem "activerecord", "~> 3.2.12"                             
+gem 'sqlite3'
+</code></pre>
+
+active_recordを単体で使えるようにセットアップします。
+
+<pre><code data-language="ruby"># main.rb
+require 'rubygems'
+require 'bundler/setup'
+
+require "active_record"                                     
+
+# database connection
+ActiveRecord::Base.establish_connection(                    
+  adapter:  "sqlite3",
+  database: ":memory:"                                      
+)
+</code></pre>
+
+例で使用するマイグレーションとモデルを作成します。
+
+<pre><code data-language="ruby"># main.rb
+# migration
+class Init < ActiveRecord::Migration                        
+  def self.up                                               
+    create_table(:clients){|t|                              
+      t.string :name                                        
+      t.integer :orders_count                               
+      t.timestamps                                          
+    }
+    create_table(:orders){|t|
+      t.integer :price
+      t.datetime :ordered_date 
+      t.timestamps
+    }                                                       
+    create_table(:addresses){|t|
+      t.references :clients
+      t.string :address
+    }
+  end
+  def self.down
+    drop_table :clients
+    drop_table :orders
+    drop_table :addresses
+  end
+end
+
+# run migrate
+Init.migrate(:up)
+
+# models
 class Client < ActiveRecord::Base
   has_one :address
   has_many :orders
-  has_and_belongs_to_many :roles
 end
 class Address < ActiveRecord::Base
   belongs_to :client
@@ -18,11 +77,20 @@ end
 class Order < ActiveRecord::Base
   belongs_to :client, :counter_cache => true
 end
-class Role < ActiveRecord::Base
-  has_and_belongs_to_many :clients
-end
+
 </code></pre>
 
+準備が整いました。データを入れてみます。
+
+<pre><code data-language="ruby"># main.rb
+Client.create({:name => "Alice"})
+Client.create({:name => "Bob"})
+Client.create({:name => "Carol"})
+</code></pre>
+
+
+
+<!--
 
 ## オブジェクトの取得
 
@@ -50,7 +118,37 @@ find メソッドというのもあります。`Model.find(options)` を実行�
 - 3. 結果を行ごとに適切なモデルクラスで、インスタンス化
 - 4. 指定されていれば、after_find コールバックを実行する
 
-### オブジェクトを１つだけ取得する（主キー）
+-->
+
+## データの取得
+
+<pre><code data-language="ruby"># find, first, last
+
+# idで検索します
+puts Client.find(1).name
+# => SELECT "clients".* FROM "clients" WHERE "clients"."id" = ? LIMIT 1  [["id", 1]]
+# "Alice"
+
+puts Client.first.name
+# => SELECT "clients".* FROM "clients" LIMIT 1
+# "Alice"
+
+puts Client.last.name
+# => SELECT "clients".* FROM "clients" ORDER BY "clients"."id" DESC LIMIT 1 
+# "Carol"
+
+# 配列にして複数を一度に取得できます
+puts Client.find([1,2])
+# => SELECT "clients".* FROM "clients" WHERE "clients"."id" IN (1, 2)
+# [#<Client id: 1, name: "Alice">, #<Client id: 2, name: "Bob">]
+
+</code></pre>
+
+
+<!--
+## 取得
+
+### find - オブジェクトを１つだけ取得する
 
 <pre><code data-language="ruby"># id = 10 の オブジェクトを取得
 client = Client.find(10)
@@ -63,7 +161,7 @@ client = Client.find(10)
 もし、データが見つからなかった場合は `ActiveRecord::RecordNotFound` 例外が発生します。
 
 
-### オブジェクトを１つだけ取得する（first）
+### first - 最初のオブジェクトを取得する
 
 <pre><code data-language="ruby"># first 
 client = Client.first
@@ -356,8 +454,6 @@ Client.joins('LEFT OUTER JOIN addresses ON addresses.client_id = clients.id')
 
 <pre><code data-language="ruby"># joins(symbol)
 #
-# Category (1) <----> (N) Post (1) <----> (N) Comment (1) <----> (1) Guest
-#                              (1) <----> (N) Tag
 #   
 class Category < ActiveRecord::Base
   has_many :posts
@@ -522,5 +618,5 @@ rails4でdeprecated
 
 ## Running EXPLAIN
 
-
+-->
 
