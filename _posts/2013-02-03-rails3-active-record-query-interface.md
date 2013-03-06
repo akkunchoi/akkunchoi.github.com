@@ -1,13 +1,13 @@
 ---
 layout: posts
-title: Rails3 AREL - Active Record Query Interface
+title: Rails3 - Active Record Query Interface
 tags: rails
 ---
 
 * Toc
 {:toc}
 
-[ActiveRecordのクエリーインタフェースの解説](http://guides.rubyonrails.org/active_record_querying.html) のまとめ。実際にコードを書いて確認していきます。
+[ActiveRecordのクエリーインタフェースの解説](http://guides.rubyonrails.org/active_record_querying.html) を参考に、コードを書いて確認していきます。
 
 ## 準備
 
@@ -39,21 +39,22 @@ ActiveRecord::Base.establish_connection(
 
 <pre><code data-language="ruby"># main.rb
 # migration
-class Init < ActiveRecord::Migration                        
-  def self.up                                               
-    create_table(:clients){|t|                              
-      t.string :name                                        
-      t.integer :orders_count                               
-      t.timestamps                                          
+class Init < ActiveRecord::Migration
+  def self.up
+    create_table(:clients){|t|
+      t.string :name
+      t.integer :orders_count
+      t.timestamps
     }
     create_table(:orders){|t|
+      t.references :client
       t.integer :price
-      t.datetime :ordered_date 
+      t.datetime :ordered_date
       t.timestamps
-    }                                                       
+    }
     create_table(:addresses){|t|
-      t.references :clients
-      t.string :address
+      t.references :client
+      t.string :pref
     }
   end
   def self.down
@@ -86,8 +87,16 @@ end
 Client.create({:name => "Alice"})
 Client.create({:name => "Bob"})
 Client.create({:name => "Carol"})
+Address.create({:client => Client.find(1), :pref => "Osaka"})
+
 </code></pre>
 
+SQLを確認するためにloggerを設定します。
+
+<pre><code data-language="ruby"># main.rb
+ActiveSupport::LogSubscriber.colorize_logging = false
+ActiveRecord::Base.logger = Logger.new(STDOUT)
+</code></pre>
 
 
 <!--
@@ -120,129 +129,134 @@ find メソッドというのもあります。`Model.find(options)` を実行�
 
 -->
 
-## データの取得
+## オブジェクトをひとつだけ取り出す
 
-<pre><code data-language="ruby"># find, first, last
+### find - 主キーによる検索
 
-# idで検索します
+普通は id で検索します。
+
+<pre><code data-language="ruby"># find
 puts Client.find(1).name
 # => SELECT "clients".* FROM "clients" WHERE "clients"."id" = ? LIMIT 1  [["id", 1]]
 # "Alice"
+</code></pre>
 
+もしデータが見つからなかった場合は`ActiveRecord::RecordNotFound`例外が発生します。
+
+<pre><code data-language="ruby"># find but not found
+begin
+  Client.find(100)
+rescue ActiveRecord::RecordNotFound => e
+  p e
+  #<ActiveRecord::RecordNotFound: Couldn't find Client with id=100> 
+end
+</code></pre>
+
+
+以前はこの find の引数に色々パラメータを入れて複雑な条件をするのが主流でした。現在では後述の`ActiveRecord::Relation`を使う方が良いです。 find はもっぱら、主キーからオブジェクトを取得する目的だけに使われるようになったようです。
+
+
+### first
+
+最初の項目を取得します。`LIMIT 1`と同じです。
+`first`はレコードが存在していなければ`nil`を返しますが、`first!`にすると、`ActiveRecord::RecordNotFound`例外が発生します。
+
+<pre><code data-language="ruby"># first
 puts Client.first.name
 # => SELECT "clients".* FROM "clients" LIMIT 1
 # "Alice"
+</code></pre>
 
+
+### last
+
+最後の項目を取得します。降順にして`LIMIT 1`にすることで取得しています。
+`last`はレコードが存在していなければ`nil`を返しますが、`last!`にすると、`ActiveRecord::RecordNotFound`例外が発生します。
+
+<pre><code data-language="ruby"># last
 puts Client.last.name
 # => SELECT "clients".* FROM "clients" ORDER BY "clients"."id" DESC LIMIT 1 
 # "Carol"
+</code></pre>
 
-# 配列にして複数を一度に取得できます
-puts Client.find([1,2])
+
+## 複数のオブジェクトを取り出す
+
+id の配列をfindすると一度に複数のオブジェクトを取得できます。
+
+<pre><code data-language="ruby"># find(array)
+p Client.find([1,2])
 # => SELECT "clients".* FROM "clients" WHERE "clients"."id" IN (1, 2)
 # [#<Client id: 1, name: "Alice">, #<Client id: 2, name: "Bob">]
-
 </code></pre>
+
+ひとつでもレコードが見つからなければやはり`ActiveRecord::RecordNotFound`です。
+
+find, first, last は [ActiveRecord::FinderMethods](https://github.com/rails/rails/blob/v3.2.12/activerecord/lib/active_record/relation/finder_methods.rb) で定義されています。
+
+## 複数のオブジェクトをまとめて処理する
+
+テーブル内のレコード全件を処理したい場合は`all`メソッドを使うことができます。
+
+<pre><code data-language="ruby"># all
+Client.all.each do |c|
+  # ...
+end
+</code></pre>
+
+ただ、`all`はテーブルの全データを取得して、インスタンス化し、メモリ内に保持するので、何千件もあるとすぐメモリ不足になります。
+（allは実行された時点で、データベースにクエリーを投げます。戻り値は`ActiveRecord::Relation`ではありません。ここは間違いやすいので注意です）
+
+この問題を解決するために、`find_each`と`find_in_batches`という２通りの方法が用意されています。
+
+### find_each 
+
+全件をいくつかのブロックに分けて処理していくので、効率的に全件処理できます。。デフォルトでは1000件ごとです。
+findの標準的なオプション（`:order`, `:limit`を除く）が使用できます。
+
+<pre><code data-language="ruby"># find_each
+Client.find_each(:include => :address) do |c|
+  p c
+end
+# SELECT "clients".* FROM "clients" WHERE ("clients"."id" >= 0) ORDER BY "clients"."id" ASC LIMIT 1000
+# SELECT "addresses".* FROM "addresses" WHERE "addresses"."client_id" IN (1, 2, 3) 
+
+#<Address id: 1, client_id: 1, pref: "Osaka">                              
+# nil
+# nil
+
+# :start, :batch_size オプションが追加で使用できる
+Client.find_each(:start => 2000, :batch_size => 5000) do |c|
+  # ...
+end
+</code></pre>
+
+`:start`はバッチを再開する場合や、並列してワーカーを実行する場合などに利用できます。
+
+### find_in_batches
+
+find_eachと似てますが、こちらはブロックの引数が配列になります。
+
+<pre><code data-language="ruby"># find_in_batches
+Client.find_in_batches(:include => :orders, :batch_size => 2) do |clients|
+  puts clients.size
+end
+
+# 一回目のバッチ
+# SELECT "clients".* FROM "clients" WHERE ("clients"."id" >= 0) ORDER BY "clients"."id" ASC LIMIT 2
+# SELECT "addresses".* FROM "addresses" WHERE "addresses"."client_id" IN (1, 2)
+# => 2
+
+# 二回目のバッチ
+# SELECT "clients".* FROM "clients" WHERE ("clients"."id" > 2) ORDER BY "clients"."id" ASC LIMIT 2
+# SELECT "addresses".* FROM "addresses" WHERE "addresses"."client_id" IN (3)
+# => 1
+</code></pre>
+
+
 
 
 <!--
-## 取得
-
-### find - オブジェクトを１つだけ取得する
-
-<pre><code data-language="ruby"># id = 10 の オブジェクトを取得
-client = Client.find(10)
-# => #<Client id: 10, first_name: "たかし">
-# 
-# sql: SELECT * FROM clients WHERE (clients.id = 10) LIMIT 1
-# 
-</code></pre>
-
-もし、データが見つからなかった場合は `ActiveRecord::RecordNotFound` 例外が発生します。
-
-
-### first - 最初のオブジェクトを取得する
-
-<pre><code data-language="ruby"># first 
-client = Client.first
-# => #<Client id: 1, ... >
-# 
-# sql: SELECT * FROM clients LIMIT 1
-# 
-</code></pre>
-
-もし、データが見つからなければ、`nil` を返します。`Model.first!` だと、例外が発生します。
-
-
-### オブジェクトを１つだけ取得する（last）
-
-<pre><code data-language="ruby"># last
-client = Client.last
-# => #<Client id: 221, ... >
-# 
-# sql: SELECT * FROM clients ORDER BY clients.id DESC LIMIT 1
-# 
-</code></pre>
-
-もし、データが見つからなければ、`nil` を返します。`Model.last!`だと、例外が発生します。
-
-
-### オブジェクトを複数取得する（主キー）
-
-`find` メソッドでidの配列を渡すと、そのオブジェクトを配列で返します。
-
-<pre><code data-language="ruby"># find multiple
-client = Client.find([1, 10]) # または Client.find(1, 10)
-# => [#<Client id: 1, ... >, #<Client id: 10, ... >]
-# 
-# sql: SELECT * FROM clients WHERE (clients.id IN (1,10)) 
-# 
-</code></pre>
-
-ひとつも見つからなかった場合に、`ActiveRecord::RecordNotFound`例外が発生します。
-
-
-### テーブル内の全件を取得する（all）
-
-テーブル内のレコード全件を処理したい場合は`all`メソッドを使います。
-
-<pre><code data-language="ruby"># all
-User.all.each do |user|
-  NewsLetter.weekly_deliver(user)
-end
-</code></pre>
-
-ただ、`all'`はテーブルの全データを取得して、インスタンス化し、メモリ内に保持するので、何千件もあるとすぐメモリ不足になります。
-この問題を解決するために、`find_each`と`find_in_batches`という２通りの方法が用意されています。
-
-### テーブル内の全件を取得する（find_each）
-
-全件をいくつかのブロックに分けて処理していくので、効率的に全件処理できます。。デフォルトでは1000件ごとです。
-findの標準的なオプション（:order, :limitを除く）が使用できます。
-
-<pre><code data-language="ruby"># find_each
-User.find_each do |user|
-  NewsLetter.weekly_deliver(user)
-end
-
-# :start, :batch_size オプションが追加で使用できる
-User.find_each(:start => 2000, :batch_size => 5000) do |user|
-  NewsLetter.weekly_deliver(user)
-end
-</code></pre>
-
-:startはバッチを再開する場合や、並列してワーカーを実行する場合などに利用できます。
-
-### テーブル内の全件を取得する（find_in_batches）
-
-find_eachと似ているけど、こちらは配列で取得します。
-
-<pre><code data-language="ruby"># find_in_batches
-Invoice.find_in_batches(:include => :invoice_lines) do |invoices|
-  export.add_invoices(invoices)
-end
-</code></pre>
-
 
 ## Where
 
