@@ -5,8 +5,8 @@
         <link>http://akkunchoi.github.com</link>
         <atom:link href="http://akkunchoi.github.com/rss.xml" rel="self" type="application/rss+xml" />
         <description>This site is a information for development written by akkunchoi</description>
-        <pubDate>Sun, 03 Mar 2013 09:14:06 +0900</pubDate>
-        <lastBuildDate>Sun, 03 Mar 2013 09:14:06 +0900</lastBuildDate>
+        <pubDate>Wed, 06 Mar 2013 18:12:35 +0900</pubDate>
+        <lastBuildDate>Wed, 06 Mar 2013 18:12:35 +0900</lastBuildDate>
         
         <item>
             <title>PHP5.3.xの問題あるバージョン</title>
@@ -71,13 +71,24 @@ apacheにHUPを送信することで現象は発生しなくなりました。&l
         </item>
         
         <item>
-            <title>Rails3 AREL - Active Record Query Interface</title>
+            <title>Rails3 - Active Record Query Interface</title>
             <description>&lt;ul id=&quot;markdown-toc&quot;&gt;
   &lt;li&gt;&lt;a href=&quot;#section&quot;&gt;準備&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#section-1&quot;&gt;データの取得&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#section-1&quot;&gt;オブジェクトをひとつだけ取り出す&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#find---&quot;&gt;find - 主キーによる検索&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#first&quot;&gt;first&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#last&quot;&gt;last&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#section-2&quot;&gt;複数のオブジェクトを取り出す&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#section-3&quot;&gt;複数のオブジェクトをまとめて処理する&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#findeach&quot;&gt;find_each&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#findinbatches&quot;&gt;find_in_batches&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;&lt;a href=&quot;http://guides.rubyonrails.org/active_record_querying.html&quot;&gt;ActiveRecordのクエリーインタフェースの解説&lt;/a&gt; のまとめ。実際にコードを書いて確認していきます。&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://guides.rubyonrails.org/active_record_querying.html&quot;&gt;ActiveRecordのクエリーインタフェースの解説&lt;/a&gt; を参考に、コードを書いて確認していきます。&lt;/p&gt;
 
 &lt;h2 id=&quot;section&quot;&gt;準備&lt;/h2&gt;
 
@@ -109,21 +120,22 @@ ActiveRecord::Base.establish_connection(
 
 &lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# main.rb
 # migration
-class Init &amp;lt; ActiveRecord::Migration                        
-  def self.up                                               
-    create_table(:clients){|t|                              
-      t.string :name                                        
-      t.integer :orders_count                               
-      t.timestamps                                          
+class Init &amp;lt; ActiveRecord::Migration
+  def self.up
+    create_table(:clients){|t|
+      t.string :name
+      t.integer :orders_count
+      t.timestamps
     }
     create_table(:orders){|t|
+      t.references :client
       t.integer :price
-      t.datetime :ordered_date 
+      t.datetime :ordered_date
       t.timestamps
-    }                                                       
+    }
     create_table(:addresses){|t|
-      t.references :clients
-      t.string :address
+      t.references :client
+      t.string :pref
     }
   end
   def self.down
@@ -156,6 +168,15 @@ end
 Client.create({:name =&amp;gt; &quot;Alice&quot;})
 Client.create({:name =&amp;gt; &quot;Bob&quot;})
 Client.create({:name =&amp;gt; &quot;Carol&quot;})
+Address.create({:client =&amp;gt; Client.find(1), :pref =&amp;gt; &quot;Osaka&quot;})
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;SQLを確認するためにloggerを設定します。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# main.rb
+ActiveSupport::LogSubscriber.colorize_logging = false
+ActiveRecord::Base.logger = Logger.new(STDOUT)
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;!--
@@ -188,128 +209,127 @@ find メソッドというのもあります。`Model.find(options)` を実行�
 
 --&gt;
 
-&lt;h2 id=&quot;section-1&quot;&gt;データの取得&lt;/h2&gt;
+&lt;h2 id=&quot;section-1&quot;&gt;オブジェクトをひとつだけ取り出す&lt;/h2&gt;
 
-&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# find, first, last
+&lt;h3 id=&quot;find---&quot;&gt;find - 主キーによる検索&lt;/h3&gt;
 
-# idで検索します
+&lt;p&gt;普通は id で検索します。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# find
 puts Client.find(1).name
 # =&amp;gt; SELECT &quot;clients&quot;.* FROM &quot;clients&quot; WHERE &quot;clients&quot;.&quot;id&quot; = ? LIMIT 1  [[&quot;id&quot;, 1]]
 # &quot;Alice&quot;
+&lt;/code&gt;&lt;/pre&gt;
 
+&lt;p&gt;もしデータが見つからなかった場合は&lt;code&gt;ActiveRecord::RecordNotFound&lt;/code&gt;例外が発生します。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# find but not found
+begin
+  Client.find(100)
+rescue ActiveRecord::RecordNotFound =&amp;gt; e
+  p e
+  #&amp;lt;ActiveRecord::RecordNotFound: Couldn't find Client with id=100&amp;gt; 
+end
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;以前はこの find の引数に色々パラメータを入れて複雑な条件をするのが主流でした。現在では後述の&lt;code&gt;ActiveRecord::Relation&lt;/code&gt;を使う方が良いです。 find はもっぱら、主キーからオブジェクトを取得する目的だけに使われるようになったようです。&lt;/p&gt;
+
+&lt;h3 id=&quot;first&quot;&gt;first&lt;/h3&gt;
+
+&lt;p&gt;最初の項目を取得します。&lt;code&gt;LIMIT 1&lt;/code&gt;と同じです。
+&lt;code&gt;first&lt;/code&gt;はレコードが存在していなければ&lt;code&gt;nil&lt;/code&gt;を返しますが、&lt;code&gt;first!&lt;/code&gt;にすると、&lt;code&gt;ActiveRecord::RecordNotFound&lt;/code&gt;例外が発生します。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# first
 puts Client.first.name
 # =&amp;gt; SELECT &quot;clients&quot;.* FROM &quot;clients&quot; LIMIT 1
 # &quot;Alice&quot;
+&lt;/code&gt;&lt;/pre&gt;
 
+&lt;h3 id=&quot;last&quot;&gt;last&lt;/h3&gt;
+
+&lt;p&gt;最後の項目を取得します。降順にして&lt;code&gt;LIMIT 1&lt;/code&gt;にすることで取得しています。
+&lt;code&gt;last&lt;/code&gt;はレコードが存在していなければ&lt;code&gt;nil&lt;/code&gt;を返しますが、&lt;code&gt;last!&lt;/code&gt;にすると、&lt;code&gt;ActiveRecord::RecordNotFound&lt;/code&gt;例外が発生します。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# last
 puts Client.last.name
 # =&amp;gt; SELECT &quot;clients&quot;.* FROM &quot;clients&quot; ORDER BY &quot;clients&quot;.&quot;id&quot; DESC LIMIT 1 
 # &quot;Carol&quot;
+&lt;/code&gt;&lt;/pre&gt;
 
-# 配列にして複数を一度に取得できます
-puts Client.find([1,2])
+&lt;h2 id=&quot;section-2&quot;&gt;複数のオブジェクトを取り出す&lt;/h2&gt;
+
+&lt;p&gt;id の配列をfindすると一度に複数のオブジェクトを取得できます。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# find(array)
+p Client.find([1,2])
 # =&amp;gt; SELECT &quot;clients&quot;.* FROM &quot;clients&quot; WHERE &quot;clients&quot;.&quot;id&quot; IN (1, 2)
 # [#&amp;lt;Client id: 1, name: &quot;Alice&quot;&amp;gt;, #&amp;lt;Client id: 2, name: &quot;Bob&quot;&amp;gt;]
+&lt;/code&gt;&lt;/pre&gt;
 
+&lt;p&gt;ひとつでもレコードが見つからなければやはり&lt;code&gt;ActiveRecord::RecordNotFound&lt;/code&gt;です。&lt;/p&gt;
+
+&lt;p&gt;find, first, last は &lt;a href=&quot;https://github.com/rails/rails/blob/v3.2.12/activerecord/lib/active_record/relation/finder_methods.rb&quot;&gt;ActiveRecord::FinderMethods&lt;/a&gt; で定義されています。&lt;/p&gt;
+
+&lt;h2 id=&quot;section-3&quot;&gt;複数のオブジェクトをまとめて処理する&lt;/h2&gt;
+
+&lt;p&gt;テーブル内のレコード全件を処理したい場合は&lt;code&gt;all&lt;/code&gt;メソッドを使うことができます。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# all
+Client.all.each do |c|
+  # ...
+end
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ただ、&lt;code&gt;all&lt;/code&gt;はテーブルの全データを取得して、インスタンス化し、メモリ内に保持するので、何千件もあるとすぐメモリ不足になります。
+（allは実行された時点で、データベースにクエリーを投げます。戻り値は&lt;code&gt;ActiveRecord::Relation&lt;/code&gt;ではありません。ここは間違いやすいので注意です）&lt;/p&gt;
+
+&lt;p&gt;この問題を解決するために、&lt;code&gt;find_each&lt;/code&gt;と&lt;code&gt;find_in_batches&lt;/code&gt;という２通りの方法が用意されています。&lt;/p&gt;
+
+&lt;h3 id=&quot;findeach&quot;&gt;find_each&lt;/h3&gt;
+
+&lt;p&gt;全件をいくつかのブロックに分けて処理していくので、効率的に全件処理できます。。デフォルトでは1000件ごとです。
+findの標準的なオプション（&lt;code&gt;:order&lt;/code&gt;, &lt;code&gt;:limit&lt;/code&gt;を除く）が使用できます。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# find_each
+Client.find_each(:include =&amp;gt; :address) do |c|
+  p c
+end
+# SELECT &quot;clients&quot;.* FROM &quot;clients&quot; WHERE (&quot;clients&quot;.&quot;id&quot; &amp;gt;= 0) ORDER BY &quot;clients&quot;.&quot;id&quot; ASC LIMIT 1000
+# SELECT &quot;addresses&quot;.* FROM &quot;addresses&quot; WHERE &quot;addresses&quot;.&quot;client_id&quot; IN (1, 2, 3) 
+
+#&amp;lt;Address id: 1, client_id: 1, pref: &quot;Osaka&quot;&amp;gt;                              
+# nil
+# nil
+
+# :start, :batch_size オプションが追加で使用できる
+Client.find_each(:start =&amp;gt; 2000, :batch_size =&amp;gt; 5000) do |c|
+  # ...
+end
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code&gt;:start&lt;/code&gt;はバッチを再開する場合や、並列してワーカーを実行する場合などに利用できます。&lt;/p&gt;
+
+&lt;h3 id=&quot;findinbatches&quot;&gt;find_in_batches&lt;/h3&gt;
+
+&lt;p&gt;find_eachと似てますが、こちらはブロックの引数が配列になります。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# find_in_batches
+Client.find_in_batches(:include =&amp;gt; :orders, :batch_size =&amp;gt; 2) do |clients|
+  puts clients.size
+end
+
+# 一回目のバッチ
+# SELECT &quot;clients&quot;.* FROM &quot;clients&quot; WHERE (&quot;clients&quot;.&quot;id&quot; &amp;gt;= 0) ORDER BY &quot;clients&quot;.&quot;id&quot; ASC LIMIT 2
+# SELECT &quot;addresses&quot;.* FROM &quot;addresses&quot; WHERE &quot;addresses&quot;.&quot;client_id&quot; IN (1, 2)
+# =&amp;gt; 2
+
+# 二回目のバッチ
+# SELECT &quot;clients&quot;.* FROM &quot;clients&quot; WHERE (&quot;clients&quot;.&quot;id&quot; &amp;gt; 2) ORDER BY &quot;clients&quot;.&quot;id&quot; ASC LIMIT 2
+# SELECT &quot;addresses&quot;.* FROM &quot;addresses&quot; WHERE &quot;addresses&quot;.&quot;client_id&quot; IN (3)
+# =&amp;gt; 1
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;!--
-## 取得
-
-### find - オブジェクトを１つだけ取得する
-
-&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# id = 10 の オブジェクトを取得
-client = Client.find(10)
-# =&gt; #&lt;Client id: 10, first_name: &quot;たかし&quot;&gt;
-# 
-# sql: SELECT * FROM clients WHERE (clients.id = 10) LIMIT 1
-# 
-&lt;/code&gt;&lt;/pre&gt;
-
-もし、データが見つからなかった場合は `ActiveRecord::RecordNotFound` 例外が発生します。
-
-
-### first - 最初のオブジェクトを取得する
-
-&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# first 
-client = Client.first
-# =&gt; #&lt;Client id: 1, ... &gt;
-# 
-# sql: SELECT * FROM clients LIMIT 1
-# 
-&lt;/code&gt;&lt;/pre&gt;
-
-もし、データが見つからなければ、`nil` を返します。`Model.first!` だと、例外が発生します。
-
-
-### オブジェクトを１つだけ取得する（last）
-
-&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# last
-client = Client.last
-# =&gt; #&lt;Client id: 221, ... &gt;
-# 
-# sql: SELECT * FROM clients ORDER BY clients.id DESC LIMIT 1
-# 
-&lt;/code&gt;&lt;/pre&gt;
-
-もし、データが見つからなければ、`nil` を返します。`Model.last!`だと、例外が発生します。
-
-
-### オブジェクトを複数取得する（主キー）
-
-`find` メソッドでidの配列を渡すと、そのオブジェクトを配列で返します。
-
-&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# find multiple
-client = Client.find([1, 10]) # または Client.find(1, 10)
-# =&gt; [#&lt;Client id: 1, ... &gt;, #&lt;Client id: 10, ... &gt;]
-# 
-# sql: SELECT * FROM clients WHERE (clients.id IN (1,10)) 
-# 
-&lt;/code&gt;&lt;/pre&gt;
-
-ひとつも見つからなかった場合に、`ActiveRecord::RecordNotFound`例外が発生します。
-
-
-### テーブル内の全件を取得する（all）
-
-テーブル内のレコード全件を処理したい場合は`all`メソッドを使います。
-
-&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# all
-User.all.each do |user|
-  NewsLetter.weekly_deliver(user)
-end
-&lt;/code&gt;&lt;/pre&gt;
-
-ただ、`all'`はテーブルの全データを取得して、インスタンス化し、メモリ内に保持するので、何千件もあるとすぐメモリ不足になります。
-この問題を解決するために、`find_each`と`find_in_batches`という２通りの方法が用意されています。
-
-### テーブル内の全件を取得する（find_each）
-
-全件をいくつかのブロックに分けて処理していくので、効率的に全件処理できます。。デフォルトでは1000件ごとです。
-findの標準的なオプション（:order, :limitを除く）が使用できます。
-
-&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# find_each
-User.find_each do |user|
-  NewsLetter.weekly_deliver(user)
-end
-
-# :start, :batch_size オプションが追加で使用できる
-User.find_each(:start =&gt; 2000, :batch_size =&gt; 5000) do |user|
-  NewsLetter.weekly_deliver(user)
-end
-&lt;/code&gt;&lt;/pre&gt;
-
-:startはバッチを再開する場合や、並列してワーカーを実行する場合などに利用できます。
-
-### テーブル内の全件を取得する（find_in_batches）
-
-find_eachと似ているけど、こちらは配列で取得します。
-
-&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# find_in_batches
-Invoice.find_in_batches(:include =&gt; :invoice_lines) do |invoices|
-  export.add_invoices(invoices)
-end
-&lt;/code&gt;&lt;/pre&gt;
-
 
 ## Where
 
