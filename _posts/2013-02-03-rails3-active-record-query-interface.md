@@ -88,6 +88,8 @@ Client.create({:name => "Alice"})
 Client.create({:name => "Bob"})
 Client.create({:name => "Carol"})
 Address.create({:client => Client.find(1), :pref => "Osaka"})
+Order.create({:client => Client.find(2), :price=> 20})
+Order.create({:client => Client.find(2), :price=> 50})
 
 </code></pre>
 
@@ -99,35 +101,6 @@ ActiveRecord::Base.logger = Logger.new(STDOUT)
 </code></pre>
 
 
-<!--
-
-## オブジェクトの取得
-
-情報取得するには以下の finder method が利用できます。これを呼び出すことで、SQLを書かずにクエリーを実行することができます。戻り値は ActiveRecord::Relation インスタンスです。
-
-- where
-- select
-- group
-- order
-- reorder
-- reverse_order
-- limit
-- offset
-- joins
-- includes
-- lock
-- readonly
-- from
-- having
-
-find メソッドというのもあります。`Model.find(options)` を実行すると、次のような動作になります。
-
-- 1. オプションをSQLクエリに変換する
-- 2. SQLクエリを実行し、結果をデータベースから取り出す
-- 3. 結果を行ごとに適切なモデルクラスで、インスタンス化
-- 4. 指定されていれば、after_find コールバックを実行する
-
--->
 
 ## オブジェクトをひとつだけ取り出す
 
@@ -254,9 +227,30 @@ end
 </code></pre>
 
 
+## ActiveRecord::Relation
 
+条件を指定して取得するには以下のメソッドを使います。これらは`ActiveRecord::Relation`オブジェクトを返します。
 
-<!--
+- where
+- select
+- group
+- order
+- reorder
+- reverse_order
+- limit
+- offset
+- joins
+- includes
+- lock
+- readonly
+- from
+- having
+
+<pre><code data-language="ruby">p Client.where("1").class
+# ActiveRecord::Relation
+</code></pre>
+
+`find` に同じようなオプションを与えることもできます。
 
 ## Where
 
@@ -266,12 +260,14 @@ Stringの場合、SQLを直接書くようなイメージです。エスケー�
 
 <pre><code data-language="ruby"># where(string)
 Client.where("orders_count = '2'")
+# SELECT "clients".* FROM "clients" WHERE (orders_count = '2')
+# => [#<Client id: 2, name: "Bob", orders_count: 2, created_at: "2013-03-06 19:12:44", updated_at: "2013-03-06 19:12:44">]
 
 # これはやってはいけない！
 Client.where("first_name LIKE '%#{params[:first_name]}%'")
 </code></pre>
 
-Arrayにすると、プレースホルダーが使えます。'?' にエスケープされた第二引数の値が置き換わるので安全です。
+Arrayにすると、プレースホルダーが使えます。`?` にエスケープされた値が入るので安全です。
 [詳細](http://guides.rubyonrails.org/security.html#sql-injection)。
 
 <pre><code data-language="ruby"># where(array, ...)
@@ -285,8 +281,7 @@ Client.where("created_at >= :start_date AND created_at <= :end_date",
   {:start_date => params[:start_date], :end_date => params[:end_date]})
 </code></pre>
 
-
-Hashにするとさらに読みやすくなります。
+Hashにするとすっきりします。
 
 <pre><code data-language="ruby"># where(hash)
 Client.where(:orders_count => 2)
@@ -308,9 +303,10 @@ Client.where(:orders_count => [1,3,5])
 # SELECT * FROM clients WHERE (clients.orders_count IN (1,3,5))
 </code></pre>
 
+
 ## Order
 
-ORDER BY です。
+普通に`ORDER BY`です。
 
 <pre><code data-language="ruby"># order by
 Client.order("created_at")
@@ -319,7 +315,7 @@ Client.order("orders_count ASC, created_at DESC")
 
 ## Select
 
-特定のカラムだけ取得する。selectを使うと Readonly になります。
+`SELECT`句です。これを指定すると、取得されたオブジェクトは Readonly になります。
 
 <pre><code data-language="ruby"># select
 Client.select("viewable_by, locked")
@@ -338,7 +334,6 @@ Client.select(:name).uniq
 
 q = Client.select(:name).uniq
 q = uniq(false) # uniq解除
-
 </code></pre>
 
 
@@ -368,10 +363,10 @@ Order.select("date(created_at) as ordered_date, sum(price) as total_price")
 
 構築したクエリから一部を除外したり、特定の条件だけにするメソッドが用意されてます。
 
-- except(): 指定クエリを除外（:order, :whereなど）
-- only(): 指定クエリだけにする（:order, :whereなど）
-- reorder(): default scope で指定した order を上書きします
-- reverse_order(): 逆順にします
+- `except()`: 指定クエリを除外（`:order`, `:where`など）
+- `only()`: 指定クエリだけにする（`:order`, `:where`など）
+- `reorder()`: default scope で指定した order を上書きします
+- `reverse_order()`: 逆順にします
 
 
 ## 読み込み専用 - Readonly
@@ -454,9 +449,10 @@ item.with_lock do
 end
 </code></pre>
 
+<!--
 ## Join
 
-whereと同様、Strngで与えると、SQLがそのまま記述できます。
+whereと同様、Stringで与えると、SQLをそのまま記述できます。
 
 <pre><code data-language="ruby"># joins(string)
 Client.joins('LEFT OUTER JOIN addresses ON addresses.client_id = clients.id')
