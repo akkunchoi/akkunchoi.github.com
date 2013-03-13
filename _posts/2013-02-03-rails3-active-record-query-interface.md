@@ -1,3 +1,5 @@
+Rails3 - Active Record Query Interface
+
 ---
 layout: posts
 title: Rails3 - Active Record Query Interface
@@ -250,7 +252,7 @@ end
 # ActiveRecord::Relation
 </code></pre>
 
-`find` に同じようなオプションを与えることもできます。
+`find` に同じようなオプションを与えることもできます（古いやり方）。
 
 ## Where
 
@@ -306,7 +308,7 @@ Client.where(:orders_count => [1,3,5])
 
 ## Order
 
-普通に`ORDER BY`です。
+`ORDER BY`です。
 
 <pre><code data-language="ruby"># order by
 Client.order("created_at")
@@ -318,12 +320,22 @@ Client.order("orders_count ASC, created_at DESC")
 `SELECT`句です。これを指定すると、取得されたオブジェクトは Readonly になります。
 
 <pre><code data-language="ruby"># select
-Client.select("viewable_by, locked")
+Client.select(:orders_count)
 # sql: 
-# SELECT viewable_by, locked FROM clients
+# SELECT orders_count FROM "clients"
 </code></pre>
 
 selectとした列以外を取得しようとすると、ActiveRecord::MissingAttributeError になります。
+
+<pre><code data-language="ruby"># select error
+c = Client.select(:orders_count).first
+begin
+  p c.name
+rescue ActiveModel::MissingAttributeError => e
+  p e
+end
+# #<ActiveModel::MissingAttributeError: missing attribute: name>
+</code></pre>
 
 `SELECT DISTINCT` 相当は `uniq()` です。
 
@@ -339,6 +351,8 @@ q = uniq(false) # uniq解除
 
 ## Limit, Offset
 
+`LIMIT`と`OFFSET`句です。
+
 <pre><code data-language="ruby"># limit, offset
 Client.limit(5)
 Client.offset(30)
@@ -346,10 +360,12 @@ Client.offset(30)
 
 ## Group
 
+`GROUP BY` です。
+
 <pre><code data-language="ruby"># group by
 Client.group("date(created_at)")
+# sql: SELECT "clients".* FROM "clients" GROUP BY date(created_at)
 </code></pre>
-
 
 ## Having
 
@@ -357,6 +373,7 @@ Client.group("date(created_at)")
 Order.select("date(created_at) as ordered_date, sum(price) as total_price")
   .group("date(created_at)")
   .having("sum(price) > ?", 100)
+# sql: SELECT date(created_at) as ordered_date, sum(price) as total_price FROM "orders" GROUP BY date(created_at) HAVING sum(price) > 100
 </code></pre>
 
 ## 上書き - Overriding
@@ -368,6 +385,17 @@ Order.select("date(created_at) as ordered_date, sum(price) as total_price")
 - `reorder()`: default scope で指定した order を上書きします
 - `reverse_order()`: 逆順にします
 
+`except`を使ってみます。例外的な処理が発生する場合に使えるかもです。
+
+<pre><code data-language="ruby"># except
+clients = Client.where("orders_count > 0")
+p clients
+# [#<Client id: 2, name: "Bob">]
+
+clients = clients.except(:where)
+p clients
+# [#<Client id: 1, name: "Alice">, #<Client id: 2, name: "Bob">, #<Client id: 3, name: "Carol">]
+</code></pre>
 
 ## 読み込み専用 - Readonly
 
@@ -375,7 +403,7 @@ Readonlyなオブジェクトを更新しようとすると、例外が発生し
 
 <pre><code data-language="ruby"># readonly
 client = Client.readonly.first
-client.visits += 1
+client.name = "hoge"
 client.save # raise ActiveRecord::ReadOnlyRecord
 </code></pre>
 
@@ -394,14 +422,19 @@ c2 = Client.find(1)
  
 c1.first_name = "Michael"
 c1.save
-  
+ 
+# sql: 
+# begin transaction
+# UPDATE "clients" SET "name" = 'Michael', "updated_at" = '2013-03-13 17:17:59.886521', "lock_version" = 1 WHERE ("clients"."id" = 1 AND "clients"."lock_version" = 0)
+# commit transaction
+
 c2.name = "should fail"
 c2.save # Raises an ActiveRecord::StaleObjectError
 </code></pre>
 
 `ActiveRecord::Base.lock_optimistically = false` でこの機能を無効にできます。
 
-`set_locking_column` でlock_versionというカラム名を変更できます。
+`set_locking_column` で既定の`lock_version`というカラム名を変更できます。
 
 <pre><code data-language="ruby"># set_locking_column
 class Client < ActiveRecord::Base
@@ -418,36 +451,36 @@ end
 `lock`を使ったリレーションはデッドロックを避けるために、通常`transaction`ブロックで囲みます。
 
 <pre><code data-language="ruby"># transaction
-Item.transaction do
-  i = Item.lock.first
-  i.name = 'Jones'
-  i.save
+Address.transaction do
+  a = Address.lock.first
+  a.pref = "Hokkaido"
+  a.save
 end
-# SQL (0.2ms)   BEGIN
-# Item Load (0.3ms)   SELECT * FROM `items` LIMIT 1 FOR UPDATE
-# Item Update (0.4ms)   UPDATE `items` SET `updated_at` = '2009-02-07 18:05:56', `name` = 'Jones' WHERE `id` = 1
-# SQL (0.8ms)   COMMIT
+# begin transaction
+# UPDATE "addresses" SET "pref" = 'Hokkaido' WHERE "addresses"."id" = 1
+# commit transaction
 </code></pre>
 
 
 共有ロックなどロックタイプを変更したい場合は引数にタイプを与えてやります。
 
 <pre><code data-language="ruby"># lock in share mode
-Item.transaction do
-  i = Item.lock("LOCK IN SHARE MODE").find(1)
-  i.increment!(:views)
+Address.transaction do
+  a = Address.lock("LOCK IN SHARE MODE").first
+  a.increment!(:views)
 end
 </code></pre>
 
 すでにインスタンスを取得しているなら、`with_lock`でトランザクションを開始できます。
 
 <pre><code data-language="ruby"># with_lock
-item = Item.first
-item.with_lock do
+a = Address.first
+a.with_lock do
   # このブロックはtransaction内で、itemはロックされてます
-  item.increment!(:views)
+  a.increment!(:views)
 end
 </code></pre>
+
 
 <!--
 ## Join
