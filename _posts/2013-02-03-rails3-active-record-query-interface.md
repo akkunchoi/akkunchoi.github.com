@@ -456,15 +456,15 @@ end
 
 ## Join
 
-whereと同様、Strngで与えると、SQLがそのまま記述できる。
+whereと同様、Strngで与えると、SQLがそのまま記述できます。
 
 <pre><code data-language="ruby"># joins(string)
 Client.joins('LEFT OUTER JOIN addresses ON addresses.client_id = clients.id')
 # sql:
 # SELECT clients.* FROM clients LEFT OUTER JOIN addresses ON addresses.client_id = clients.id
-</code></rep>
+</code></pre>
 
-[associations](http://guides.rubyonrails.org/association_basics.html) を定義していれば、もっと簡単に書くことができるようになる。
+[associations](http://guides.rubyonrails.org/association_basics.html) を定義していれば、もっと簡単に書くことができるようになります。
 
 <pre><code data-language="ruby"># joins(symbol)
 #
