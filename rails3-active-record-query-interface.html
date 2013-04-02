@@ -64,6 +64,21 @@ $(document).ready(function($){
       <li><a href="#findinbatches">find_in_batches</a></li>
     </ul>
   </li>
+  <li><a href="#activerecordrelation">ActiveRecord::Relation</a></li>
+  <li><a href="#where">Where</a></li>
+  <li><a href="#order">Order</a></li>
+  <li><a href="#select">Select</a></li>
+  <li><a href="#limit-offset">Limit, Offset</a></li>
+  <li><a href="#group">Group</a></li>
+  <li><a href="#having">Having</a></li>
+  <li><a href="#overriding">上書き - Overriding</a></li>
+  <li><a href="#readonly">読み込み専用 - Readonly</a></li>
+  <li><a href="#locking">ロック - Locking</a>    <ul>
+      <li><a href="#section-4">楽観的ロック</a></li>
+      <li><a href="#section-5">悲観的ロック</a></li>
+    </ul>
+  </li>
+  <li><a href="#join">Join</a></li>
 </ul>
 
 <p><a href="http://guides.rubyonrails.org/active_record_querying.html">ActiveRecordのクエリーインタフェースの解説</a> を参考に、コードを書いて確認していきます。</p>
@@ -147,6 +162,8 @@ Client.create({:name =&gt; "Alice"})
 Client.create({:name =&gt; "Bob"})
 Client.create({:name =&gt; "Carol"})
 Address.create({:client =&gt; Client.find(1), :pref =&gt; "Osaka"})
+Order.create({:client =&gt; Client.find(2), :price=&gt; 20})
+Order.create({:client =&gt; Client.find(2), :price=&gt; 50})
 
 </code></pre>
 
@@ -156,36 +173,6 @@ Address.create({:client =&gt; Client.find(1), :pref =&gt; "Osaka"})
 ActiveSupport::LogSubscriber.colorize_logging = false
 ActiveRecord::Base.logger = Logger.new(STDOUT)
 </code></pre>
-
-<!--
-
-## オブジェクトの取得
-
-情報取得するには以下の finder method が利用できます。これを呼び出すことで、SQLを書かずにクエリーを実行することができます。戻り値は ActiveRecord::Relation インスタンスです。
-
-- where
-- select
-- group
-- order
-- reorder
-- reverse_order
-- limit
-- offset
-- joins
-- includes
-- lock
-- readonly
-- from
-- having
-
-find メソッドというのもあります。`Model.find(options)` を実行すると、次のような動作になります。
-
-- 1. オプションをSQLクエリに変換する
-- 2. SQLクエリを実行し、結果をデータベースから取り出す
-- 3. 結果を行ごとに適切なモデルクラスで、インスタンス化
-- 4. 指定されていれば、after_find コールバックを実行する
-
--->
 
 <h2 id="section-1">オブジェクトをひとつだけ取り出す</h2>
 
@@ -307,80 +294,116 @@ end
 # =&gt; 1
 </code></pre>
 
-<!--
+<h2 id="activerecordrelation">ActiveRecord::Relation</h2>
 
-## Where
+<p>条件を指定して取得するには以下のメソッドを使います。これらは<code>ActiveRecord::Relation</code>オブジェクトを返します。</p>
 
-SQLのWhere文を構築します。String, Array, Hash のどれかを引数に入れて使います。
+<ul>
+  <li>where</li>
+  <li>select</li>
+  <li>group</li>
+  <li>order</li>
+  <li>reorder</li>
+  <li>reverse_order</li>
+  <li>limit</li>
+  <li>offset</li>
+  <li>joins</li>
+  <li>includes</li>
+  <li>lock</li>
+  <li>readonly</li>
+  <li>from</li>
+  <li>having</li>
+</ul>
 
-Stringの場合、SQLを直接書くようなイメージです。エスケープなどはされません。ユーザー入力値をそのまま入れないようにしましょう。
+<pre><code data-language="ruby">p Client.where("1").class
+# ActiveRecord::Relation
+</code></pre>
+
+<p><code>find</code> に同じようなオプションを与えることもできます（古いやり方）。</p>
+
+<h2 id="where">Where</h2>
+
+<p>SQLのWhere文を構築します。String, Array, Hash のどれかを引数に入れて使います。</p>
+
+<p>Stringの場合、SQLを直接書くようなイメージです。エスケープなどはされません。ユーザー入力値をそのまま入れないようにしましょう。</p>
 
 <pre><code data-language="ruby"># where(string)
 Client.where("orders_count = '2'")
+# SELECT "clients".* FROM "clients" WHERE (orders_count = '2')
+# =&gt; [#&lt;Client id: 2, name: "Bob", orders_count: 2, created_at: "2013-03-06 19:12:44", updated_at: "2013-03-06 19:12:44"&gt;]
 
 # これはやってはいけない！
 Client.where("first_name LIKE '%#{params[:first_name]}%'")
 </code></pre>
 
-Arrayにすると、プレースホルダーが使えます。'?' にエスケープされた第二引数の値が置き換わるので安全です。
-[詳細](http://guides.rubyonrails.org/security.html#sql-injection)。
+<p>Arrayにすると、プレースホルダーが使えます。<code>?</code> にエスケープされた値が入るので安全です。
+<a href="http://guides.rubyonrails.org/security.html#sql-injection">詳細</a>。</p>
 
 <pre><code data-language="ruby"># where(array, ...)
 Client.where("orders_count = ?", params[:orders])
 </code></pre>
 
-プレースホルダーはハッシュにもできます。
+<p>プレースホルダーはハッシュにもできます。</p>
 
 <pre><code data-language="ruby"># where(array, hash)
-Client.where("created_at >= :start_date AND created_at <= :end_date",
-  {:start_date => params[:start_date], :end_date => params[:end_date]})
+Client.where("created_at &gt;= :start_date AND created_at &lt;= :end_date",
+  {:start_date =&gt; params[:start_date], :end_date =&gt; params[:end_date]})
 </code></pre>
 
-
-Hashにするとさらに読みやすくなります。
+<p>Hashにするとすっきりします。</p>
 
 <pre><code data-language="ruby"># where(hash)
-Client.where(:orders_count => 2)
+Client.where(:orders_count =&gt; 2)
 </code></pre>
 
-範囲指定もできます。
+<p>範囲指定もできます。</p>
 
-<pre><code data-language="ruby"># where(key => range)
-Client.where(:created_at => (Time.now.midnight - 1.day)..Time.now.midnight)
+<pre><code data-language="ruby"># where(key =&gt; range)
+Client.where(:created_at =&gt; (Time.now.midnight - 1.day)..Time.now.midnight)
 # sql: 
 # SELECT * FROM clients WHERE (clients.created_at BETWEEN '2008-12-21 00:00:00' AND '2008-12-22 00:00:00')
 </code></pre>
 
-Subset条件（IN構文）を使うには、値を配列にします
+<p>Subset条件（IN構文）を使うには、値を配列にします</p>
 
-<pre><code data-language="ruby"># where(key => array)
-Client.where(:orders_count => [1,3,5])
+<pre><code data-language="ruby"># where(key =&gt; array)
+Client.where(:orders_count =&gt; [1,3,5])
 # sql:
 # SELECT * FROM clients WHERE (clients.orders_count IN (1,3,5))
 </code></pre>
 
-## Order
+<h2 id="order">Order</h2>
 
-ORDER BY です。
+<p>SQL の ORDER BY そのままです。</p>
 
 <pre><code data-language="ruby"># order by
 Client.order("created_at")
 Client.order("orders_count ASC, created_at DESC")
 </code></pre>
 
-## Select
+<h2 id="select">Select</h2>
 
-特定のカラムだけ取得する。selectを使うと Readonly になります。
+<p>SELECT句です。これを指定すると、取得されたオブジェクトは Readonly になります。</p>
 
 <pre><code data-language="ruby"># select
-Client.select("viewable_by, locked")
+Client.select(:orders_count)
 # sql: 
-# SELECT viewable_by, locked FROM clients
+# SELECT orders_count FROM "clients"
 </code></pre>
 
-selectとした列以外を取得しようとすると、ActiveRecord::MissingAttributeError になります。
+<p>selectとした列以外を取得しようとすると、ActiveRecord::MissingAttributeError になります。</p>
 
-`SELECT DISTINCT` 相当は `uniq()` です。
+<pre><code data-language="ruby"># select error
+c = Client.select(:orders_count).first
+begin
+  p c.name
+rescue ActiveModel::MissingAttributeError =&gt; e
+  p e
+end
+# #&gt;ActiveModel::MissingAttributeError: missing attribute: name
+</code></pre>
+
+<p><code>SELECT DISTINCT</code> 相当は <code>uniq()</code> です。</p>
 
 <pre><code data-language="ruby"># select distinct
 Client.select(:name).uniq
@@ -389,60 +412,74 @@ Client.select(:name).uniq
 
 q = Client.select(:name).uniq
 q = uniq(false) # uniq解除
-
 </code></pre>
 
+<h2 id="limit-offset">Limit, Offset</h2>
 
-## Limit, Offset
+<p>LIMIT/OFFSET句です。</p>
 
 <pre><code data-language="ruby"># limit, offset
 Client.limit(5)
 Client.offset(30)
 </code></pre>
 
-## Group
+<h2 id="group">Group</h2>
 
 <pre><code data-language="ruby"># group by
 Client.group("date(created_at)")
+# sql: SELECT "clients".* FROM "clients" GROUP BY date(created_at)
 </code></pre>
 
-
-## Having
+<h2 id="having">Having</h2>
 
 <pre><code data-language="ruby"># having
 Order.select("date(created_at) as ordered_date, sum(price) as total_price")
   .group("date(created_at)")
-  .having("sum(price) > ?", 100)
+  .having("sum(price) &gt; ?", 100)
+# sql: SELECT date(created_at) as ordered_date, sum(price) as total_price FROM "orders" GROUP BY date(created_at) HAVING sum(price) &gt; 100
 </code></pre>
 
-## 上書き - Overriding
+<h2 id="overriding">上書き - Overriding</h2>
 
-構築したクエリから一部を除外したり、特定の条件だけにするメソッドが用意されてます。
+<p>構築したクエリから一部を除外したり、特定の条件だけにするメソッドが用意されてます。</p>
 
-- except(): 指定クエリを除外（:order, :whereなど）
-- only(): 指定クエリだけにする（:order, :whereなど）
-- reorder(): default scope で指定した order を上書きします
-- reverse_order(): 逆順にします
+<ul>
+  <li><code>except()</code>: 指定クエリを除外（<code>:order</code>, <code>:where</code>など）</li>
+  <li><code>only()</code>: 指定クエリだけにする（<code>:order</code>, <code>:where</code>など）</li>
+  <li><code>reorder()</code>: default scope で指定した order を上書きします</li>
+  <li><code>reverse_order()</code>: 逆順にします</li>
+</ul>
 
+<p><code>except</code>を使ってみます。例外的な処理が発生する場合に使えるかもです。</p>
 
-## 読み込み専用 - Readonly
+<pre><code data-language="ruby"># except
+clients = Client.where("orders_count &gt; 0")
+p clients
+# [#&lt;Client id: 2, name: "Bob"&gt;]
 
-Readonlyなオブジェクトを更新しようとすると、例外が発生します。
+clients = clients.except(:where)
+p clients
+# [#&lt;Client id: 1, name: "Alice"&gt;, #&lt;Client id: 2, name: "Bob"&gt;, #&lt;Client id: 3, name: "Carol"&gt;]
+</code></pre>
+
+<h2 id="readonly">読み込み専用 - Readonly</h2>
+
+<p>Readonlyなオブジェクトを更新しようとすると、例外が発生します。</p>
 
 <pre><code data-language="ruby"># readonly
 client = Client.readonly.first
-client.visits += 1
+client.name = "hoge"
 client.save # raise ActiveRecord::ReadOnlyRecord
 </code></pre>
 
-## ロック - Locking
+<h2 id="locking">ロック - Locking</h2>
 
-### 楽観的ロック
+<h3 id="section-4">楽観的ロック</h3>
 
-integer型の`lock_version`という名前のカラムが存在すると、Railsが自動的に楽観的ロックを行なってくれます。
-更新する度に`lock_version`の値をインクリメントしていき、競合を検知する仕組みです。
+<p>integer型の<code>lock_version</code>という名前のカラムが存在すると、Railsが自動的に楽観的ロックを行なってくれます。
+更新する度に<code>lock_version</code>の値をインクリメントしていき、競合を検知する仕組みです。</p>
 
-更新が競合した場合、`ActiveRecord::StaleObjectError`が発生します。
+<p>更新が競合した場合、<code>ActiveRecord::StaleObjectError</code>が発生します。</p>
 
 <pre><code data-language="ruby"># lock_version
 c1 = Client.find(1)
@@ -450,72 +487,79 @@ c2 = Client.find(1)
  
 c1.first_name = "Michael"
 c1.save
-  
+ 
+# sql: 
+# begin transaction
+# UPDATE "clients" SET "name" = 'Michael', "updated_at" = '2013-03-13 17:17:59.886521', "lock_version" = 1 WHERE ("clients"."id" = 1 AND "clients"."lock_version" = 0)
+# commit transaction
+
 c2.name = "should fail"
 c2.save # Raises an ActiveRecord::StaleObjectError
 </code></pre>
 
-`ActiveRecord::Base.lock_optimistically = false` でこの機能を無効にできます。
+<p><code>ActiveRecord::Base.lock_optimistically = false</code> でこの機能を無効にできます。</p>
 
-`set_locking_column` でlock_versionというカラム名を変更できます。
+<p><code>set_locking_column</code> で既定の<code>lock_version</code>というカラム名を変更できます。</p>
 
 <pre><code data-language="ruby"># set_locking_column
-class Client < ActiveRecord::Base
+class Client &lt; ActiveRecord::Base
   set_locking_column :lock_client_column
 end
 </code></pre>
 
+<h3 id="section-5">悲観的ロック</h3>
 
-### 悲観的ロック
+<p>悲観的ロックはデータベースシステムの機能を利用します。</p>
 
-悲観的ロックはデータベースシステムの機能を利用します。
-
-リレーションを構築する時に`lock`を使うと、選択行の排他的ロックを獲得します。
-`lock`を使ったリレーションはデッドロックを避けるために、通常`transaction`ブロックで囲みます。
+<p>リレーションを構築する時に<code>lock</code>を使うと、選択行の排他的ロックを獲得します。
+<code>lock</code>を使ったリレーションはデッドロックを避けるために、通常<code>transaction</code>ブロックで囲みます。</p>
 
 <pre><code data-language="ruby"># transaction
-Item.transaction do
-  i = Item.lock.first
-  i.name = 'Jones'
-  i.save
+Address.transaction do
+  a = Address.lock.first
+  a.pref = "Hokkaido"
+  a.save
 end
-# SQL (0.2ms)   BEGIN
-# Item Load (0.3ms)   SELECT * FROM `items` LIMIT 1 FOR UPDATE
-# Item Update (0.4ms)   UPDATE `items` SET `updated_at` = '2009-02-07 18:05:56', `name` = 'Jones' WHERE `id` = 1
-# SQL (0.8ms)   COMMIT
+# begin transaction
+# UPDATE "addresses" SET "pref" = 'Hokkaido' WHERE "addresses"."id" = 1
+# commit transaction
 </code></pre>
 
-
-共有ロックなどロックタイプを変更したい場合は引数にタイプを与えてやります。
+<p>共有ロックなどロックタイプを変更したい場合は引数にタイプを与えてやります。</p>
 
 <pre><code data-language="ruby"># lock in share mode
-Item.transaction do
-  i = Item.lock("LOCK IN SHARE MODE").find(1)
-  i.increment!(:views)
+Address.transaction do
+  a = Address.lock("LOCK IN SHARE MODE").first
+  a.increment!(:views)
 end
 </code></pre>
 
-すでにインスタンスを取得しているなら、`with_lock`でトランザクションを開始できます。
+<p>すでにインスタンスを取得しているなら、<code>with_lock</code>でトランザクションを開始できます。</p>
 
 <pre><code data-language="ruby"># with_lock
-item = Item.first
-item.with_lock do
+a = Address.first
+a.with_lock do
   # このブロックはtransaction内で、itemはロックされてます
-  item.increment!(:views)
+  a.increment!(:views)
 end
 </code></pre>
 
+<h2 id="join">Join</h2>
+
+<p>TODO</p>
+
+<!--
 ## Join
 
-whereと同様、Strngで与えると、SQLがそのまま記述できる。
+whereと同様、Stringで与えると、SQLをそのまま記述できます。
 
 <pre><code data-language="ruby"># joins(string)
 Client.joins('LEFT OUTER JOIN addresses ON addresses.client_id = clients.id')
 # sql:
 # SELECT clients.* FROM clients LEFT OUTER JOIN addresses ON addresses.client_id = clients.id
-</code></rep>
+</code></pre>
 
-[associations](http://guides.rubyonrails.org/association_basics.html) を定義していれば、もっと簡単に書くことができるようになる。
+[associations](http://guides.rubyonrails.org/association_basics.html) を定義していれば、もっと簡単に書くことができるようになります。
 
 <pre><code data-language="ruby"># joins(symbol)
 #
@@ -688,7 +732,7 @@ rails4でdeprecated
 
   </div>
   <footer> 
-  <p>Last updated at <time>2013-03-03 09:14:12 +0900</time></p>
+  <p>Last updated at <time>2013-04-02 12:57:34 +0900</time></p>
   <!-- <p>Published at <time>2013-02-03</time></p> -->
   </footer>
 </article>

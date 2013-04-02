@@ -5,8 +5,8 @@
         <link>http://akkunchoi.github.com</link>
         <atom:link href="http://akkunchoi.github.com/rss.xml" rel="self" type="application/rss+xml" />
         <description>This site is a information for development written by akkunchoi</description>
-        <pubDate>Wed, 06 Mar 2013 18:12:35 +0900</pubDate>
-        <lastBuildDate>Wed, 06 Mar 2013 18:12:35 +0900</lastBuildDate>
+        <pubDate>Tue, 02 Apr 2013 13:36:01 +0900</pubDate>
+        <lastBuildDate>Tue, 02 Apr 2013 13:36:01 +0900</lastBuildDate>
         
         <item>
             <title>PHP5.3.xの問題あるバージョン</title>
@@ -86,6 +86,21 @@ apacheにHUPを送信することで現象は発生しなくなりました。&l
       &lt;li&gt;&lt;a href=&quot;#findinbatches&quot;&gt;find_in_batches&lt;/a&gt;&lt;/li&gt;
     &lt;/ul&gt;
   &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#activerecordrelation&quot;&gt;ActiveRecord::Relation&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#where&quot;&gt;Where&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#order&quot;&gt;Order&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#select&quot;&gt;Select&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#limit-offset&quot;&gt;Limit, Offset&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#group&quot;&gt;Group&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#having&quot;&gt;Having&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#overriding&quot;&gt;上書き - Overriding&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#readonly&quot;&gt;読み込み専用 - Readonly&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#locking&quot;&gt;ロック - Locking&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#section-4&quot;&gt;楽観的ロック&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#section-5&quot;&gt;悲観的ロック&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#join&quot;&gt;Join&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;p&gt;&lt;a href=&quot;http://guides.rubyonrails.org/active_record_querying.html&quot;&gt;ActiveRecordのクエリーインタフェースの解説&lt;/a&gt; を参考に、コードを書いて確認していきます。&lt;/p&gt;
@@ -169,6 +184,8 @@ Client.create({:name =&amp;gt; &quot;Alice&quot;})
 Client.create({:name =&amp;gt; &quot;Bob&quot;})
 Client.create({:name =&amp;gt; &quot;Carol&quot;})
 Address.create({:client =&amp;gt; Client.find(1), :pref =&amp;gt; &quot;Osaka&quot;})
+Order.create({:client =&amp;gt; Client.find(2), :price=&amp;gt; 20})
+Order.create({:client =&amp;gt; Client.find(2), :price=&amp;gt; 50})
 
 &lt;/code&gt;&lt;/pre&gt;
 
@@ -178,36 +195,6 @@ Address.create({:client =&amp;gt; Client.find(1), :pref =&amp;gt; &quot;Osaka&qu
 ActiveSupport::LogSubscriber.colorize_logging = false
 ActiveRecord::Base.logger = Logger.new(STDOUT)
 &lt;/code&gt;&lt;/pre&gt;
-
-&lt;!--
-
-## オブジェクトの取得
-
-情報取得するには以下の finder method が利用できます。これを呼び出すことで、SQLを書かずにクエリーを実行することができます。戻り値は ActiveRecord::Relation インスタンスです。
-
-- where
-- select
-- group
-- order
-- reorder
-- reverse_order
-- limit
-- offset
-- joins
-- includes
-- lock
-- readonly
-- from
-- having
-
-find メソッドというのもあります。`Model.find(options)` を実行すると、次のような動作になります。
-
-- 1. オプションをSQLクエリに変換する
-- 2. SQLクエリを実行し、結果をデータベースから取り出す
-- 3. 結果を行ごとに適切なモデルクラスで、インスタンス化
-- 4. 指定されていれば、after_find コールバックを実行する
-
---&gt;
 
 &lt;h2 id=&quot;section-1&quot;&gt;オブジェクトをひとつだけ取り出す&lt;/h2&gt;
 
@@ -329,80 +316,116 @@ end
 # =&amp;gt; 1
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;!--
+&lt;h2 id=&quot;activerecordrelation&quot;&gt;ActiveRecord::Relation&lt;/h2&gt;
 
-## Where
+&lt;p&gt;条件を指定して取得するには以下のメソッドを使います。これらは&lt;code&gt;ActiveRecord::Relation&lt;/code&gt;オブジェクトを返します。&lt;/p&gt;
 
-SQLのWhere文を構築します。String, Array, Hash のどれかを引数に入れて使います。
+&lt;ul&gt;
+  &lt;li&gt;where&lt;/li&gt;
+  &lt;li&gt;select&lt;/li&gt;
+  &lt;li&gt;group&lt;/li&gt;
+  &lt;li&gt;order&lt;/li&gt;
+  &lt;li&gt;reorder&lt;/li&gt;
+  &lt;li&gt;reverse_order&lt;/li&gt;
+  &lt;li&gt;limit&lt;/li&gt;
+  &lt;li&gt;offset&lt;/li&gt;
+  &lt;li&gt;joins&lt;/li&gt;
+  &lt;li&gt;includes&lt;/li&gt;
+  &lt;li&gt;lock&lt;/li&gt;
+  &lt;li&gt;readonly&lt;/li&gt;
+  &lt;li&gt;from&lt;/li&gt;
+  &lt;li&gt;having&lt;/li&gt;
+&lt;/ul&gt;
 
-Stringの場合、SQLを直接書くようなイメージです。エスケープなどはされません。ユーザー入力値をそのまま入れないようにしましょう。
+&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;p Client.where(&quot;1&quot;).class
+# ActiveRecord::Relation
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code&gt;find&lt;/code&gt; に同じようなオプションを与えることもできます（古いやり方）。&lt;/p&gt;
+
+&lt;h2 id=&quot;where&quot;&gt;Where&lt;/h2&gt;
+
+&lt;p&gt;SQLのWhere文を構築します。String, Array, Hash のどれかを引数に入れて使います。&lt;/p&gt;
+
+&lt;p&gt;Stringの場合、SQLを直接書くようなイメージです。エスケープなどはされません。ユーザー入力値をそのまま入れないようにしましょう。&lt;/p&gt;
 
 &lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# where(string)
 Client.where(&quot;orders_count = '2'&quot;)
+# SELECT &quot;clients&quot;.* FROM &quot;clients&quot; WHERE (orders_count = '2')
+# =&amp;gt; [#&amp;lt;Client id: 2, name: &quot;Bob&quot;, orders_count: 2, created_at: &quot;2013-03-06 19:12:44&quot;, updated_at: &quot;2013-03-06 19:12:44&quot;&amp;gt;]
 
 # これはやってはいけない！
 Client.where(&quot;first_name LIKE '%#{params[:first_name]}%'&quot;)
 &lt;/code&gt;&lt;/pre&gt;
 
-Arrayにすると、プレースホルダーが使えます。'?' にエスケープされた第二引数の値が置き換わるので安全です。
-[詳細](http://guides.rubyonrails.org/security.html#sql-injection)。
+&lt;p&gt;Arrayにすると、プレースホルダーが使えます。&lt;code&gt;?&lt;/code&gt; にエスケープされた値が入るので安全です。
+&lt;a href=&quot;http://guides.rubyonrails.org/security.html#sql-injection&quot;&gt;詳細&lt;/a&gt;。&lt;/p&gt;
 
 &lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# where(array, ...)
 Client.where(&quot;orders_count = ?&quot;, params[:orders])
 &lt;/code&gt;&lt;/pre&gt;
 
-プレースホルダーはハッシュにもできます。
+&lt;p&gt;プレースホルダーはハッシュにもできます。&lt;/p&gt;
 
 &lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# where(array, hash)
-Client.where(&quot;created_at &gt;= :start_date AND created_at &lt;= :end_date&quot;,
-  {:start_date =&gt; params[:start_date], :end_date =&gt; params[:end_date]})
+Client.where(&quot;created_at &amp;gt;= :start_date AND created_at &amp;lt;= :end_date&quot;,
+  {:start_date =&amp;gt; params[:start_date], :end_date =&amp;gt; params[:end_date]})
 &lt;/code&gt;&lt;/pre&gt;
 
-
-Hashにするとさらに読みやすくなります。
+&lt;p&gt;Hashにするとすっきりします。&lt;/p&gt;
 
 &lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# where(hash)
-Client.where(:orders_count =&gt; 2)
+Client.where(:orders_count =&amp;gt; 2)
 &lt;/code&gt;&lt;/pre&gt;
 
-範囲指定もできます。
+&lt;p&gt;範囲指定もできます。&lt;/p&gt;
 
-&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# where(key =&gt; range)
-Client.where(:created_at =&gt; (Time.now.midnight - 1.day)..Time.now.midnight)
+&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# where(key =&amp;gt; range)
+Client.where(:created_at =&amp;gt; (Time.now.midnight - 1.day)..Time.now.midnight)
 # sql: 
 # SELECT * FROM clients WHERE (clients.created_at BETWEEN '2008-12-21 00:00:00' AND '2008-12-22 00:00:00')
 &lt;/code&gt;&lt;/pre&gt;
 
-Subset条件（IN構文）を使うには、値を配列にします
+&lt;p&gt;Subset条件（IN構文）を使うには、値を配列にします&lt;/p&gt;
 
-&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# where(key =&gt; array)
-Client.where(:orders_count =&gt; [1,3,5])
+&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# where(key =&amp;gt; array)
+Client.where(:orders_count =&amp;gt; [1,3,5])
 # sql:
 # SELECT * FROM clients WHERE (clients.orders_count IN (1,3,5))
 &lt;/code&gt;&lt;/pre&gt;
 
-## Order
+&lt;h2 id=&quot;order&quot;&gt;Order&lt;/h2&gt;
 
-ORDER BY です。
+&lt;p&gt;SQL の ORDER BY そのままです。&lt;/p&gt;
 
 &lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# order by
 Client.order(&quot;created_at&quot;)
 Client.order(&quot;orders_count ASC, created_at DESC&quot;)
 &lt;/code&gt;&lt;/pre&gt;
 
-## Select
+&lt;h2 id=&quot;select&quot;&gt;Select&lt;/h2&gt;
 
-特定のカラムだけ取得する。selectを使うと Readonly になります。
+&lt;p&gt;SELECT句です。これを指定すると、取得されたオブジェクトは Readonly になります。&lt;/p&gt;
 
 &lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# select
-Client.select(&quot;viewable_by, locked&quot;)
+Client.select(:orders_count)
 # sql: 
-# SELECT viewable_by, locked FROM clients
+# SELECT orders_count FROM &quot;clients&quot;
 &lt;/code&gt;&lt;/pre&gt;
 
-selectとした列以外を取得しようとすると、ActiveRecord::MissingAttributeError になります。
+&lt;p&gt;selectとした列以外を取得しようとすると、ActiveRecord::MissingAttributeError になります。&lt;/p&gt;
 
-`SELECT DISTINCT` 相当は `uniq()` です。
+&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# select error
+c = Client.select(:orders_count).first
+begin
+  p c.name
+rescue ActiveModel::MissingAttributeError =&amp;gt; e
+  p e
+end
+# #&amp;gt;ActiveModel::MissingAttributeError: missing attribute: name
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code&gt;SELECT DISTINCT&lt;/code&gt; 相当は &lt;code&gt;uniq()&lt;/code&gt; です。&lt;/p&gt;
 
 &lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# select distinct
 Client.select(:name).uniq
@@ -411,60 +434,74 @@ Client.select(:name).uniq
 
 q = Client.select(:name).uniq
 q = uniq(false) # uniq解除
-
 &lt;/code&gt;&lt;/pre&gt;
 
+&lt;h2 id=&quot;limit-offset&quot;&gt;Limit, Offset&lt;/h2&gt;
 
-## Limit, Offset
+&lt;p&gt;LIMIT/OFFSET句です。&lt;/p&gt;
 
 &lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# limit, offset
 Client.limit(5)
 Client.offset(30)
 &lt;/code&gt;&lt;/pre&gt;
 
-## Group
+&lt;h2 id=&quot;group&quot;&gt;Group&lt;/h2&gt;
 
 &lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# group by
 Client.group(&quot;date(created_at)&quot;)
+# sql: SELECT &quot;clients&quot;.* FROM &quot;clients&quot; GROUP BY date(created_at)
 &lt;/code&gt;&lt;/pre&gt;
 
-
-## Having
+&lt;h2 id=&quot;having&quot;&gt;Having&lt;/h2&gt;
 
 &lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# having
 Order.select(&quot;date(created_at) as ordered_date, sum(price) as total_price&quot;)
   .group(&quot;date(created_at)&quot;)
-  .having(&quot;sum(price) &gt; ?&quot;, 100)
+  .having(&quot;sum(price) &amp;gt; ?&quot;, 100)
+# sql: SELECT date(created_at) as ordered_date, sum(price) as total_price FROM &quot;orders&quot; GROUP BY date(created_at) HAVING sum(price) &amp;gt; 100
 &lt;/code&gt;&lt;/pre&gt;
 
-## 上書き - Overriding
+&lt;h2 id=&quot;overriding&quot;&gt;上書き - Overriding&lt;/h2&gt;
 
-構築したクエリから一部を除外したり、特定の条件だけにするメソッドが用意されてます。
+&lt;p&gt;構築したクエリから一部を除外したり、特定の条件だけにするメソッドが用意されてます。&lt;/p&gt;
 
-- except(): 指定クエリを除外（:order, :whereなど）
-- only(): 指定クエリだけにする（:order, :whereなど）
-- reorder(): default scope で指定した order を上書きします
-- reverse_order(): 逆順にします
+&lt;ul&gt;
+  &lt;li&gt;&lt;code&gt;except()&lt;/code&gt;: 指定クエリを除外（&lt;code&gt;:order&lt;/code&gt;, &lt;code&gt;:where&lt;/code&gt;など）&lt;/li&gt;
+  &lt;li&gt;&lt;code&gt;only()&lt;/code&gt;: 指定クエリだけにする（&lt;code&gt;:order&lt;/code&gt;, &lt;code&gt;:where&lt;/code&gt;など）&lt;/li&gt;
+  &lt;li&gt;&lt;code&gt;reorder()&lt;/code&gt;: default scope で指定した order を上書きします&lt;/li&gt;
+  &lt;li&gt;&lt;code&gt;reverse_order()&lt;/code&gt;: 逆順にします&lt;/li&gt;
+&lt;/ul&gt;
 
+&lt;p&gt;&lt;code&gt;except&lt;/code&gt;を使ってみます。例外的な処理が発生する場合に使えるかもです。&lt;/p&gt;
 
-## 読み込み専用 - Readonly
+&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# except
+clients = Client.where(&quot;orders_count &amp;gt; 0&quot;)
+p clients
+# [#&amp;lt;Client id: 2, name: &quot;Bob&quot;&amp;gt;]
 
-Readonlyなオブジェクトを更新しようとすると、例外が発生します。
+clients = clients.except(:where)
+p clients
+# [#&amp;lt;Client id: 1, name: &quot;Alice&quot;&amp;gt;, #&amp;lt;Client id: 2, name: &quot;Bob&quot;&amp;gt;, #&amp;lt;Client id: 3, name: &quot;Carol&quot;&amp;gt;]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;readonly&quot;&gt;読み込み専用 - Readonly&lt;/h2&gt;
+
+&lt;p&gt;Readonlyなオブジェクトを更新しようとすると、例外が発生します。&lt;/p&gt;
 
 &lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# readonly
 client = Client.readonly.first
-client.visits += 1
+client.name = &quot;hoge&quot;
 client.save # raise ActiveRecord::ReadOnlyRecord
 &lt;/code&gt;&lt;/pre&gt;
 
-## ロック - Locking
+&lt;h2 id=&quot;locking&quot;&gt;ロック - Locking&lt;/h2&gt;
 
-### 楽観的ロック
+&lt;h3 id=&quot;section-4&quot;&gt;楽観的ロック&lt;/h3&gt;
 
-integer型の`lock_version`という名前のカラムが存在すると、Railsが自動的に楽観的ロックを行なってくれます。
-更新する度に`lock_version`の値をインクリメントしていき、競合を検知する仕組みです。
+&lt;p&gt;integer型の&lt;code&gt;lock_version&lt;/code&gt;という名前のカラムが存在すると、Railsが自動的に楽観的ロックを行なってくれます。
+更新する度に&lt;code&gt;lock_version&lt;/code&gt;の値をインクリメントしていき、競合を検知する仕組みです。&lt;/p&gt;
 
-更新が競合した場合、`ActiveRecord::StaleObjectError`が発生します。
+&lt;p&gt;更新が競合した場合、&lt;code&gt;ActiveRecord::StaleObjectError&lt;/code&gt;が発生します。&lt;/p&gt;
 
 &lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# lock_version
 c1 = Client.find(1)
@@ -472,72 +509,79 @@ c2 = Client.find(1)
  
 c1.first_name = &quot;Michael&quot;
 c1.save
-  
+ 
+# sql: 
+# begin transaction
+# UPDATE &quot;clients&quot; SET &quot;name&quot; = 'Michael', &quot;updated_at&quot; = '2013-03-13 17:17:59.886521', &quot;lock_version&quot; = 1 WHERE (&quot;clients&quot;.&quot;id&quot; = 1 AND &quot;clients&quot;.&quot;lock_version&quot; = 0)
+# commit transaction
+
 c2.name = &quot;should fail&quot;
 c2.save # Raises an ActiveRecord::StaleObjectError
 &lt;/code&gt;&lt;/pre&gt;
 
-`ActiveRecord::Base.lock_optimistically = false` でこの機能を無効にできます。
+&lt;p&gt;&lt;code&gt;ActiveRecord::Base.lock_optimistically = false&lt;/code&gt; でこの機能を無効にできます。&lt;/p&gt;
 
-`set_locking_column` でlock_versionというカラム名を変更できます。
+&lt;p&gt;&lt;code&gt;set_locking_column&lt;/code&gt; で既定の&lt;code&gt;lock_version&lt;/code&gt;というカラム名を変更できます。&lt;/p&gt;
 
 &lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# set_locking_column
-class Client &lt; ActiveRecord::Base
+class Client &amp;lt; ActiveRecord::Base
   set_locking_column :lock_client_column
 end
 &lt;/code&gt;&lt;/pre&gt;
 
+&lt;h3 id=&quot;section-5&quot;&gt;悲観的ロック&lt;/h3&gt;
 
-### 悲観的ロック
+&lt;p&gt;悲観的ロックはデータベースシステムの機能を利用します。&lt;/p&gt;
 
-悲観的ロックはデータベースシステムの機能を利用します。
-
-リレーションを構築する時に`lock`を使うと、選択行の排他的ロックを獲得します。
-`lock`を使ったリレーションはデッドロックを避けるために、通常`transaction`ブロックで囲みます。
+&lt;p&gt;リレーションを構築する時に&lt;code&gt;lock&lt;/code&gt;を使うと、選択行の排他的ロックを獲得します。
+&lt;code&gt;lock&lt;/code&gt;を使ったリレーションはデッドロックを避けるために、通常&lt;code&gt;transaction&lt;/code&gt;ブロックで囲みます。&lt;/p&gt;
 
 &lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# transaction
-Item.transaction do
-  i = Item.lock.first
-  i.name = 'Jones'
-  i.save
+Address.transaction do
+  a = Address.lock.first
+  a.pref = &quot;Hokkaido&quot;
+  a.save
 end
-# SQL (0.2ms)   BEGIN
-# Item Load (0.3ms)   SELECT * FROM `items` LIMIT 1 FOR UPDATE
-# Item Update (0.4ms)   UPDATE `items` SET `updated_at` = '2009-02-07 18:05:56', `name` = 'Jones' WHERE `id` = 1
-# SQL (0.8ms)   COMMIT
+# begin transaction
+# UPDATE &quot;addresses&quot; SET &quot;pref&quot; = 'Hokkaido' WHERE &quot;addresses&quot;.&quot;id&quot; = 1
+# commit transaction
 &lt;/code&gt;&lt;/pre&gt;
 
-
-共有ロックなどロックタイプを変更したい場合は引数にタイプを与えてやります。
+&lt;p&gt;共有ロックなどロックタイプを変更したい場合は引数にタイプを与えてやります。&lt;/p&gt;
 
 &lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# lock in share mode
-Item.transaction do
-  i = Item.lock(&quot;LOCK IN SHARE MODE&quot;).find(1)
-  i.increment!(:views)
+Address.transaction do
+  a = Address.lock(&quot;LOCK IN SHARE MODE&quot;).first
+  a.increment!(:views)
 end
 &lt;/code&gt;&lt;/pre&gt;
 
-すでにインスタンスを取得しているなら、`with_lock`でトランザクションを開始できます。
+&lt;p&gt;すでにインスタンスを取得しているなら、&lt;code&gt;with_lock&lt;/code&gt;でトランザクションを開始できます。&lt;/p&gt;
 
 &lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# with_lock
-item = Item.first
-item.with_lock do
+a = Address.first
+a.with_lock do
   # このブロックはtransaction内で、itemはロックされてます
-  item.increment!(:views)
+  a.increment!(:views)
 end
 &lt;/code&gt;&lt;/pre&gt;
 
+&lt;h2 id=&quot;join&quot;&gt;Join&lt;/h2&gt;
+
+&lt;p&gt;TODO&lt;/p&gt;
+
+&lt;!--
 ## Join
 
-whereと同様、Strngで与えると、SQLがそのまま記述できる。
+whereと同様、Stringで与えると、SQLをそのまま記述できます。
 
 &lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# joins(string)
 Client.joins('LEFT OUTER JOIN addresses ON addresses.client_id = clients.id')
 # sql:
 # SELECT clients.* FROM clients LEFT OUTER JOIN addresses ON addresses.client_id = clients.id
-&lt;/code&gt;&lt;/rep&gt;
+&lt;/code&gt;&lt;/pre&gt;
 
-[associations](http://guides.rubyonrails.org/association_basics.html) を定義していれば、もっと簡単に書くことができるようになる。
+[associations](http://guides.rubyonrails.org/association_basics.html) を定義していれば、もっと簡単に書くことができるようになります。
 
 &lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# joins(symbol)
 #
@@ -713,14 +757,19 @@ rails4でdeprecated
         </item>
         
         <item>
-            <title>Ruby メタプログラミング (1)</title>
-            <description>&lt;p&gt;書籍メタプログラミングRubyを参考に、メタプログラミングの方法を簡単にまとめます。&lt;/p&gt;
+            <title>Ruby メタプログラミング (1. クラス)</title>
+            <description>&lt;p&gt;書籍「メタプログラミングRuby」を参考に、メタプログラミングの方法を簡単にまとめます。&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&quot;http://www.amazon.co.jp/gp/product/4048687158/ref=as_li_ss_il?ie=UTF8&amp;amp;camp=247&amp;amp;creative=7399&amp;amp;creativeASIN=4048687158&amp;amp;linkCode=as2&amp;amp;tag=ac0689-22&quot;&gt;&lt;img border=&quot;0&quot; src=&quot;http://ws.assoc-amazon.jp/widgets/q?_encoding=UTF8&amp;amp;ASIN=4048687158&amp;amp;Format=_SL110_&amp;amp;ID=AsinImage&amp;amp;MarketPlace=JP&amp;amp;ServiceVersion=20070822&amp;amp;WS=1&amp;amp;tag=ac0689-22&quot; /&gt;&lt;/a&gt;&lt;img src=&quot;http://www.assoc-amazon.jp/e/ir?t=ac0689-22&amp;amp;l=as2&amp;amp;o=9&amp;amp;a=4048687158&quot; width=&quot;1&quot; height=&quot;1&quot; border=&quot;0&quot; alt=&quot;&quot; style=&quot;border:none !important; margin:0px !important;&quot; /&gt;&lt;/p&gt;
+&lt;iframe src=&quot;http://rcm-jp.amazon.co.jp/e/cm?lt1=_blank&amp;amp;bc1=000000&amp;amp;IS2=1&amp;amp;nou=1&amp;amp;bg1=FFFFFF&amp;amp;fc1=000000&amp;amp;lc1=0000FF&amp;amp;t=ac0689-22&amp;amp;o=9&amp;amp;p=8&amp;amp;l=as1&amp;amp;m=amazon&amp;amp;f=ifr&amp;amp;ref=tf_til&amp;amp;asins=4048687158&quot; style=&quot;width:120px;height:240px;&quot; scrolling=&quot;no&quot; marginwidth=&quot;0&quot; marginheight=&quot;0&quot; frameborder=&quot;0&quot;&gt;&lt;/iframe&gt;
 
-&lt;h2 id=&quot;section&quot;&gt;オープンクラス&lt;/h2&gt;
+&lt;h2 id=&quot;section&quot;&gt;文法&lt;/h2&gt;
 
-&lt;p&gt;既存のクラスを拡張することができる。&lt;/p&gt;
+&lt;p&gt;書籍「メタプログラミングRuby」には文法に関する説明はありません。
+クラスに関する文法は &lt;a href=&quot;http://doc.ruby-lang.org/ja/1.9.3/doc/spec=2fdef.html&quot;&gt;http://doc.ruby-lang.org/ja/1.9.3/doc/spec=2fdef.html&lt;/a&gt; を参考にして下さい。&lt;/p&gt;
+
+&lt;h2 id=&quot;section-1&quot;&gt;オープンクラス&lt;/h2&gt;
+
+&lt;p&gt;Rubyは既存のクラスを拡張することができます。&lt;/p&gt;
 
 &lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# Stringクラスを拡張する
 class String
@@ -747,9 +796,20 @@ end
   &lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h3 id=&quot;section-1&quot;&gt;クラス定義&lt;/h3&gt;
+&lt;h2 id=&quot;section-2&quot;&gt;再オープン&lt;/h2&gt;
 
-&lt;p&gt;クラス定義とその他のコードに違いはない。&lt;/p&gt;
+&lt;p&gt;クラス定義とその他のコードには違いがありません。&lt;/p&gt;
+
+&lt;p&gt;クラス定義も式です。&lt;code&gt;class&lt;/code&gt;にもきちんと戻り値があります。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# classの戻り値
+class A
+  'hoge'
+end
+=&amp;gt; &quot;hoge&quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;同じクラスに対して何度も&lt;code&gt;class&lt;/code&gt;で呼ぶことができます。&lt;/p&gt;
 
 &lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# クラスCを3回定義している？
 3.times do
@@ -762,29 +822,35 @@ end
 # Hello
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;クラスが存在していない時は、クラスを定義する。メソッドがあればメソッドも定義する。
-クラスが存在している時は、既存のクラスを&lt;strong&gt;再オープン&lt;/strong&gt;して、メソッドを追加する。&lt;/p&gt;
+&lt;p&gt;この場合、定義を繰り返しているのではなく、&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;クラスが存在していない時は、クラスを定義する。メソッドがあればメソッドも定義する。&lt;/li&gt;
+  &lt;li&gt;クラスが存在している時は、既存のクラスを&lt;strong&gt;再オープン&lt;/strong&gt;して、メソッドを追加する。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;という動作を行います。&lt;/p&gt;
 
 &lt;p&gt;class キーワードはクラス宣言というより、スコープ演算子のようなもの。&lt;/p&gt;
 
-&lt;p&gt;既存のクラスを再オープンして、いつでもその場で修正できる。この技術を&lt;strong&gt;オープンクラス&lt;/strong&gt;と呼ぶ。&lt;/p&gt;
+&lt;p&gt;既存のクラスを再オープンして、いつでもその場で修正できることを&lt;strong&gt;オープンクラス&lt;/strong&gt;と呼びます。&lt;/p&gt;
 
-&lt;h3 id=&quot;section-2&quot;&gt;オープンクラスの問題点&lt;/h3&gt;
+&lt;h2 id=&quot;section-3&quot;&gt;オープンクラスの問題点: モンキーパッチ&lt;/h2&gt;
 
-&lt;p&gt;すでに用意されているメソッドを簡単に書き換えられる。
-そのため、知らぬ間に依存している機能の動作を変更してバグにつながる可能性がある。&lt;/p&gt;
+&lt;p&gt;オープンクラスはすでに用意されているメソッドを簡単に書き換えることができます。
+そのため、知らぬ間に依存している機能の動作を変更することで、バグにつながりやすい。&lt;/p&gt;
 
-&lt;p&gt;クラスへの安易なパッチを蔑称して&lt;strong&gt;モンキーパッチ&lt;/strong&gt;と呼ぶ。&lt;/p&gt;
+&lt;p&gt;クラスへの安易なパッチを蔑称して&lt;strong&gt;モンキーパッチ&lt;/strong&gt;と呼びます。&lt;/p&gt;
 
-&lt;p&gt;モンキーパッチは「意図せずに起きる」のと「意図的に適用」する場合がある。
-便利だが危険がつきまとう。独自のメソッドを定義する前に、クラスに既存のメソッドがないかを注意深く確認すること。&lt;/p&gt;
+&lt;p&gt;モンキーパッチは「意図せずに起きる」のと「意図的に適用」する場合があります。&lt;/p&gt;
 
-&lt;h2 id=&quot;section-3&quot;&gt;クラス&lt;/h2&gt;
+&lt;p&gt;便利だけど危険がつきまとうので、
+独自のメソッドを定義する前に、クラスに既存のメソッドがないかを注意深く確認することが大事です。&lt;/p&gt;
 
-&lt;h3 id=&quot;section-4&quot;&gt;インスタンス変数とインスタンスメソッド&lt;/h3&gt;
+&lt;h2 id=&quot;section-4&quot;&gt;インスタンス変数とインスタンスメソッド&lt;/h2&gt;
 
-&lt;p&gt;インスタンス変数はハッシュのキー・バリューのようなもの。セットして初めて存在する。
-インスタンス変数はオブジェクトに、インスタンスメソッドはクラスに住んでいる。&lt;/p&gt;
+&lt;p&gt;インスタンス変数はハッシュのキー・バリューのようなもの。セットして初めて存在します。
+インスタンス変数はオブジェクトに、インスタンスメソッドはクラスに住んでいます。&lt;/p&gt;
 
 &lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# 
 class MyClass
@@ -797,9 +863,11 @@ obj.instance_variables # [@v]
 obj.methods            # [&quot;my_method&quot;]
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&quot;section-5&quot;&gt;クラスはオブジェクト&lt;/h3&gt;
+&lt;h2 id=&quot;section-5&quot;&gt;クラスはオブジェクト&lt;/h2&gt;
 
-&lt;p&gt;クラスは Class クラスのインスタンス。&lt;/p&gt;
+&lt;p&gt;（もう少し説明足したい）&lt;/p&gt;
+
+&lt;p&gt;クラスは Class クラスのインスタンスです。&lt;/p&gt;
 
 &lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# classメソッド
 &quot;hello&quot;.class # =&amp;gt; String
@@ -807,18 +875,22 @@ String.class  # =&amp;gt; Class
 Class.class   # =&amp;gt; Class
 &lt;/code&gt;&lt;/pre&gt;
 
+&lt;p&gt;Classはnew, allocate, superclassを追加したモジュールに過ぎない！&lt;/p&gt;
+
 &lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# Classに定義されているインスタンスメソッド
 inherited = false
 Class.instance_methods(inherited) # =&amp;gt; [:superclass, :allocate, :new]
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;Classはnew, allocate, superclassを追加したモジュールに過ぎない。&lt;/p&gt;
+&lt;p&gt;Stringのクラス階層&lt;/p&gt;
 
 &lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# Stringのクラス階層
 String.superclass     # =&amp;gt; Object
 Object.superclass     # =&amp;gt; BasicObject
 BasicObjct.superclass # =&amp;gt; nil
 &lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Classのクラス階層&lt;/p&gt;
 
 &lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# Classのクラス階層
 Class.superclass      # =&amp;gt; Module
@@ -827,23 +899,30 @@ Object.superclass     # =&amp;gt; BasicObject
 BasicObjct.superclass # =&amp;gt; nil
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;クラス階層とインスタンスの関係をまとめてみる。&lt;/p&gt;
+&lt;p&gt;クラス階層とインスタンスの関係をまとめてみる。
+（&lt;code&gt;&amp;lt;====&lt;/code&gt; は is_a 関係、&lt;code&gt;&amp;lt;----&lt;/code&gt;はクラスの親子関係）&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;Class &amp;lt;--(class)-- Object
+&lt;pre&gt;&lt;code&gt;               BasicObject
                     |
-                    |--&amp;gt; String   &amp;lt;--(class)-- &quot;Hello&quot;
+                    v 
+     Class &amp;lt;====  Object
                     |
-                    |--&amp;gt; MyClass  &amp;lt;--(class)-- myObj
+                    |--&amp;gt; String   &amp;lt;==== &quot;Hello&quot;
+                    |
+                    |--&amp;gt; MyClass  &amp;lt;==== myObj (= MyClass.new)
                     |
                     `--&amp;gt; Module
                          |
                          `--&amp;gt; Class
+
+# もちろん Object だけでなく BasicObject, String, MyClass, Module, Class も Class のインスタンス
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;h2 id=&quot;section-6&quot;&gt;定数&lt;/h2&gt;
 
-&lt;p&gt;大文字で始まる参照は、クラス名やモジュール名も含めて、すべて定数になる。
-定数はモジュールで階層化することができる。名前が同じでもパスが違えば違う定数になる。この階層構造はファイルシステムと似ている。&lt;/p&gt;
+&lt;p&gt;大文字で始まる参照は、クラス名やモジュール名も含めて、すべて定数になります。
+定数はモジュールで階層化することができ、名前が同じでもパスが違えば違う定数になります。
+ファイルシステムのような階層構造です。&lt;/p&gt;
 
 &lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# 定数
 module A
@@ -856,6 +935,8 @@ end
 A::B    # =&amp;gt; 'external'
 A::C::B # =&amp;gt; 'internal'
 &lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;パスの指定の方法もファイルシステムみたい。&lt;/p&gt;
 
 &lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# 定数のパス
 module A
@@ -870,12 +951,14 @@ module A
 end
 &lt;/code&gt;&lt;/pre&gt;
 
+&lt;p&gt;&lt;code&gt;constants()&lt;/code&gt;メソッドでモジュールに定義されている定数を取得できます。&lt;/p&gt;
+
 &lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# 定数の一覧
 A.constants         # =&amp;gt; [:B, :C]
 Module.constants    # =&amp;gt; [:Object, :Module, ...]
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;定数は警告が出るけど上書きできる。&lt;/p&gt;
+&lt;p&gt;定数は警告が出るけど、上書きできます。&lt;/p&gt;
 
 &lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# 定数の上書き
 module M
@@ -886,26 +969,29 @@ M = N # warning: already initialized constant M
 M     # =&amp;gt; N
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&quot;load&quot;&gt;load&lt;/h3&gt;
+&lt;h2 id=&quot;load&quot;&gt;load&lt;/h2&gt;
 
 &lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# load
 load('foo.rb')        # foo.rbで定義された定数が読み込まれる
 load('foo.rb', true)  # 無名モジュールを作成して、foo.rbを取り込むので汚染しない
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;load はコードを実行するために使う。
-require はライブラリを読み込むために使う。&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;load はコードを実行するために使う。&lt;/li&gt;
+  &lt;li&gt;require はライブラリを読み込むために使う。&lt;/li&gt;
+&lt;/ul&gt;
 
 &lt;h2 id=&quot;section-7&quot;&gt;その他クラスに関して&lt;/h2&gt;
 
-&lt;p&gt;Rubyのクラスは慣習としてキャメルケースを使う。&lt;/p&gt;
+&lt;p&gt;Rubyのクラスは慣習としてキャメルケースを使います。&lt;/p&gt;
 
 &lt;ul&gt;
   &lt;li&gt;NG =&amp;gt; TEXT&lt;/li&gt;
   &lt;li&gt;OK =&amp;gt; Text&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;先にmoduleが定義されてあればclassは定義できない。クラスだったらオープンクラスで上書きできたけど&lt;/p&gt;
+&lt;p&gt;先にmoduleが定義されてあればclassは定義できません。
+クラスだったらオープンクラスで上書きできるけど。&lt;/p&gt;
 
 &lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# TypeError
 module Text
@@ -915,7 +1001,7 @@ end
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;例えばActionMailerをロードしたら Text モジュールが定義されてしまう。
-これを避けるには、自分のネームスペースを作る。&lt;/p&gt;
+これを避けるには、別のネームスペース(module)を作ります。&lt;/p&gt;
 
 &lt;pre&gt;&lt;code data-language=&quot;ruby&quot;&gt;# 
 module Bookworm
