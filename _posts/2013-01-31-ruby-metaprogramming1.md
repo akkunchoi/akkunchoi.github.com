@@ -6,11 +6,12 @@ tags: ruby
 
 書籍メタプログラミングRubyを参考に、メタプログラミングの方法を簡単にまとめます。
 
-<a href="http://www.amazon.co.jp/gp/product/4048687158/ref=as_li_ss_il?ie=UTF8&camp=247&creative=7399&creativeASIN=4048687158&linkCode=as2&tag=ac0689-22"><img border="0" src="http://ws.assoc-amazon.jp/widgets/q?_encoding=UTF8&ASIN=4048687158&Format=_SL110_&ID=AsinImage&MarketPlace=JP&ServiceVersion=20070822&WS=1&tag=ac0689-22" ></a><img src="http://www.assoc-amazon.jp/e/ir?t=ac0689-22&l=as2&o=9&a=4048687158" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" />
+<iframe src="http://rcm-jp.amazon.co.jp/e/cm?lt1=_blank&bc1=000000&IS2=1&nou=1&bg1=FFFFFF&fc1=000000&lc1=0000FF&t=ac0689-22&o=9&p=8&l=as1&m=amazon&f=ifr&ref=tf_til&asins=4048687158" style="width:120px;height:240px;" scrolling="no" marginwidth="0" marginheight="0" frameborder="0"></iframe>
+
 
 ## オープンクラス
 
-既存のクラスを拡張することができる。
+Rubyは既存のクラスを拡張することができる。
 
 <pre><code data-language="ruby"># Stringクラスを拡張する
 class String
@@ -32,7 +33,7 @@ end
 
 ### クラス定義
 
-クラス定義とその他のコードに違いはない。
+クラス定義とその他のコードに違いがない。
 
 <pre><code data-language="ruby"># クラスCを3回定義している？
 3.times do
