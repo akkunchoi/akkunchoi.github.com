@@ -308,7 +308,7 @@ Client.where(:orders_count => [1,3,5])
 
 ## Order
 
-`ORDER BY`です。
+SQL の ORDER BY そのままです。
 
 <pre><code data-language="ruby"># order by
 Client.order("created_at")
@@ -317,7 +317,7 @@ Client.order("orders_count ASC, created_at DESC")
 
 ## Select
 
-`SELECT`句です。これを指定すると、取得されたオブジェクトは Readonly になります。
+SELECT句です。これを指定すると、取得されたオブジェクトは Readonly になります。
 
 <pre><code data-language="ruby"># select
 Client.select(:orders_count)
@@ -334,7 +334,7 @@ begin
 rescue ActiveModel::MissingAttributeError => e
   p e
 end
-# #<ActiveModel::MissingAttributeError: missing attribute: name>
+# #&gt;ActiveModel::MissingAttributeError: missing attribute: name
 </code></pre>
 
 `SELECT DISTINCT` 相当は `uniq()` です。
@@ -351,7 +351,7 @@ q = uniq(false) # uniq解除
 
 ## Limit, Offset
 
-`LIMIT`と`OFFSET`句です。
+LIMIT/OFFSET句です。
 
 <pre><code data-language="ruby"># limit, offset
 Client.limit(5)
@@ -359,8 +359,6 @@ Client.offset(30)
 </code></pre>
 
 ## Group
-
-`GROUP BY` です。
 
 <pre><code data-language="ruby"># group by
 Client.group("date(created_at)")
@@ -481,6 +479,10 @@ a.with_lock do
 end
 </code></pre>
 
+
+## Join
+
+TODO
 
 <!--
 ## Join
