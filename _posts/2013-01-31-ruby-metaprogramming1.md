@@ -1,17 +1,22 @@
 ---
 layout: posts
-title: Ruby メタプログラミング (1)
+title: Ruby メタプログラミング (1. クラス)
 tags: ruby
 ---
 
-書籍メタプログラミングRubyを参考に、メタプログラミングの方法を簡単にまとめます。
+書籍「メタプログラミングRuby」を参考に、メタプログラミングの方法を簡単にまとめます。
 
 <iframe src="http://rcm-jp.amazon.co.jp/e/cm?lt1=_blank&bc1=000000&IS2=1&nou=1&bg1=FFFFFF&fc1=000000&lc1=0000FF&t=ac0689-22&o=9&p=8&l=as1&m=amazon&f=ifr&ref=tf_til&asins=4048687158" style="width:120px;height:240px;" scrolling="no" marginwidth="0" marginheight="0" frameborder="0"></iframe>
 
 
+## 文法
+
+書籍「メタプログラミングRuby」には文法に関する説明はありません。
+クラスに関する文法は <http://doc.ruby-lang.org/ja/1.9.3/doc/spec=2fdef.html> を参考にして下さい。
+
 ## オープンクラス
 
-Rubyは既存のクラスを拡張することができる。
+Rubyは既存のクラスを拡張することができます。
 
 <pre><code data-language="ruby"># Stringクラスを拡張する
 class String
@@ -31,9 +36,20 @@ end
   - 別の AlphanumericString クラスを定義する
   - 特異メソッドを使って、特定の String インスタンスにだけメソッドを追加する。
 
-### クラス定義
+## 再オープン
 
-クラス定義とその他のコードに違いがない。
+クラス定義とその他のコードには違いがありません。
+
+クラス定義も式です。`class`にもきちんと戻り値があります。
+
+<pre><code data-language="ruby"># classの戻り値
+class A
+  'hoge'
+end
+=> "hoge"
+</code></pre>
+
+同じクラスに対して何度も`class`で呼ぶことができます。
 
 <pre><code data-language="ruby"># クラスCを3回定義している？
 3.times do
@@ -46,30 +62,34 @@ end
 # Hello
 </code></pre>
 
-クラスが存在していない時は、クラスを定義する。メソッドがあればメソッドも定義する。
-クラスが存在している時は、既存のクラスを**再オープン**して、メソッドを追加する。
+この場合、定義を繰り返しているのではなく、
+
+- クラスが存在していない時は、クラスを定義する。メソッドがあればメソッドも定義する。
+- クラスが存在している時は、既存のクラスを**再オープン**して、メソッドを追加する。
+
+という動作を行います。
 
 class キーワードはクラス宣言というより、スコープ演算子のようなもの。
 
-既存のクラスを再オープンして、いつでもその場で修正できる。この技術を**オープンクラス**と呼ぶ。
+既存のクラスを再オープンして、いつでもその場で修正できることを**オープンクラス**と呼びます。
 
-### オープンクラスの問題点
+## オープンクラスの問題点: モンキーパッチ
 
-すでに用意されているメソッドを簡単に書き換えられる。
-そのため、知らぬ間に依存している機能の動作を変更してバグにつながる可能性がある。
+オープンクラスはすでに用意されているメソッドを簡単に書き換えることができます。
+そのため、知らぬ間に依存している機能の動作を変更することで、バグにつながりやすい。
 
-クラスへの安易なパッチを蔑称して**モンキーパッチ**と呼ぶ。
+クラスへの安易なパッチを蔑称して**モンキーパッチ**と呼びます。
 
-モンキーパッチは「意図せずに起きる」のと「意図的に適用」する場合がある。
-便利だが危険がつきまとう。独自のメソッドを定義する前に、クラスに既存のメソッドがないかを注意深く確認すること。
+モンキーパッチは「意図せずに起きる」のと「意図的に適用」する場合があります。
+
+便利だけど危険がつきまとうので、
+独自のメソッドを定義する前に、クラスに既存のメソッドがないかを注意深く確認することが大事です。
 
 
-## クラス
+## インスタンス変数とインスタンスメソッド
 
-### インスタンス変数とインスタンスメソッド
-
-インスタンス変数はハッシュのキー・バリューのようなもの。セットして初めて存在する。
-インスタンス変数はオブジェクトに、インスタンスメソッドはクラスに住んでいる。
+インスタンス変数はハッシュのキー・バリューのようなもの。セットして初めて存在します。
+インスタンス変数はオブジェクトに、インスタンスメソッドはクラスに住んでいます。
 
 <pre><code data-language="ruby"># 
 class MyClass
@@ -83,9 +103,11 @@ obj.methods            # ["my_method"]
 </code></pre>
 
 
-### クラスはオブジェクト
+## クラスはオブジェクト
 
-クラスは Class クラスのインスタンス。
+（もう少し説明足したい）
+
+クラスは Class クラスのインスタンスです。
 
 <pre><code data-language="ruby"># classメソッド
 "hello".class # => String
@@ -93,18 +115,23 @@ String.class  # => Class
 Class.class   # => Class
 </code></pre>
 
+Classはnew, allocate, superclassを追加したモジュールに過ぎない！
+
 <pre><code data-language="ruby"># Classに定義されているインスタンスメソッド
 inherited = false
 Class.instance_methods(inherited) # => [:superclass, :allocate, :new]
 </code></pre>
 
-Classはnew, allocate, superclassを追加したモジュールに過ぎない。
+
+Stringのクラス階層
 
 <pre><code data-language="ruby"># Stringのクラス階層
 String.superclass     # => Object
 Object.superclass     # => BasicObject
 BasicObjct.superclass # => nil
 </code></pre>
+
+Classのクラス階層
 
 <pre><code data-language="ruby"># Classのクラス階層
 Class.superclass      # => Module
@@ -114,23 +141,28 @@ BasicObjct.superclass # => nil
 </code></pre>
 
 クラス階層とインスタンスの関係をまとめてみる。
+（`<====` は is_a 関係、`<----`はクラスの親子関係）
 
-    Class <--(class)-- Object
+                   BasicObject
                         |
-                        |--> String   <--(class)-- "Hello"
+                        v 
+         Class <====  Object
                         |
-                        |--> MyClass  <--(class)-- myObj
+                        |--> String   <==== "Hello"
+                        |
+                        |--> MyClass  <==== myObj (= MyClass.new)
                         |
                         `--> Module
                              |
                              `--> Class
 
-
+    # もちろん Object だけでなく BasicObject, String, MyClass, Module, Class も Class のインスタンス
 
 ## 定数
 
-大文字で始まる参照は、クラス名やモジュール名も含めて、すべて定数になる。
-定数はモジュールで階層化することができる。名前が同じでもパスが違えば違う定数になる。この階層構造はファイルシステムと似ている。
+大文字で始まる参照は、クラス名やモジュール名も含めて、すべて定数になります。
+定数はモジュールで階層化することができ、名前が同じでもパスが違えば違う定数になります。
+ファイルシステムのような階層構造です。
 
 <pre><code data-language="ruby"># 定数
 module A
@@ -145,6 +177,7 @@ A::C::B # => 'internal'
 </code></pre>
 
 
+パスの指定の方法もファイルシステムみたい。
 
 <pre><code data-language="ruby"># 定数のパス
 module A
@@ -159,12 +192,14 @@ module A
 end
 </code></pre>
 
+`constants()`メソッドでモジュールに定義されている定数を取得できます。
+
 <pre><code data-language="ruby"># 定数の一覧
 A.constants         # => [:B, :C]
 Module.constants    # => [:Object, :Module, ...]
 </code></pre>
 
-定数は警告が出るけど上書きできる。
+定数は警告が出るけど、上書きできます。
 
 <pre><code data-language="ruby"># 定数の上書き
 module M
@@ -175,25 +210,26 @@ M = N # warning: already initialized constant M
 M     # => N
 </code></pre>
 
-### load
+## load
 
 <pre><code data-language="ruby"># load
 load('foo.rb')        # foo.rbで定義された定数が読み込まれる
 load('foo.rb', true)  # 無名モジュールを作成して、foo.rbを取り込むので汚染しない
 </code></pre>
 
-load はコードを実行するために使う。
-require はライブラリを読み込むために使う。
+- load はコードを実行するために使う。
+- require はライブラリを読み込むために使う。
 
 
 ## その他クラスに関して
 
-Rubyのクラスは慣習としてキャメルケースを使う。
+Rubyのクラスは慣習としてキャメルケースを使います。
 
 - NG => TEXT
 - OK => Text
 
-先にmoduleが定義されてあればclassは定義できない。クラスだったらオープンクラスで上書きできたけど
+先にmoduleが定義されてあればclassは定義できません。
+クラスだったらオープンクラスで上書きできるけど。
 
 <pre><code data-language="ruby"># TypeError
 module Text
@@ -203,7 +239,7 @@ end
 </code></pre>
 
 例えばActionMailerをロードしたら Text モジュールが定義されてしまう。
-これを避けるには、自分のネームスペースを作る。
+これを避けるには、別のネームスペース(module)を作ります。
 
 <pre><code data-language="ruby"># 
 module Bookworm
