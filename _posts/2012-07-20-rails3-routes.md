@@ -486,7 +486,7 @@ end
 ### /about や /help のような静的ページのようなアクションを量産したい
 
 <pre><code data-language="ruby"># config/routes.rb
-match ':action', :controller => :pages_controller
+match ':action', :controller => :pages
 </code></pre>
 
 /about は PagesController#about に、
